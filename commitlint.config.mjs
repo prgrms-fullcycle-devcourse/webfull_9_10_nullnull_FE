@@ -12,7 +12,11 @@ export default {
         'test',
         'deploy',
         'chore',
-        'merge',
+        'design',
+        'comment',
+        'rename',
+        'remove',
+        '!HOTFIX',
       ],
     ],
     'type-case': [2, 'always', 'lower-case'],
@@ -22,7 +26,7 @@ export default {
   parserPreset: {
     parserOpts: {
       headerPattern:
-        /^(feat|fix|docs|style|refactor|test|deploy|chore|merge) : (.+)$/,
+        /^(feat|fix|docs|style|refactor|test|deploy|chore|design|comment|rename|remove|!HOTFIX) : (.+)$/,
       headerCorrespondence: ['type', 'subject'],
     },
   },
