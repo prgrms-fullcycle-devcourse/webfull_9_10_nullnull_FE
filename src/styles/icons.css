@@ -1,0 +1,152 @@
+:root{
+    /* 쓰기 */
+    --ico-edit: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_178_8322)'%3E%3Cpath d='M3 17.4601V20.5001C3 20.7801 3.22 21.0001 3.5 21.0001H6.54C6.67 21.0001 6.8 20.9501 6.89 20.8501L17.81 9.94006L14.06 6.19006L3.15 17.1001C3.05 17.2001 3 17.3201 3 17.4601ZM20.71 7.04006C21.1 6.65006 21.1 6.02006 20.71 5.63006L18.37 3.29006C17.98 2.90006 17.35 2.90006 16.96 3.29006L15.13 5.12006L18.88 8.87006L20.71 7.04006Z' fill='%230D1117'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_178_8322'%3E%3Crect width='24' height='24' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
+    
+    /* 삭제 */
+    --ico-delete: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_163_13355)'%3E%3Cpath d='M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V9C18 7.9 17.1 7 16 7H8C6.9 7 6 7.9 6 9V19ZM18 4H15.5L14.79 3.29C14.61 3.11 14.35 3 14.09 3H9.91C9.65 3 9.39 3.11 9.21 3.29L8.5 4H6C5.45 4 5 4.45 5 5C5 5.55 5.45 6 6 6H18C18.55 6 19 5.55 19 5C19 4.45 18.55 4 18 4Z' fill='%230D1117'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_163_13355'%3E%3Crect width='24' height='24' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
+    
+    /* 에러 */
+    --ico-error: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 13C11.45 13 11 12.55 11 12V8C11 7.45 11.45 7 12 7C12.55 7 13 7.45 13 8V12C13 12.55 12.55 13 12 13ZM13 17H11V15H13V17Z' fill='%230D1117'/%3E%3C/svg%3E%0A");
+    
+    /* 취소 */
+    --ico-cancel: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_155_1566)'%3E%3Cpath d='M12 2C6.47 2 2 6.47 2 12C2 17.53 6.47 22 12 22C17.53 22 22 17.53 22 12C22 6.47 17.53 2 12 2ZM16.3 16.3C15.91 16.69 15.28 16.69 14.89 16.3L12 13.41L9.11 16.3C8.72 16.69 8.09 16.69 7.7 16.3C7.31 15.91 7.31 15.28 7.7 14.89L10.59 12L7.7 9.11C7.31 8.72 7.31 8.09 7.7 7.7C8.09 7.31 8.72 7.31 9.11 7.7L12 10.59L14.89 7.7C15.28 7.31 15.91 7.31 16.3 7.7C16.69 8.09 16.69 8.72 16.3 9.11L13.41 12L16.3 14.89C16.68 15.27 16.68 15.91 16.3 16.3Z' fill='%230D1117'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_155_1566'%3E%3Crect width='24' height='24' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
+    
+    /* 체크 */
+    --ico-check: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_155_1562)'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM9.29 16.29L5.7 12.7C5.31 12.31 5.31 11.68 5.7 11.29C6.09 10.9 6.72 10.9 7.11 11.29L10 14.17L16.88 7.29C17.27 6.9 17.9 6.9 18.29 7.29C18.68 7.68 18.68 8.31 18.29 8.7L10.7 16.29C10.32 16.68 9.68 16.68 9.29 16.29Z' fill='%230D1117'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_155_1562'%3E%3Crect width='24' height='24' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
+    
+    /* 더보기 */
+    --ico-more: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_126_297)'%3E%3Cpath d='M6 10C4.9 10 4 10.9 4 12C4 13.1 4.9 14 6 14C7.1 14 8 13.1 8 12C8 10.9 7.1 10 6 10ZM18 10C16.9 10 16 10.9 16 12C16 13.1 16.9 14 18 14C19.1 14 20 13.1 20 12C20 10.9 19.1 10 18 10ZM12 10C10.9 10 10 10.9 10 12C10 13.1 10.9 14 12 14C13.1 14 14 13.1 14 12C14 10.9 13.1 10 12 10Z' fill='%230D1117'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_126_297'%3E%3Crect width='24' height='24' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
+    
+    /* 추가 */
+    --ico-add: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_125_954)'%3E%3Cpath d='M18 13H13V18C13 18.55 12.55 19 12 19C11.45 19 11 18.55 11 18V13H6C5.45 13 5 12.55 5 12C5 11.45 5.45 11 6 11H11V6C11 5.45 11.45 5 12 5C12.55 5 13 5.45 13 6V11H18C18.55 11 19 11.45 19 12C19 12.55 18.55 13 18 13Z' fill='%230D1117'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_125_954'%3E%3Crect width='24' height='24' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
+    
+    /* 검색 */
+    --ico-search: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_125_858)'%3E%3Cpath d='M15.4999 13.9999H14.7099L14.4299 13.7299C15.6299 12.3299 16.2499 10.4199 15.9099 8.38989C15.4399 5.60989 13.1199 3.38989 10.3199 3.04989C6.08989 2.52989 2.52989 6.08989 3.04989 10.3199C3.38989 13.1199 5.60989 15.4399 8.38989 15.9099C10.4199 16.2499 12.3299 15.6299 13.7299 14.4299L13.9999 14.7099V15.4999L18.2499 19.7499C18.6599 20.1599 19.3299 20.1599 19.7399 19.7499C20.1499 19.3399 20.1499 18.6699 19.7399 18.2599L15.4999 13.9999ZM9.49989 13.9999C7.00989 13.9999 4.99989 11.9899 4.99989 9.49989C4.99989 7.00989 7.00989 4.99989 9.49989 4.99989C11.9899 4.99989 13.9999 7.00989 13.9999 9.49989C13.9999 11.9899 11.9899 13.9999 9.49989 13.9999Z' fill='%230D1117'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_125_858'%3E%3Crect width='24' height='24' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
+    
+    /* 드래그 */
+    --ico-drag-indicator: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_122_985)'%3E%3Cpath d='M11 18C11 19.1 10.1 20 9 20C7.9 20 7 19.1 7 18C7 16.9 7.9 16 9 16C10.1 16 11 16.9 11 18ZM9 10C7.9 10 7 10.9 7 12C7 13.1 7.9 14 9 14C10.1 14 11 13.1 11 12C11 10.9 10.1 10 9 10ZM9 4C7.9 4 7 4.9 7 6C7 7.1 7.9 8 9 8C10.1 8 11 7.1 11 6C11 4.9 10.1 4 9 4ZM15 8C16.1 8 17 7.1 17 6C17 4.9 16.1 4 15 4C13.9 4 13 4.9 13 6C13 7.1 13.9 8 15 8ZM15 10C13.9 10 13 10.9 13 12C13 13.1 13.9 14 15 14C16.1 14 17 13.1 17 12C17 10.9 16.1 10 15 10ZM15 16C13.9 16 13 16.9 13 18C13 19.1 13.9 20 15 20C16.1 20 17 19.1 17 18C17 16.9 16.1 16 15 16Z' fill='%230D1117'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_122_985'%3E%3Crect width='24' height='24' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
+    
+    /* 닫기 */
+    --ico-close: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_122_216)'%3E%3Cpath d='M18.3 5.70997C17.91 5.31997 17.28 5.31997 16.89 5.70997L12 10.59L7.10997 5.69997C6.71997 5.30997 6.08997 5.30997 5.69997 5.69997C5.30997 6.08997 5.30997 6.71997 5.69997 7.10997L10.59 12L5.69997 16.89C5.30997 17.28 5.30997 17.91 5.69997 18.3C6.08997 18.69 6.71997 18.69 7.10997 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.10997C18.68 6.72997 18.68 6.08997 18.3 5.70997Z' fill='%230D1117'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_122_216'%3E%3Crect width='24' height='24' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
+    
+    /* 알람끄기 */
+    --ico-noti-off: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_121_1512)'%3E%3Cpath d='M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.89 22 12 22ZM18 11C18 7.93 16.36 5.36 13.5 4.68V4C13.5 3.17 12.83 2.5 12 2.5C11.17 2.5 10.5 3.17 10.5 4V4.68C10.26 4.74 10.03 4.83 9.81 4.91L18 13.1V11ZM5.41 3.35L4 4.76L6.81 7.57C6.29 8.57 6 9.73 6 11V16L4.71 17.29C4.08 17.92 4.52 19 5.41 19H18.24L19.98 20.74L21.39 19.33L5.41 3.35Z' fill='%230D1117'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_121_1512'%3E%3Crect width='24' height='24' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
+    
+    /* 알람켜기 */
+    --ico-noti-on: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_121_1509)'%3E%3Cpath d='M18 16V11C18 7.93 16.36 5.36 13.5 4.68V4C13.5 3.17 12.82 2.5 11.99 2.5C11.16 2.5 10.5 3.17 10.5 4V4.68C7.62998 5.36 5.99998 7.92 5.99998 11V16L4.69998 17.29C4.06998 17.92 4.50998 19 5.39998 19H18.57C19.46 19 19.91 17.92 19.28 17.29L18 16ZM11.99 22C13.09 22 13.99 21.1 13.99 20H9.98998C9.98998 21.1 10.88 22 11.99 22ZM6.76998 4.73C7.18998 4.35 7.19998 3.7 6.79998 3.3C6.41998 2.92 5.79998 2.91 5.40998 3.28C3.69998 4.84 2.51998 6.96 2.13998 9.34C2.04998 9.95 2.51998 10.5 3.13998 10.5C3.61998 10.5 4.03998 10.15 4.11998 9.67C4.41998 7.73 5.37998 6 6.76998 4.73ZM18.6 3.28C18.2 2.91 17.58 2.92 17.2 3.3C16.8 3.7 16.82 4.34 17.23 4.72C18.61 5.99 19.58 7.72 19.88 9.66C19.95 10.14 20.37 10.49 20.86 10.49C21.47 10.49 21.95 9.94 21.85 9.33C21.47 6.96 20.3 4.85 18.6 3.28Z' fill='%230D1117'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_121_1509'%3E%3Crect width='24' height='24' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
+    
+    /* 보기끄기 */
+    --ico-visibility-off: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_120_592)'%3E%3Cpath d='M12 6.49993C14.76 6.49993 17 8.73993 17 11.4999C17 12.0099 16.9 12.4999 16.76 12.9599L19.82 16.0199C21.21 14.7899 22.31 13.2499 23 11.4899C21.27 7.10993 17 3.99993 12 3.99993C10.73 3.99993 9.51 4.19993 8.36 4.56993L10.53 6.73993C11 6.59993 11.49 6.49993 12 6.49993ZM2.71 3.15993C2.32 3.54993 2.32 4.17993 2.71 4.56993L4.68 6.53993C3.06 7.82993 1.77 9.52993 1 11.4999C2.73 15.8899 7 18.9999 12 18.9999C13.52 18.9999 14.97 18.6999 16.31 18.1799L19.03 20.8999C19.42 21.2899 20.05 21.2899 20.44 20.8999C20.83 20.5099 20.83 19.8799 20.44 19.4899L4.13 3.15993C3.74 2.76993 3.1 2.76993 2.71 3.15993ZM12 16.4999C9.24 16.4999 7 14.2599 7 11.4999C7 10.7299 7.18 9.99993 7.49 9.35993L9.06 10.9299C9.03 11.1099 9 11.2999 9 11.4999C9 13.1599 10.34 14.4999 12 14.4999C12.2 14.4999 12.38 14.4699 12.57 14.4299L14.14 15.9999C13.49 16.3199 12.77 16.4999 12 16.4999ZM14.97 11.1699C14.82 9.76993 13.72 8.67993 12.33 8.52993L14.97 11.1699Z' fill='%230D1117'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_120_592'%3E%3Crect width='24' height='24' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
+    
+    /* 보기켜기 */
+    --ico-visibility-on: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_120_589)'%3E%3Cpath d='M12 4C7 4 2.73 7.11 1 11.5C2.73 15.89 7 19 12 19C17 19 21.27 15.89 23 11.5C21.27 7.11 17 4 12 4ZM12 16.5C9.24 16.5 7 14.26 7 11.5C7 8.74 9.24 6.5 12 6.5C14.76 6.5 17 8.74 17 11.5C17 14.26 14.76 16.5 12 16.5ZM12 8.5C10.34 8.5 9 9.84 9 11.5C9 13.16 10.34 14.5 12 14.5C13.66 14.5 15 13.16 15 11.5C15 9.84 13.66 8.5 12 8.5Z' fill='%230D1117'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_120_589'%3E%3Crect width='24' height='24' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
+    
+    /* 화살표 */
+    --ico-arrow: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_115_1343)'%3E%3Cpath d='M16.6201 2.99006C16.1301 2.50006 15.3401 2.50006 14.8501 2.99006L6.54006 11.3001C6.15006 11.6901 6.15006 12.3201 6.54006 12.7101L14.8501 21.0201C15.3401 21.5101 16.1301 21.5101 16.6201 21.0201C17.1101 20.5301 17.1101 19.7401 16.6201 19.2501L9.38006 12.0001L16.6301 4.75006C17.1101 4.27006 17.1101 3.47006 16.6201 2.99006Z' fill='%230D1117'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_115_1343'%3E%3Crect width='24' height='24' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
+}
+
+.ico {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    vertical-align: middle;
+}
+
+.ico::before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: currentColor;
+    vertical-align: middle;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+}
+
+.ico-edit::before {
+    -webkit-mask-image: var(--ico-edit);
+    mask-image: var(--ico-edit);
+}
+
+.ico-delete::before {
+    -webkit-mask-image: var(--ico-delete);
+    mask-image: var(--ico-delete);
+}
+
+.ico-error::before {
+    -webkit-mask-image: var(--ico-error);
+    mask-image: var(--ico-error);
+}
+
+.ico-cancel::before {
+    -webkit-mask-image: var(--ico-cancel);
+    mask-image: var(--ico-cancel);
+}
+
+.ico-check::before {
+    -webkit-mask-image: var(--ico-check);
+    mask-image: var(--ico-check);
+}
+
+.ico-more::before {
+    -webkit-mask-image: var(--ico-more);
+    mask-image: var(--ico-more);
+}
+
+.ico-add::before {
+    -webkit-mask-image: var(--ico-add);
+    mask-image: var(--ico-add);
+}
+
+.ico-search::before {
+    -webkit-mask-image: var(--ico-search);
+    mask-image: var(--ico-search);
+}
+
+.ico-drag-indicator::before {
+    -webkit-mask-image: var(--ico-drag-indicator);
+    mask-image: var(--ico-drag-indicator);
+}
+
+.ico-close::before {
+    -webkit-mask-image: var(--ico-close);
+    mask-image: var(--ico-close);
+}
+
+.ico-noti-off::before {
+    -webkit-mask-image: var(--ico-noti-off);
+    mask-image: var(--ico-noti-off);
+}
+
+.ico-noti-on::before {
+    -webkit-mask-image: var(--ico-noti-on);
+    mask-image: var(--ico-noti-on);
+}
+
+.ico-visibility-off::before {
+    -webkit-mask-image: var(--ico-visibility-off);
+    mask-image: var(--ico-visibility-off);
+}
+
+.ico-visibility-on::before {
+    -webkit-mask-image: var(--ico-visibility-on);
+    mask-image: var(--ico-visibility-on);
+}
+
+.ico-arrow::before,
+.ico-back::before {
+    -webkit-mask-image: var(--ico-arrow);
+    mask-image: var(--ico-arrow);
+}
