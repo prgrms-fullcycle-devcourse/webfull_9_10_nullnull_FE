@@ -1,0 +1,15 @@
+services:
+  frontend:
+    build:
+      context: .
+      target: builder
+    container_name: nullnull-frontend
+    ports:
+      - '4000:3000'
+    environment:
+      - NODE_ENV=development
+    command: pnpm dev
+    volumes:
+      - ./:/app
+      - /app/node_modules
+      - /app/.next
