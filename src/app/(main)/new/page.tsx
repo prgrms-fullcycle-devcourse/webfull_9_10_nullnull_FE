@@ -1,7 +1,7 @@
 // src/app/(main)/new/page.tsx
 
-import { AppShell } from "@/components/layout/AppShell";
-import { Button } from "@/components/ui/button";
+import { AppShell } from '@/components/layout/AppShell';
+import { Button } from '@/components/ui/button';
 
 export default function NewPage() {
   return (
@@ -13,8 +13,7 @@ export default function NewPage() {
       rightSlot={<button>취소</button>}
       bottomSlot={<Button className="w-full h-14">다음</Button>}
     >
-      <div className="" style={{ height: "calc(100vh + 200px)", }}>
-      </div>
+      <div className="" style={{ height: 'calc(100vh + 200px)' }}></div>
     </AppShell>
   );
 }

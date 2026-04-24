@@ -1,7 +1,7 @@
-import type { ReactNode } from "react";
-import { cn } from "@/lib/utils";
-import { AppHeader } from "./AppHeader";
-import { FixedBottom } from "./FixedBottom";
+import type { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
+import { AppHeader } from './AppHeader';
+import { FixedBottom } from './FixedBottom';
 
 type Props = {
   title?: ReactNode;
@@ -32,7 +32,7 @@ export function AppShell({
         {bottomSlot && (
           <FixedBottom
             className={cn(
-              "min-h-[calc(var(--layout-bottom-stacked-fallback-height)+env(safe-area-inset-bottom))]",
+              'min-h-[calc(var(--layout-bottom-stacked-fallback-height)+env(safe-area-inset-bottom))]',
               bottomReserveClassName,
             )}
             contentClassName={bottomContentClassName}
