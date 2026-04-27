@@ -5,7 +5,7 @@ services:
       target: builder
     container_name: nullnull-frontend
     ports:
-      - '4000:3000'
+      - "4000:3000"
     environment:
       - NODE_ENV=development
     command: pnpm dev

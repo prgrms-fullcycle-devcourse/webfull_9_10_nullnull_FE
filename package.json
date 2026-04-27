@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "prepare": "husky"
+    "prepare": "husky",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
