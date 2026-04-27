@@ -1,9 +1,14 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "../styles/font.css";
+@import "../styles/icon.css";
 
 @custom-variant dark (&:is(.dark *));
 
+/* =========================================
+   1. shadcn/ui 기본 테마 변수 매핑 
+   ========================================= */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -48,6 +53,9 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* =========================================
+   2. shadcn/ui 라이트모드 및 다크모드 색상 
+   ========================================= */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -117,6 +125,135 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* =========================================
+   3. 널널(NULLNULL) 커스텀 Primitive Colors 
+   ========================================= */
+@theme {
+  --color-white: #fcfcfc;
+  --color-black: #0d1117;
+
+  --color-gray-50: #f7f8fc;
+  --color-gray-100: #eff1f7;
+  --color-gray-200: #e0e3ec;
+  --color-gray-300: #c8ccd8;
+  --color-gray-400: #959aaa;
+  --color-gray-500: #676c7e;
+  --color-gray-600: #4b5062;
+  --color-gray-700: #353a4c;
+  --color-gray-800: #212636;
+  --color-gray-900: #141824;
+  --color-gray-950: #0d0c1d;
+
+  --color-indigo-50: #edecff;
+  --color-indigo-100: #dfdcff;
+  --color-indigo-200: #c0b9ff;
+  --color-indigo-300: #a196ff;
+  --color-indigo-400: #8371ff;
+  --color-indigo-500: #6546ff;
+  --color-indigo-600: #4e08ff;
+  --color-indigo-700: #3a00c8;
+  --color-indigo-800: #280092;
+  --color-indigo-900: #17005f;
+  --color-indigo-950: #0c003f;
+
+  --color-teal-50: #e6fefb;
+  --color-teal-100: #cafef7;
+  --color-teal-200: #94fdf1;
+  --color-teal-300: #4ef7e8;
+  --color-teal-400: #4beedf;
+  --color-teal-500: #47e3d5;
+  --color-teal-600: #36b2a7;
+  --color-teal-700: #258179;
+  --color-teal-800: #165751;
+  --color-teal-900: #072d2a;
+  --color-teal-950: #031b19;
+
+  --color-blue-50: #f0f3fe;
+  --color-blue-100: #e4ebfe;
+  --color-blue-200: #c8d7fd;
+  --color-blue-300: #abc4fb;
+  --color-blue-400: #8cb0fa;
+  --color-blue-500: #669df9;
+  --color-blue-600: #247ce0;
+  --color-blue-700: #185ca9;
+  --color-blue-800: #0d3d74;
+  --color-blue-900: #052144;
+  --color-blue-950: #02132b;
+
+  --color-green-50: #effded;
+  --color-green-100: #defcda;
+  --color-green-200: #b7f9ab;
+  --color-green-300: #91f47a;
+  --color-green-400: #8ae874;
+  --color-green-500: #83dd6e;
+  --color-green-600: #65ac54;
+  --color-green-700: #497f3c;
+  --color-green-800: #2f5426;
+  --color-green-900: #162d11;
+  --color-green-950: #0b1b08;
+
+  --color-red-50: #fdf1f0;
+  --color-red-100: #fbe3e2;
+  --color-red-200: #f7c2c0;
+  --color-red-300: #f5a3a0;
+  --color-red-400: #f27e78;
+  --color-red-500: #f1574b;
+  --color-red-600: #c7392b;
+  --color-red-700: #992a1f;
+  --color-red-800: #691a12;
+  --color-red-900: #410c07;
+  --color-red-950: #2c0604;
+
+  --color-yellow-50: #fef8f4;
+  --color-yellow-100: #fdeee2;
+  --color-yellow-200: #fbe1c9;
+  --color-yellow-300: #f9d0a6;
+  --color-yellow-400: #f8c284;
+  --color-yellow-500: #f7b24d;
+  --color-yellow-600: #c28b3b;
+  --color-yellow-700: #8e6529;
+  --color-yellow-800: #614319;
+  --color-yellow-900: #342209;
+  --color-yellow-950: #221504;
+}
+
+/* =========================================
+   4. 널널(NULLNULL) 커스텀 Semantic Colors 
+   ========================================= */
+@theme {
+  /* Info (정보) */
+  --color-info-subtle: var(--color-blue-50);
+  --color-info-lighter: var(--color-blue-200);
+  --color-info: var(--color-blue-500);
+  --color-info-darker: var(--color-blue-700);
+
+  /* Success (성공) */
+  --color-success-subtle: var(--color-green-50);
+  --color-success-lighter: var(--color-green-200);
+  --color-success: var(--color-green-500);
+  --color-success-darker: var(--color-green-700);
+
+  /* Warning (경고) */
+  --color-warning-subtle: var(--color-yellow-50);
+  --color-warning-lighter: var(--color-yellow-200);
+  --color-warning: var(--color-yellow-500);
+  --color-warning-darker: var(--color-yellow-700);
+
+  /* Danger (위험) - shadcn의 bg-destructive와 별개로 커스텀 디자인 시스템용 */
+  --color-danger-subtle: var(--color-red-50);
+  --color-danger-lighter: var(--color-red-200);
+  --color-danger: var(--color-red-500);
+  --color-danger-darker: var(--color-red-700);
+
+  /* Shadow */
+  --shadow-sm: 0 0 5px rgba(13, 12, 29, 0.05);
+  --shadow-md: 0 0 10px rgba(13, 12, 29, 0.07);
+  --shadow-lg: 0 0 20px rgba(13, 12, 29, 0.1);
+}
+
+/* =========================================
+   5. 기본 레이어 (Base)
+   ========================================= */
 @layer base {
   * {
     @apply border-border outline-ring/50;
