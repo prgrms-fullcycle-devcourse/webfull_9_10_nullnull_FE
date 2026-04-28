@@ -1,0 +1,24 @@
+/* 모든 아이콘에 공통으로 적용되는 설정 */
+[class^="icon-"],
+[class*=" icon-"] {
+  display: inline-block;
+  width: 1.5rem; /* 기본 크기 24px (w-6) */
+  height: 1.5rem; /* 기본 크기 24px (h-6) */
+  background-color: currentColor; /* 현재 글자 색상을 따라감 */
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  -webkit-mask-position: center;
+}
+
+.icon-arrow-left {
+  mask-image: url("/assets/icon/arrow_left.svg");
+  -webkit-mask-image: url("/assets/icon/arrow_left.svg");
+}
+
+.icon-close {
+  mask-image: url("/assets/icon/close.svg");
+  -webkit-mask-image: url("/assets/icon/close.svg");
+}
