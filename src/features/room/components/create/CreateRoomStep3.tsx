@@ -11,7 +11,14 @@ const TIME_OPTIONS = Array.from({ length: 24 }).map((_, i) => {
 
 export function CreateRoomStep3() {
   const [preferredDay, setPreferredDay] = useState("weekday");
+  const [customDays, setCustomDays] = useState<string[]>([]);
   const [recommendPlace, setRecommendPlace] = useState(false);
+
+  const toggleDay = (day: string) => {
+    setCustomDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
+    );
+  };
 
   return (
     <div className="flex-1 flex flex-col gap-6">
@@ -106,6 +113,23 @@ export function CreateRoomStep3() {
             요일 선택
           </button>
         </div>
+        {preferredDay === "custom" && (
+          <div className="flex gap-2 mt-1">
+            {["월", "화", "수", "목", "금", "토", "일"].map((day) => (
+              <button
+                key={day}
+                onClick={() => toggleDay(day)}
+                className={`flex-1 h-10 rounded-xl font-medium text-sm transition-colors border ${
+                  customDays.includes(day)
+                    ? "bg-[#F5F3FF] text-[#6B4EFF] border-[#6B4EFF]"
+                    : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                }`}
+              >
+                {day}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* 투표 마감일 */}

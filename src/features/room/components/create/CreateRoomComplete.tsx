@@ -1,11 +1,22 @@
-export function CreateRoomComplete() {
+import Image from "next/image";
+import roomLogo from "@/assets/images/room/logo.svg";
+
+export function CreateRoomComplete({
+  roomId = "v3-x91-azq",
+}: {
+  roomId?: string;
+}) {
+  const inviteUrl = `nznz.app/room/${roomId}`;
+
   return (
     <div className="flex-1 flex flex-col bg-gray-50 pb-8 min-h-[inherit]">
       <div className="bg-[#0B0A26] relative overflow-hidden px-5 pt-8 pb-10 flex flex-col items-center text-center">
         <div className="w-16 h-16 rounded-full bg-[#6B4EFF]/20 flex items-center justify-center mb-4 relative z-10">
-          <div className="w-12 h-12 rounded-full bg-[#6B4EFF] flex items-center justify-center text-white font-bold italic text-lg">
-            N
-          </div>
+          <Image
+            src={roomLogo}
+            alt="Room Logo"
+            className="w-12 h-12 rounded-full object-cover"
+          />
         </div>
         <h1 className="text-white text-2xl font-bold mb-2 relative z-10">
           모임이 만들어졌어요
@@ -128,7 +139,7 @@ export function CreateRoomComplete() {
 
           <div className="flex gap-2">
             <div className="flex-1 h-12 bg-gray-100 rounded-xl px-4 flex items-center text-sm text-gray-500 truncate border border-gray-200">
-              nznz.app/rooms/v3-x91-azq
+              {inviteUrl}
             </div>
             <button className="h-12 px-5 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-700 shrink-0 shadow-sm">
               공유
