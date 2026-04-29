@@ -37,18 +37,17 @@ export function FixedBottom({
     >
       <div
         ref={setFixedElement}
-        className="fixed bottom-0 left-0 right-0 z-50 bg-background"
+        // className="fixed bottom-0 left-1/2 z-50 w-full max-w-[var(--layout-mobile)] -translate-x-1/2 bg-background lg:left-auto lg:right-[max(0px,calc((100vw-var(--layout-desktop))/2))] lg:translate-x-0"
+        className="fixed bottom-0 z-50 w-full max-w-[var(--layout-mobile)] bg-background md:auto "
       >
-        <div className="Wrap">
-          <div
-            className={cn(
-              // iOS 홈 인디케이터 영역을 피하고, 여러 하단 액션을 세로로 쌓을 수 있게 합니다.
-              "flex flex-col gap-3 border-t py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]",
-              contentClassName,
-            )}
-          >
-            {children}
-          </div>
+        <div
+          className={cn(
+            // iOS 홈 인디케이터 영역을 피하고, 여러 하단 액션을 세로로 쌓을 수 있게 합니다.
+            "flex flex-col gap-3 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-gray-50",
+            contentClassName,
+          )}
+        >
+          {children}
         </div>
       </div>
     </div>
