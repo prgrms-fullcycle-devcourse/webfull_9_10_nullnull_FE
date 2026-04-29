@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { AppHeader } from "@/components/layout/AppHeader";
 import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
