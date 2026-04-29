@@ -3,15 +3,19 @@ import { Button } from "@/components/ui/button";
 import mainTitleBg from "@/assets/images/main/bg_main_title.svg";
 import { HomeAnimation } from "@/features/home/components/HomeAnimation";
 
+import Link from "next/link";
+
 export function HomePage() {
   return (
     <AppShell
       leftSlot={<button className="icon icon-logo" aria-label="nullnull 홈" />}
       rightSlot={<Button className="h-10 rounded-xl px-4">로그인</Button>}
       bottomSlot={
-        <Button className="h-14 w-full rounded-2xl text-base">
-          모임 만들기
-        </Button>
+        <Link href="/room" className="block w-full">
+          <Button className="h-14 w-full rounded-2xl text-base">
+            모임 만들기
+          </Button>
+        </Link>
       }
     >
       <div className="min-h-[inherit] px-4 pt-8">
