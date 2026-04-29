@@ -12,9 +12,16 @@ import { CreateRoomComplete } from "@/features/room/components/create/CreateRoom
 
 export function CreateRoom() {
   const [step, setStep] = useState(1);
+  const [roomId, setRoomId] = useState("");
 
   const handleNext = () => {
-    if (step < 4) setStep(step + 1);
+    if (step < 4) {
+      if (step === 3 && !roomId) {
+        const slug = Math.random().toString(36).substring(2, 10);
+        setRoomId(slug);
+      }
+      setStep(step + 1);
+    }
   };
 
   const handleBack = () => {
@@ -48,7 +55,7 @@ export function CreateRoom() {
             {step === 3 ? "완료" : "다음"}
           </Button>
         ) : (
-          <Link href="/room" className="block w-full">
+          <Link href={`/room/${roomId}`} className="block w-full">
             <Button className="h-14 w-full rounded-2xl text-base font-bold border-0">
               안되는 시간 선택하기
             </Button>
@@ -76,7 +83,7 @@ export function CreateRoom() {
           {step === 3 && <CreateRoomStep3 />}
         </div>
       ) : (
-        <CreateRoomComplete />
+        <CreateRoomComplete roomId={roomId} />
       )}
     </AppShell>
   );
