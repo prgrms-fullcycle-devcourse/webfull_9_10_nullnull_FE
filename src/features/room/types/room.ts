@@ -15,3 +15,10 @@ export type RoomApiResponse = {
   participantCount?: number;
   maxParticipants?: number;
 };
+
+export type RoomLocation = {
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+};
