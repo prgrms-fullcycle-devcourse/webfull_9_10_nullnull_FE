@@ -11,16 +11,14 @@ export function HomePage() {
       leftSlot={<button className="icon icon-logo" aria-label="nullnull 홈" />}
       rightSlot={<Button className="h-10 rounded-xl px-4">로그인</Button>}
       bottomSlot={
-        <Link href="/room" className="block w-full">
-          <Button className="h-14 w-full rounded-2xl text-base">
-            모임 만들기
-          </Button>
-        </Link>
+        <Button size="cta" asChild>
+          <Link href="/room">모임 만들기</Link>
+        </Button>
       }
     >
       <div className="min-h-[inherit] px-4 pt-8">
         <section
-          className="relative flex flex-col items-center overflow-hidden bg-contain bg-center bg-no-repeat bg-position-[center_top_-2rem] py-10 text-center"
+          className="relative flex flex-col items-center overflow-hidden bg-contain bg-center bg-no-repeat bg-position-[center_top_-2rem] pb-10 pt-10 text-center"
           style={{ backgroundImage: `url(${mainTitleBg.src})` }}
         >
           <div className="relative z-10">

@@ -47,18 +47,13 @@ export function CreateRoom() {
       }
       bottomSlot={
         step < 4 ? (
-          <Button
-            className="h-14 w-full rounded-2xl text-base"
-            onClick={handleNext}
-          >
+          <Button size="cta" onClick={handleNext}>
             {step === 3 ? "완료" : "다음"}
           </Button>
         ) : (
-          <Link href={`/room/${roomId}`} className="block w-full">
-            <Button className="h-14 w-full rounded-2xl text-base font-bold border-0">
-              안되는 시간 선택하기
-            </Button>
-          </Link>
+          <Button size="cta" asChild>
+            <Link href={`/room/${roomId}`}>안되는 시간 선택하기</Link>
+          </Button>
         )
       }
     >
