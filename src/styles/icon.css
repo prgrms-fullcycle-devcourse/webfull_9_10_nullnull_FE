@@ -230,3 +230,78 @@
     -webkit-mask-image: var(--ico-arrow);
     mask-image: var(--ico-arrow);
 }
+
+.icon-calendar::before {
+    -webkit-mask-image: var(--ico-calendar);
+    mask-image: var(--ico-calendar);
+}
+
+.icon-time::before {
+    -webkit-mask-image: var(--ico-time);
+    mask-image: var(--ico-time);
+}
+
+.icon-deily::before {
+    -webkit-mask-image: var(--ico-deily);
+    mask-image: var(--ico-deily);
+}
+
+.icon-deadline::before {
+    -webkit-mask-image: var(--ico-deadline);
+    mask-image: var(--ico-deadline);
+}
+
+.icon-person::before {
+    -webkit-mask-image: var(--ico-person);
+    mask-image: var(--ico-person);
+}
+
+.icon-host::before {
+    -webkit-mask-image: var(--ico-host);
+    mask-image: var(--ico-host);
+}
+
+.icon-food::before {
+    -webkit-mask-image: var(--ico-food);
+    mask-image: var(--ico-food);
+}
+
+.icon-anniv::before {
+    -webkit-mask-image: var(--ico-anniv);
+    mask-image: var(--ico-anniv);
+}
+
+.icon-coffee::before {
+    -webkit-mask-image: var(--ico-coffee);
+    mask-image: var(--ico-coffee);
+}
+
+.icon-bar::before {
+    -webkit-mask-image: var(--ico-bar);
+    mask-image: var(--ico-bar);
+}
+
+.icon-study::before {
+    -webkit-mask-image: var(--ico-study);
+    mask-image: var(--ico-study);
+}
+
+.icon-game::before {
+    -webkit-mask-image: var(--ico-game);
+    mask-image: var(--ico-game);
+}
+
+.icon-meeting::before {
+    -webkit-mask-image: var(--ico-meeting);
+    mask-image: var(--ico-meeting);
+}
+
+.icon-exercise::before {
+    -webkit-mask-image: var(--ico-exercise);
+    mask-image: var(--ico-exercise);
+}
+
+.icon-star::before {
+    -webkit-mask-image: var(--ico-star);
+    mask-image: var(--ico-star);
+}
