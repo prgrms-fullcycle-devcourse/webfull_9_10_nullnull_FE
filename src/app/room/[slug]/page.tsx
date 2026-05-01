@@ -1,3 +1,5 @@
+import { RoomDetail } from "@/features/room/RoomDetail";
+
 export default function RoomDetailPage({
   params,
 }: {

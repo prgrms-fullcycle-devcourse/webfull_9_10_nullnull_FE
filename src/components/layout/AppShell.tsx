@@ -8,6 +8,7 @@ type Props = {
   leftSlot?: ReactNode;
   rightSlot?: ReactNode;
   bottomSlot?: ReactNode;
+  overlaySlot?: ReactNode;
   bottomReserveClassName?: string;
   bottomContentClassName?: string;
   children: ReactNode;
@@ -18,13 +19,14 @@ export function AppShell({
   leftSlot,
   rightSlot,
   bottomSlot,
+  overlaySlot,
   bottomReserveClassName,
   bottomContentClassName,
   children,
 }: Props) {
   return (
     <div className="Wrap min-h-dvh bg-background">
-      <div className="wrap-container bg-gray-50">
+      <div className="relative wrap-container bg-gray-50">
         <AppHeader title={title} leftSlot={leftSlot} rightSlot={rightSlot} />
 
         <main className="flex-1">{children}</main>
@@ -40,6 +42,8 @@ export function AppShell({
             {bottomSlot}
           </FixedBottom>
         )}
+
+        {overlaySlot}
       </div>
     </div>
   );
