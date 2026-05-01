@@ -11,7 +11,7 @@ export function CreateRoomComplete({
   return (
     <div className="flex-1 flex flex-col bg-gray-50 pb-8 min-h-[inherit]">
       <div className="bg-[#0B0A26] relative overflow-hidden px-5 pt-8 pb-10 flex flex-col items-center text-center">
-        <div className="w-16 h-16 rounded-full bg-[#6B4EFF]/20 flex items-center justify-center mb-4 relative z-10">
+        <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4 relative z-10">
           <Image
             src={roomLogo}
             alt="Room Logo"
@@ -34,7 +34,7 @@ export function CreateRoomComplete({
               <span className="px-2 py-0.5 rounded-full bg-[#E5F7ED] text-[#00C271] text-xs font-bold">
                 🍴 식사
               </span>
-              <span className="px-2 py-0.5 rounded-full bg-[#EEF2FF] text-[#6B4EFF] text-xs font-bold">
+              <span className="px-2 py-0.5 rounded-full bg-primary-subtle text-primary text-xs font-bold">
                 진행중
               </span>
             </div>
@@ -42,7 +42,7 @@ export function CreateRoomComplete({
               우리 언제 밥 한번 먹지
             </h2>
             <div className="flex items-center gap-2">
-              <span className="text-[#6B4EFF] font-bold text-xs flex items-center gap-1">
+              <span className="text-primary font-bold text-xs flex items-center gap-1">
                 <span>🏆</span> 모임장
               </span>
               <span className="text-gray-700 text-sm font-medium">
@@ -122,7 +122,7 @@ export function CreateRoomComplete({
           </div>
           <div className="flex flex-col gap-1.5">
             <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-              <div className="h-full bg-[#6B4EFF] w-[75%] rounded-full" />
+              <div className="h-full bg-primary w-[75%] rounded-full" />
             </div>
             <span className="text-[10px] text-gray-500 text-right">
               75% 제출 완료
