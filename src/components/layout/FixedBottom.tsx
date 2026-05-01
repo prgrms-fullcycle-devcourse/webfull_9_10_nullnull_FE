@@ -43,7 +43,7 @@ export function FixedBottom({
         <div
           className={cn(
             // iOS 홈 인디케이터 영역을 피하고, 여러 하단 액션을 세로로 쌓을 수 있게 합니다.
-            "flex flex-col gap-3 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-gray-50",
+            "flex flex-col gap-3 bg-gray-50 px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))]",
             contentClassName,
           )}
         >

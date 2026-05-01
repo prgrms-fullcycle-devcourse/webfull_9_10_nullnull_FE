@@ -1,4 +1,4 @@
-import { AppShell } from "@/components/layout/AppShell";
+import { AppShell, AppContent, AppLogoLink } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import mainTitleBg from "@/assets/images/main/bg_main_title.svg";
 import { HomeAnimation } from "@/features/home/components/HomeAnimation";
@@ -8,7 +8,7 @@ import Link from "next/link";
 export function HomePage() {
   return (
     <AppShell
-      leftSlot={<button className="icon icon-logo" aria-label="nullnull 홈" />}
+      leftSlot={<AppLogoLink />}
       rightSlot={<Button className="h-10 rounded-xl px-4">로그인</Button>}
       bottomSlot={
         <Button size="cta" asChild>
@@ -16,7 +16,7 @@ export function HomePage() {
         </Button>
       }
     >
-      <div className="min-h-[inherit] px-4 pt-8">
+      <AppContent>
         <section
           className="relative flex flex-col items-center overflow-hidden bg-contain bg-center bg-no-repeat bg-position-[center_top_-2rem] pb-10 pt-10 text-center"
           style={{ backgroundImage: `url(${mainTitleBg.src})` }}
@@ -36,7 +36,7 @@ export function HomePage() {
 
           <HomeAnimation />
         </section>
-      </div>
+      </AppContent>
     </AppShell>
   );
 }
