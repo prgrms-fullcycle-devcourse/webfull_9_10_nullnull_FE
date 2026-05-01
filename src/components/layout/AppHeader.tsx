@@ -8,14 +8,14 @@ type Props = {
 
 export function AppHeader({ title, leftSlot, rightSlot }: Props) {
   return (
-    <header className="sticky top-0 left-0 right-0 z-50 border-b bg-background">
-      <div className="Wrap flex h-full items-center justify-between px-5 py-2.5">
+    <header className="sticky top-0 left-0 right-0 z-50 bg-gray-50">
+      <div className="flex h-full items-center justify-between px-5 py-2.5">
         <div className="flex min-w-0 flex-1 items-center gap-3">
           {leftSlot && (
             <div className="flex shrink-0 items-center gap-2">{leftSlot}</div>
           )}
           {title && (
-            <h1 className="min-w-0 flex-1 truncate text-xl font-bold text-foreground">
+            <h1 className="min-w-0 flex-1 truncate text-base font-semibold text-foreground">
               {title}
             </h1>
           )}

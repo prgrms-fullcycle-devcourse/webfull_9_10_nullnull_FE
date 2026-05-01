@@ -10,7 +10,7 @@ export default function RoomDetailPage({
       </h1>
       <p className="text-gray-500 mb-6">
         현재 접속하신 방의 고유 주소는 <br />
-        <span className="font-bold text-[#6B4EFF]">{params.slug}</span> 입니다.
+        <span className="font-bold text-primary">{params.slug}</span> 입니다.
       </p>
 
       <div className="bg-white p-6 rounded-2xl shadow-sm max-w-sm w-full">
