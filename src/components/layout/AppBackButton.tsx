@@ -7,18 +7,14 @@ type Props =
 export function AppBackButton({ href, onClick }: Props) {
   if (href) {
     return (
-      <Link
-        href={href}
-        className="icon [--icon-mask:var(--ico-arrow)]"
-        aria-label="뒤로가기"
-      />
+      <Link href={href} className="icon icon-back" aria-label="뒤로가기" />
     );
   }
   return (
     <button
       type="button"
       onClick={onClick}
-      className="icon [--icon-mask:var(--ico-arrow)]"
+      className="icon icon-back"
       aria-label="뒤로가기"
     />
   );

@@ -124,7 +124,7 @@ export function CreateRoomComplete({
             <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
               <div className="h-full bg-primary w-[75%] rounded-full" />
             </div>
-            <span className="text-[10px] text-gray-500 text-right">
+            <span className="text-xs text-gray-500 text-right">
               75% 제출 완료
             </span>
           </div>

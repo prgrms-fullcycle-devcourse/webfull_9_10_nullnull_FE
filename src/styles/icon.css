@@ -147,3 +147,128 @@
     mask-size: var(--icon-mask-size, contain);
     -webkit-mask-size: var(--icon-mask-size, contain);
 }
+
+.icon-logo {
+    --icon-mask: var(--ico-logo);
+}
+
+.icon-main-link {
+    --icon-mask: var(--ico-main-link);
+}
+
+.icon-main-timer {
+    --icon-mask: var(--ico-main-timer);
+}
+
+.icon-kakao {
+    --icon-mask: var(--ico-kakao);
+}
+
+.icon-noti {
+    --icon-mask: var(--ico-noti);
+}
+
+.icon-arrow,
+.icon-back {
+    --icon-mask: var(--ico-arrow);
+}
+
+.icon-more {
+    --icon-mask: var(--ico-more);
+}
+
+.icon-alarm {
+    --icon-mask: var(--ico-alarm);
+}
+
+.icon-setting {
+    --icon-mask: var(--ico-setting);
+}
+
+.icon-add {
+    --icon-mask: var(--ico-add);
+}
+
+.icon-close {
+    --icon-mask: var(--ico-close);
+}
+
+.icon-link {
+    --icon-mask: var(--ico-link);
+}
+
+.icon-timelapse {
+    --icon-mask: var(--ico-timelapse);
+}
+
+.icon-photo-add {
+    --icon-mask: var(--ico-photo_add);
+}
+
+.icon-calendar {
+    --icon-mask: var(--ico-calendar);
+}
+
+.icon-person-add {
+    --icon-mask: var(--ico-person_add);
+}
+
+.icon-group-add {
+    --icon-mask: var(--ico-group_add);
+}
+
+.icon-deadline {
+    --icon-mask: var(--ico-deadline);
+}
+
+.icon-deily {
+    --icon-mask: var(--ico-deily);
+}
+
+.icon-time {
+    --icon-mask: var(--ico-time);
+}
+
+.icon-host {
+    --icon-mask: var(--ico-host);
+}
+
+.icon-person {
+    --icon-mask: var(--ico-person);
+}
+
+.icon-food {
+    --icon-mask: var(--ico-food);
+}
+
+.icon-anniv {
+    --icon-mask: var(--ico-anniv);
+}
+
+.icon-coffee {
+    --icon-mask: var(--ico-coffee);
+}
+
+.icon-bar {
+    --icon-mask: var(--ico-bar);
+}
+
+.icon-game {
+    --icon-mask: var(--ico-game);
+}
+
+.icon-study {
+    --icon-mask: var(--ico-study);
+}
+
+.icon-exercise {
+    --icon-mask: var(--ico-exercise);
+}
+
+.icon-meeting {
+    --icon-mask: var(--ico-meeting);
+}
+
+.icon-star {
+    --icon-mask: var(--ico-star);
+}

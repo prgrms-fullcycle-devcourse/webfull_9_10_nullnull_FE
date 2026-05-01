@@ -4,7 +4,7 @@ export function AppLogoLink() {
   return (
     <Link
       href="/"
-      className="icon size-10 [--icon-mask:var(--ico-logo)]"
+      className="icon icon-logo size-10"
       aria-label="NULLNULL 홈"
     />
   );

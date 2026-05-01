@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 
 const loginFeatures = [
   {
-    icon: "var(--ico-main-link)",
+    icon: "icon-main-link",
     title: "빠른 링크 공유",
     description: "참여자들에게 링크만 전달하세요",
   },
   {
-    icon: "var(--ico-main-timer)",
+    icon: "icon-main-timer",
     title: "자동 시간 추천",
     description: "가장 많이 겹치는 시간을 찾아드려요",
   },
@@ -21,10 +21,7 @@ export function LoginForm() {
       leftSlot={<AppLogoLink />}
       bottomSlot={
         <Button className="h-14 w-full gap-2 rounded-2xl border-0 bg-[#FEE500] text-base font-semibold text-black/90 shadow-[0_4px_7px_rgba(254,229,0,0.4)] hover:bg-[#FEE500]/90">
-          <span
-            className="icon !size-[18px] [--icon-mask:var(--ico-kakao)]"
-            aria-hidden="true"
-          />
+          <span className="icon icon-kakao !size-[18px]" aria-hidden="true" />
           카카오로 3초 만에 시작하기
         </Button>
       }
@@ -52,8 +49,7 @@ export function LoginForm() {
             >
               <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-50 text-gray-500">
                 <span
-                  className="icon size-5"
-                  style={{ "--icon-mask": feature.icon } as React.CSSProperties}
+                  className={`icon ${feature.icon} size-5`}
                   aria-hidden="true"
                 />
               </div>

@@ -1,4 +1,5 @@
 import React from "react";
+import { Input } from "@/components/ui/input";
 
 export function CreateRoomStep2() {
   return (
@@ -16,11 +17,7 @@ export function CreateRoomStep2() {
         <label className="text-sm font-medium text-gray-700">
           모임 이름 <span className="text-red-500">*</span>
         </label>
-        <input
-          type="text"
-          placeholder="2자 ~ 40자"
-          className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:border-[#6B4EFF] bg-white"
-        />
+        <Input type="text" placeholder="2자 ~ 40자" />
       </div>
 
       <div className="flex flex-col gap-2">

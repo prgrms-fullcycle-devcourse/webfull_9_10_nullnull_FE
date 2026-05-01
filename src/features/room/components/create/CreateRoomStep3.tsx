@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { Input } from "@/components/ui/input";
 
 const TIME_OPTIONS = Array.from({ length: 24 }).map((_, i) => {
   const isPM = i >= 12;
@@ -34,15 +35,15 @@ export function CreateRoomStep3() {
           희망 날짜 범위 <span className="text-red-500">*</span>
         </label>
         <div className="flex items-center gap-2">
-          <input
+          <Input
             type="date"
-            className="flex-1 h-12 px-3 rounded-xl border border-gray-200 text-sm bg-white"
+            className="flex-1 px-3 text-sm"
             defaultValue="2026-05-01"
           />
           <span className="text-gray-400">~</span>
-          <input
+          <Input
             type="date"
-            className="flex-1 h-12 px-3 rounded-xl border border-gray-200 text-sm bg-white"
+            className="flex-1 px-3 text-sm"
             defaultValue="2026-05-30"
           />
         </div>
@@ -86,7 +87,7 @@ export function CreateRoomStep3() {
             onClick={() => setPreferredDay("weekday")}
             className={`flex-1 font-medium text-sm transition-colors relative ${
               preferredDay === "weekday"
-                ? "bg-[#6B4EFF] text-white z-10"
+                ? "bg-primary text-primary-foreground z-10"
                 : "text-gray-700 hover:bg-gray-50"
             }`}
           >
@@ -96,7 +97,7 @@ export function CreateRoomStep3() {
             onClick={() => setPreferredDay("weekend")}
             className={`flex-1 font-medium text-sm transition-colors relative ${
               preferredDay === "weekend"
-                ? "bg-[#6B4EFF] text-white z-10"
+                ? "bg-primary text-primary-foreground z-10"
                 : "text-gray-700 hover:bg-gray-50"
             }`}
           >
@@ -106,7 +107,7 @@ export function CreateRoomStep3() {
             onClick={() => setPreferredDay("custom")}
             className={`flex-1 font-medium text-sm transition-colors relative ${
               preferredDay === "custom"
-                ? "bg-[#6B4EFF] text-white z-10"
+                ? "bg-primary text-primary-foreground z-10"
                 : "text-gray-700 hover:bg-gray-50"
             }`}
           >
@@ -121,7 +122,7 @@ export function CreateRoomStep3() {
                 onClick={() => toggleDay(day)}
                 className={`flex-1 h-10 rounded-xl font-medium text-sm transition-colors border ${
                   customDays.includes(day)
-                    ? "bg-[#F5F3FF] text-[#6B4EFF] border-[#6B4EFF]"
+                    ? "bg-primary-subtle text-primary border-primary"
                     : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
                 }`}
               >
@@ -138,9 +139,9 @@ export function CreateRoomStep3() {
           투표 마감일 <span className="text-red-500">*</span>
         </label>
         <div className="flex items-center gap-2">
-          <input
+          <Input
             type="date"
-            className="flex-1 h-12 px-3 rounded-xl border border-gray-200 text-sm bg-white"
+            className="flex-1 px-3 text-sm"
             defaultValue="2026-05-07"
           />
           <select
@@ -171,7 +172,7 @@ export function CreateRoomStep3() {
             onClick={() => setRecommendPlace(false)}
             className={`flex-1 rounded-xl font-medium text-sm transition-colors border ${
               !recommendPlace
-                ? "bg-[#F5F3FF] text-[#6B4EFF] border-[#6B4EFF]"
+                ? "bg-primary-subtle text-primary border-primary"
                 : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
             }`}
           >
@@ -181,7 +182,7 @@ export function CreateRoomStep3() {
             onClick={() => setRecommendPlace(true)}
             className={`flex-1 rounded-xl font-medium text-sm transition-colors border ${
               recommendPlace
-                ? "bg-[#F5F3FF] text-[#6B4EFF] border-[#6B4EFF]"
+                ? "bg-primary-subtle text-primary border-primary"
                 : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
             }`}
           >

@@ -50,7 +50,7 @@ export function RoomEndedView() {
             className="bg-white rounded-2xl shadow-sm p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
           >
             <div className="flex flex-col gap-1">
-              <span className="text-xs font-medium text-[#6B4EFF] bg-[#F0EDFF] px-2 py-0.5 rounded-full w-fit">
+              <span className="text-xs font-medium text-primary bg-primary-subtle px-2 py-0.5 rounded-full w-fit">
                 {room.category}
               </span>
               <p className="text-sm font-bold text-gray-900">{room.title}</p>

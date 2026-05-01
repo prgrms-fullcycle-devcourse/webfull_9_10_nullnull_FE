@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AppShell } from "@/components/layout/AppShell";
+import { AppBackButton, AppContent, AppShell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { MapView } from "@/components/MapView";
 import { LocationSearchSheet } from "./LocationSearchSheet";
@@ -26,13 +26,7 @@ export function LocationPage({ slug }: Props) {
   return (
     <AppShell
       title={<span className="text-base">모임 참여하기</span>}
-      leftSlot={
-        <button
-          onClick={() => router.back()}
-          className="icon icon-back"
-          aria-label="뒤로가기"
-        />
-      }
+      leftSlot={<AppBackButton onClick={() => router.back()} />}
       bottomSlot={
         <div className="flex flex-col gap-1">
           <Button size="cta" disabled={!location} onClick={handleComplete}>
@@ -58,7 +52,7 @@ export function LocationPage({ slug }: Props) {
         )
       }
     >
-      <div className="px-5 py-8 flex flex-col gap-6">
+      <AppContent className="flex flex-col gap-6">
         {!location ? (
           /* 출발지 미선택 상태 */
           <>
@@ -129,7 +123,7 @@ export function LocationPage({ slug }: Props) {
             </div>
           </>
         )}
-      </div>
+      </AppContent>
     </AppShell>
   );
 }
