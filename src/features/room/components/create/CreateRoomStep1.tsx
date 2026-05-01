@@ -1,4 +1,5 @@
 import React from "react";
+import { Input } from "@/components/ui/input";
 
 export function CreateRoomStep1() {
   return (
@@ -14,10 +15,9 @@ export function CreateRoomStep1() {
         <label className="text-sm font-medium text-gray-700">
           닉네임 <span className="text-red-500">*</span>
         </label>
-        <input
+        <Input
           type="text"
           placeholder="발넓은모임장"
-          className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:border-[#6B4EFF] focus:ring-1 focus:ring-[#6B4EFF] bg-white"
           defaultValue="발넓은모임장"
         />
       </div>

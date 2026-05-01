@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AppShell } from "@/components/layout/AppShell";
+import { AppLogoLink, AppShell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { RoomDetailView } from "./components/detail/RoomDetailView";
 import { JoinNameStep } from "./components/detail/JoinNameStep";
@@ -49,9 +49,7 @@ export function RoomDetail({ slug }: Props) {
   if (isEnded) {
     return (
       <AppShell
-        leftSlot={
-          <Link href="/" className="icon icon-logo" aria-label="nullnull 홈" />
-        }
+        leftSlot={<AppLogoLink />}
         bottomSlot={
           <Button size="cta" asChild>
             <Link href="/room">새 모임 만들기</Link>
@@ -74,9 +72,7 @@ export function RoomDetail({ slug }: Props) {
 
   return (
     <AppShell
-      leftSlot={
-        <Link href="/" className="icon icon-logo" aria-label="nullnull 홈" />
-      }
+      leftSlot={<AppLogoLink />}
       bottomSlot={
         <Button size="cta" onClick={() => setView("join-name")}>
           참여하기

@@ -98,7 +98,7 @@ export function LocationSearchSheet({ onClose, onSelect }: Props) {
                   onClick={() => onSelect(loc)}
                 >
                   <span
-                    className="icon icon-deadline text-[#6B4EFF] shrink-0 mt-0.5"
+                    className="icon icon-deadline text-primary shrink-0 mt-0.5"
                     aria-hidden="true"
                   />
                   <div className="flex flex-col gap-0.5 min-w-0">

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { AppShell } from "@/components/layout/AppShell";
+import { AppBackButton, AppContent, AppShell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { PrivacyConsentSheet } from "./PrivacyConsentSheet";
 
 const RANDOM_NICKNAMES = [
@@ -45,13 +46,7 @@ export function JoinNameStep({ onBack, onComplete }: Props) {
   return (
     <AppShell
       title={<span className="text-base">모임 참여하기</span>}
-      leftSlot={
-        <button
-          onClick={onBack}
-          className="icon icon-back"
-          aria-label="뒤로가기"
-        />
-      }
+      leftSlot={<AppBackButton onClick={onBack} />}
       bottomSlot={
         <Button size="cta" onClick={handleNext}>
           다음
@@ -66,7 +61,7 @@ export function JoinNameStep({ onBack, onComplete }: Props) {
         )
       }
     >
-      <div className="px-5 py-8 flex flex-col gap-6">
+      <AppContent className="flex flex-col gap-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             어떤 이름으로 참여할까요?
@@ -80,7 +75,7 @@ export function JoinNameStep({ onBack, onComplete }: Props) {
           <label className="text-sm font-medium text-gray-700">
             이름 <span className="text-red-500">*</span>
           </label>
-          <input
+          <Input
             type="text"
             value={name}
             onChange={(e) => {
@@ -89,11 +84,10 @@ export function JoinNameStep({ onBack, onComplete }: Props) {
             }}
             placeholder="이름을 입력해 주세요"
             aria-invalid={!!error}
-            className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:border-[#6B4EFF] focus:ring-1 focus:ring-[#6B4EFF] bg-white aria-[invalid=true]:border-red-400"
           />
           {error && <p className="text-xs text-red-500">{error}</p>}
         </div>
-      </div>
+      </AppContent>
     </AppShell>
   );
 }
