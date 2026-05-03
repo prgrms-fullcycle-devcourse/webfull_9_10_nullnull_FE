@@ -9,10 +9,10 @@ import {
 } from "@/features/room/components/RoomTitle";
 import type { RoomApiResponse } from "@/features/room/types/room";
 
-export type RoomSubmissionResult = "waiting" | "absent";
+export type RoomFeedbackResult = "waiting" | "absent";
 
 const COPY: Record<
-  RoomSubmissionResult,
+  RoomFeedbackResult,
   {
     title: string;
     description: string[];
@@ -41,11 +41,11 @@ const COPY: Record<
 };
 
 type Props = {
-  result: RoomSubmissionResult;
+  result: RoomFeedbackResult;
   roomStatus: RoomApiResponse["status"];
 };
 
-export function RoomSubmissionResultView({ result, roomStatus }: Props) {
+export function RoomFeedbackView({ result, roomStatus }: Props) {
   const copy = COPY[result];
   const dotClassName =
     copy.attendanceTone === "success" ? "bg-success" : "bg-danger";
