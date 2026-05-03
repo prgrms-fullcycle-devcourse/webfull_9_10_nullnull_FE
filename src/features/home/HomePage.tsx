@@ -1,7 +1,7 @@
 import { AppShell, AppContent, AppLogoLink } from "@/components/layout";
 import { Button } from "@/components/ui/button";
-import mainTitleBg from "@/assets/images/main/bg_main_title.svg";
-import { HomeAnimation } from "@/features/home/components/HomeAnimation";
+import TitlePositiveBg from "@/assets/images/components/bg_positive_title.svg";
+import { RoomCardsAnimation } from "@/components/visual/RoomCardsAnimation";
 
 import Link from "next/link";
 
@@ -19,7 +19,7 @@ export function HomePage() {
       <AppContent>
         <section
           className="relative flex flex-col items-center overflow-hidden bg-contain bg-center bg-no-repeat bg-position-[center_top_-2rem] pb-10 pt-10 text-center"
-          style={{ backgroundImage: `url(${mainTitleBg.src})` }}
+          style={{ backgroundImage: `url(${TitlePositiveBg.src})` }}
         >
           <div className="relative z-10">
             <h1 className="text-3xl font-bold leading-9 text-gray-950">
@@ -34,7 +34,7 @@ export function HomePage() {
             </div>
           </div>
 
-          <HomeAnimation />
+          <RoomCardsAnimation />
         </section>
       </AppContent>
     </AppShell>
