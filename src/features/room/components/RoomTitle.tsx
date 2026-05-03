@@ -8,6 +8,25 @@ const STATUS_STYLE: Record<RoomStatus, string> = {
   진행중: "text-teal-600 bg-teal-50",
 };
 
+export const ROOM_STATUS_LABEL: Record<
+  "COLLECT" | "READY" | "CONFIRM" | "CLOSED",
+  RoomStatus
+> = {
+  COLLECT: "모집중",
+  READY: "마감",
+  CONFIRM: "확정",
+  CLOSED: "종료",
+};
+
+export function RoomStatusBadge({ status }: { status: RoomStatus }) {
+  const style = STATUS_STYLE[status] ?? "text-gray-400 bg-gray-100";
+  return (
+    <span className={`text-xs font-medium px-3 py-1 rounded-full ${style}`}>
+      {status}
+    </span>
+  );
+}
+
 type CategoryConfig = {
   label: string;
   icon: string;
