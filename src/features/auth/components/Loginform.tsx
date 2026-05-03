@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { AppShell, AppContent, AppLogoLink } from "@/components/layout";
-import { Button } from "@/components/ui/button";
+import { KakaoLoginBtn } from "./KakaoLoginBtn";
 
 const loginFeatures = [
   {
@@ -17,15 +17,7 @@ const loginFeatures = [
 
 export function LoginForm() {
   return (
-    <AppShell
-      leftSlot={<AppLogoLink />}
-      bottomSlot={
-        <Button className="h-14 w-full gap-2 rounded-2xl border-0 bg-[#FEE500] text-base font-semibold text-black/90 shadow-[0_4px_7px_rgba(254,229,0,0.4)] hover:bg-[#FEE500]/90">
-          <span className="icon icon-kakao !size-[18px]" aria-hidden="true" />
-          카카오로 3초 만에 시작하기
-        </Button>
-      }
-    >
+    <AppShell leftSlot={<AppLogoLink />} bottomSlot={<KakaoLoginBtn />}>
       <AppContent>
         <section className="flex w-full flex-col items-center py-10 text-center">
           <h1 className="text-3xl font-bold leading-9 text-gray-950">
