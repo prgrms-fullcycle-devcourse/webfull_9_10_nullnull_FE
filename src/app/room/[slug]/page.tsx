@@ -1,9 +1,11 @@
+import { use } from "react";
 import { RoomDetail } from "@/features/room/RoomDetail";
 
 export default function RoomDetailPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  return <RoomDetail slug={params.slug} />;
+  const { slug } = use(params);
+  return <RoomDetail slug={slug} />;
 }

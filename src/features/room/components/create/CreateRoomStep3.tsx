@@ -2,6 +2,14 @@
 
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const TIME_OPTIONS = Array.from({ length: 24 }).map((_, i) => {
   const isPM = i >= 12;
@@ -31,57 +39,61 @@ export function CreateRoomStep3() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-gray-700">
+        <Label className="text-gray-700">
           희망 날짜 범위 <span className="text-red-500">*</span>
-        </label>
+        </Label>
         <div className="flex items-center gap-2">
           <Input
             type="date"
-            className="flex-1 px-3 text-sm"
+            className="flex-1 px-3 text-sm h-12 rounded-xl"
             defaultValue="2026-05-01"
           />
           <span className="text-gray-400">~</span>
           <Input
             type="date"
-            className="flex-1 px-3 text-sm"
+            className="flex-1 px-3 text-sm h-12 rounded-xl"
             defaultValue="2026-05-30"
           />
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-gray-700">
+        <Label className="text-gray-700">
           희망 시간대 <span className="text-red-500">*</span>
-        </label>
+        </Label>
         <div className="flex items-center gap-2">
-          <select
-            className="flex-1 h-12 px-3 rounded-xl border border-gray-200 text-sm appearance-none bg-white"
-            defaultValue="오후 6:00"
-          >
-            {TIME_OPTIONS.map((time) => (
-              <option key={time} value={time}>
-                {time}
-              </option>
-            ))}
-          </select>
+          <Select defaultValue="오후 6:00">
+            <SelectTrigger className="flex-1 h-12 px-3 rounded-xl border border-gray-200 bg-white">
+              <SelectValue placeholder="시작 시간" />
+            </SelectTrigger>
+            <SelectContent>
+              {TIME_OPTIONS.map((time) => (
+                <SelectItem key={time} value={time}>
+                  {time}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <span className="text-gray-400">~</span>
-          <select
-            className="flex-1 h-12 px-3 rounded-xl border border-gray-200 text-sm appearance-none bg-white"
-            defaultValue="오후 10:00"
-          >
-            {TIME_OPTIONS.map((time) => (
-              <option key={time} value={time}>
-                {time}
-              </option>
-            ))}
-          </select>
+          <Select defaultValue="오후 10:00">
+            <SelectTrigger className="flex-1 h-12 px-3 rounded-xl border border-gray-200 bg-white">
+              <SelectValue placeholder="종료 시간" />
+            </SelectTrigger>
+            <SelectContent>
+              {TIME_OPTIONS.map((time) => (
+                <SelectItem key={time} value={time}>
+                  {time}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-gray-700">
+        <Label className="text-gray-700">
           희망 요일 <span className="text-red-500">*</span>
-        </label>
+        </Label>
         <div className="flex rounded-xl overflow-hidden h-12 border border-gray-200 bg-white divide-x divide-gray-200">
           <button
             onClick={() => setPreferredDay("weekday")}
@@ -135,34 +147,36 @@ export function CreateRoomStep3() {
 
       {/* 투표 마감일 */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-gray-700">
+        <Label className="text-gray-700">
           투표 마감일 <span className="text-red-500">*</span>
-        </label>
+        </Label>
         <div className="flex items-center gap-2">
           <Input
             type="date"
-            className="flex-1 px-3 text-sm"
+            className="flex-1 px-3 text-sm h-12 rounded-xl"
             defaultValue="2026-05-07"
           />
-          <select
-            className="flex-1 h-12 px-3 rounded-xl border border-gray-200 text-sm appearance-none bg-white"
-            defaultValue="오전 9:00"
-          >
-            {TIME_OPTIONS.map((time) => (
-              <option key={time} value={time}>
-                {time}
-              </option>
-            ))}
-          </select>
+          <Select defaultValue="오전 9:00">
+            <SelectTrigger className="flex-1 h-12 px-3 rounded-xl border border-gray-200 bg-white">
+              <SelectValue placeholder="마감 시간" />
+            </SelectTrigger>
+            <SelectContent>
+              {TIME_OPTIONS.map((time) => (
+                <SelectItem key={time} value={time}>
+                  {time}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
       {/* 장소 추천 */}
       <div className="flex flex-col gap-2 mb-8">
         <div>
-          <label className="text-sm font-medium text-gray-700">
+          <Label className="text-gray-700">
             장소 추천 <span className="text-red-500">*</span>
-          </label>
+          </Label>
           <p className="text-xs text-gray-500 mt-1">
             중간 지점을 계산해서 모임 장소를 추천해 드려요
           </p>

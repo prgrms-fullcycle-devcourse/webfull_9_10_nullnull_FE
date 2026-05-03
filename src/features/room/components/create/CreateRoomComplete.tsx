@@ -31,8 +31,8 @@ export function CreateRoomComplete({
         <div className="bg-white rounded-2xl p-6 shadow-sm flex flex-col gap-5">
           <div className="flex flex-col gap-3">
             <div className="flex gap-2">
-              <span className="px-2 py-0.5 rounded-full bg-[#E5F7ED] text-[#00C271] text-xs font-bold">
-                🍴 식사
+              <span className="px-2 py-0.5 rounded-full bg-[#E5F7ED] text-[#00C271] text-xs font-bold flex items-center gap-1">
+                <i className="icon icon-food w-3 h-3"></i> 식사
               </span>
               <span className="px-2 py-0.5 rounded-full bg-primary-subtle text-primary text-xs font-bold">
                 진행중
@@ -43,7 +43,7 @@ export function CreateRoomComplete({
             </h2>
             <div className="flex items-center gap-2">
               <span className="text-primary font-bold text-xs flex items-center gap-1">
-                <span>🏆</span> 모임장
+                <i className="icon icon-host w-4 h-4"></i> 모임장
               </span>
               <span className="text-gray-700 text-sm font-medium">
                 발넓은모임장
@@ -56,7 +56,7 @@ export function CreateRoomComplete({
           <div className="flex flex-col gap-4">
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 shrink-0">
-                📅
+                <i className="icon icon-calendar w-5 h-5"></i>
               </div>
               <div className="flex flex-col gap-0.5 pt-0.5">
                 <span className="text-xs text-gray-400 font-medium">
@@ -70,7 +70,7 @@ export function CreateRoomComplete({
 
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 shrink-0">
-                🕒
+                <i className="icon icon-time w-5 h-5"></i>
               </div>
               <div className="flex flex-col gap-0.5 pt-0.5">
                 <span className="text-xs text-gray-400 font-medium">
@@ -84,7 +84,7 @@ export function CreateRoomComplete({
 
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 shrink-0">
-                📅
+                <i className="icon icon-calendar w-5 h-5"></i>
               </div>
               <div className="flex flex-col gap-0.5 pt-0.5">
                 <span className="text-xs text-gray-400 font-medium">
@@ -98,7 +98,7 @@ export function CreateRoomComplete({
 
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 shrink-0">
-                ⌛
+                <i className="icon icon-deadline w-5 h-5"></i>
               </div>
               <div className="flex flex-col gap-0.5 pt-0.5">
                 <span className="text-xs text-gray-400 font-medium">
@@ -134,7 +134,7 @@ export function CreateRoomComplete({
 
         <div className="flex flex-col gap-3">
           <h3 className="font-bold text-gray-900 text-sm flex items-center gap-2">
-            <span>👥</span> 초대하기
+            <i className="icon icon-group-add w-5 h-5"></i> 초대하기
           </h3>
 
           <div className="flex gap-2">

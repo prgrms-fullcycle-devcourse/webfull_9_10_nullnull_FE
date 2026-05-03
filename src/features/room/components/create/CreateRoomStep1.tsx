@@ -1,5 +1,6 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export function CreateRoomStep1() {
   return (
@@ -12,9 +13,9 @@ export function CreateRoomStep1() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-gray-700">
+        <Label className="text-gray-700">
           닉네임 <span className="text-red-500">*</span>
-        </label>
+        </Label>
         <Input
           type="text"
           placeholder="발넓은모임장"
