@@ -1,5 +1,13 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function CreateRoomStep2() {
   return (
@@ -14,21 +22,68 @@ export function CreateRoomStep2() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-gray-700">
+        <Label className="text-gray-700">
           모임 이름 <span className="text-red-500">*</span>
-        </label>
+        </Label>
         <Input type="text" placeholder="2자 ~ 40자" />
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-gray-700">
+        <Label className="text-gray-700">
           모임 카테고리 <span className="text-red-500">*</span>
-        </label>
-        <select className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:border-[#6B4EFF] bg-white appearance-none">
-          <option>식사</option>
-          <option>회의</option>
-          <option>기타</option>
-        </select>
+        </Label>
+        <Select defaultValue="food">
+          <SelectTrigger className="w-full h-12 px-4 rounded-xl border border-gray-200 bg-white">
+            <SelectValue placeholder="카테고리 선택" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="food">
+              <div className="flex items-center gap-2">
+                <i className="icon icon-food w-4 h-4 bg-gray-500"></i> 식사
+              </div>
+            </SelectItem>
+            <SelectItem value="anniv">
+              <div className="flex items-center gap-2">
+                <i className="icon icon-anniv w-4 h-4 bg-gray-500"></i> 기념일
+              </div>
+            </SelectItem>
+            <SelectItem value="coffee">
+              <div className="flex items-center gap-2">
+                <i className="icon icon-coffee w-4 h-4 bg-gray-500"></i> 카페
+              </div>
+            </SelectItem>
+            <SelectItem value="bar">
+              <div className="flex items-center gap-2">
+                <i className="icon icon-bar w-4 h-4 bg-gray-500"></i> 주점
+              </div>
+            </SelectItem>
+            <SelectItem value="game">
+              <div className="flex items-center gap-2">
+                <i className="icon icon-game w-4 h-4 bg-gray-500"></i> 게임
+              </div>
+            </SelectItem>
+            <SelectItem value="study">
+              <div className="flex items-center gap-2">
+                <i className="icon icon-study w-4 h-4 bg-gray-500"></i> 공부
+              </div>
+            </SelectItem>
+            <SelectItem value="exercise">
+              <div className="flex items-center gap-2">
+                <i className="icon icon-exercise w-4 h-4 bg-gray-500"></i> 운동
+              </div>
+            </SelectItem>
+            <SelectItem value="meeting">
+              <div className="flex items-center gap-2">
+                <i className="icon icon-meeting w-4 h-4 bg-gray-500"></i> 미팅
+              </div>
+            </SelectItem>
+            <SelectItem value="etc">
+              <div className="flex items-center gap-2">
+                <i className="icon icon-star w-4 h-4 bg-gray-500"></i> 기타
+              </div>
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );
