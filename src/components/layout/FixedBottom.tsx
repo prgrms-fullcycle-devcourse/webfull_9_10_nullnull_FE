@@ -33,12 +33,11 @@ export function FixedBottom({
         className,
       )}
       // fixed 하단 영역 뒤로 페이지 콘텐츠가 가려지지 않도록 실제 높이를 반영합니다.
-      style={height > 0 ? { minHeight: height } : undefined}
+      style={height > 0 ? { height } : undefined}
     >
       <div
         ref={setFixedElement}
-        // className="fixed bottom-0 left-1/2 z-50 w-full max-w-[var(--layout-mobile)] -translate-x-1/2 bg-background lg:left-auto lg:right-[max(0px,calc((100vw-var(--layout-desktop))/2))] lg:translate-x-0"
-        className="fixed bottom-0 z-50 w-full max-w-[var(--layout-mobile)] bg-background md:auto "
+        className="fixed bottom-0 z-50 w-full max-w-[var(--layout-mobile)] bg-background"
       >
         <div
           className={cn(

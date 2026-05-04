@@ -8,6 +8,25 @@ const STATUS_STYLE: Record<RoomStatus, string> = {
   진행중: "text-teal-600 bg-teal-50",
 };
 
+export const ROOM_STATUS_LABEL: Record<
+  "COLLECTING" | "READY" | "CONFIRMED" | "CLOSED",
+  RoomStatus
+> = {
+  COLLECTING: "모집중",
+  READY: "마감",
+  CONFIRMED: "확정",
+  CLOSED: "종료",
+};
+
+export function RoomStatusBadge({ status }: { status: RoomStatus }) {
+  const style = STATUS_STYLE[status] ?? "text-gray-400 bg-gray-100";
+  return (
+    <span className={`text-xs font-medium px-3 py-1 rounded-full ${style}`}>
+      {status}
+    </span>
+  );
+}
+
 type CategoryConfig = {
   label: string;
   icon: string;
@@ -15,14 +34,14 @@ type CategoryConfig = {
 
 const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
   MEAL: { label: "식사", icon: "food" },
-  ANNIVERSARY: { label: "파티", icon: "anniv" },
   CAFE: { label: "카페", icon: "coffee" },
-  BAR: { label: "술", icon: "bar" },
+  DRINK: { label: "술", icon: "bar" },
   STUDY: { label: "스터디", icon: "study" },
-  GAME: { label: "게임", icon: "game" },
   MEETING: { label: "회의", icon: "meeting" },
   EXERCISE: { label: "운동", icon: "exercise" },
-  OTHER: { label: "기타", icon: "star" },
+  GAME: { label: "게임", icon: "game" },
+  PARTY: { label: "파티", icon: "anniv" },
+  ETC: { label: "기타", icon: "star" },
 };
 
 type Props = {
