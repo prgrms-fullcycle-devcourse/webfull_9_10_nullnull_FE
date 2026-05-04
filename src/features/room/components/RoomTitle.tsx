@@ -9,12 +9,12 @@ const STATUS_STYLE: Record<RoomStatus, string> = {
 };
 
 export const ROOM_STATUS_LABEL: Record<
-  "COLLECT" | "READY" | "CONFIRM" | "CLOSED",
+  "COLLECTING" | "READY" | "CONFIRMED" | "CLOSED",
   RoomStatus
 > = {
-  COLLECT: "모집중",
+  COLLECTING: "모집중",
   READY: "마감",
-  CONFIRM: "확정",
+  CONFIRMED: "확정",
   CLOSED: "종료",
 };
 
@@ -34,14 +34,14 @@ type CategoryConfig = {
 
 const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
   MEAL: { label: "식사", icon: "food" },
-  ANNIVERSARY: { label: "파티", icon: "anniv" },
   CAFE: { label: "카페", icon: "coffee" },
-  BAR: { label: "술", icon: "bar" },
+  DRINK: { label: "술", icon: "bar" },
   STUDY: { label: "스터디", icon: "study" },
-  GAME: { label: "게임", icon: "game" },
   MEETING: { label: "회의", icon: "meeting" },
   EXERCISE: { label: "운동", icon: "exercise" },
-  OTHER: { label: "기타", icon: "star" },
+  GAME: { label: "게임", icon: "game" },
+  PARTY: { label: "파티", icon: "anniv" },
+  ETC: { label: "기타", icon: "star" },
 };
 
 type Props = {

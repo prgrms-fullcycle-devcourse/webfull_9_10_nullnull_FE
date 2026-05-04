@@ -32,7 +32,7 @@ type Props = {
 };
 
 export function RoomDashboardView({ room }: Props) {
-  const isConfirmed = room.status === "CONFIRM" || room.status === "CLOSED";
+  const isConfirmed = room.status === "CONFIRMED" || room.status === "CLOSED";
 
   return (
     <div className="flex flex-col gap-5 px-4 py-5">
@@ -193,7 +193,7 @@ function AttendanceGroup({
 }
 
 function getStatusMessage(room: RoomApiResponse) {
-  if (room.status === "COLLECT") {
+  if (room.status === "COLLECTING") {
     const deadline = new Date(room.deadlineAt);
     return `${deadline.getMonth() + 1}월 ${deadline.getDate()}일 모집이 마감돼요`;
   }

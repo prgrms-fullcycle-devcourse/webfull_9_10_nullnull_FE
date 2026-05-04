@@ -17,7 +17,7 @@ const MOCK_API_ROOM: RoomApiResponse = {
   name: "우리 언제 밥 한번 먹지",
   category: "MEAL",
   status: "READY",
-  responseStatus: undefined,
+  participantStatus: undefined,
   hostNickname: "방만든모임장",
   badge: "마감",
   text: "모임장의 확정을 기다리고 있어요",
@@ -43,11 +43,12 @@ export function RoomDetail({ slug }: Props) {
   const [view, setView] = useState<View>("detail");
 
   const isGuestDashboard =
-    room.responseStatus === "SUBMITTED" || room.responseStatus === "DECLINED";
+    room.participantStatus === "SUBMITTED" ||
+    room.participantStatus === "DECLINED";
   const endedReason = getEndedReason(room);
   const isHostResultReady =
-    (room.status === "READY" || room.status === "CONFIRM") &&
-    !room.responseStatus;
+    (room.status === "READY" || room.status === "CONFIRMED") &&
+    !room.participantStatus;
 
   const handleJoinComplete = (name: string, uuid: string) => {
     router.push(
@@ -131,7 +132,7 @@ export function RoomDetail({ slug }: Props) {
 }
 
 function RoomDashboardBottomSlot({ room }: { room: RoomApiResponse }) {
-  if (room.status === "COLLECT") {
+  if (room.status === "COLLECTING") {
     return (
       <Button size="cta" variant="outline" onClick={() => {}}>
         제출결과 수정하기
@@ -147,7 +148,7 @@ function RoomDashboardBottomSlot({ room }: { room: RoomApiResponse }) {
     );
   }
 
-  if (room.status === "CONFIRM") {
+  if (room.status === "CONFIRMED") {
     return (
       <Button size="cta" onClick={() => {}}>
         지도 보기
@@ -163,15 +164,15 @@ function RoomDashboardBottomSlot({ room }: { room: RoomApiResponse }) {
 }
 
 function getEndedReason(room: RoomApiResponse) {
-  const { status, responseStatus } = room;
+  const { status, participantStatus } = room;
 
   if (status === "CLOSED") {
     return "closed" as const;
   }
 
   if (
-    responseStatus === "JOINED" &&
-    (status === "READY" || status === "CONFIRM")
+    participantStatus === "JOINED" &&
+    (status === "READY" || status === "CONFIRMED")
   ) {
     return "joined-ended" as const;
   }
