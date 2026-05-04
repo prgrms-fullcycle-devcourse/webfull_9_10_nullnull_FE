@@ -16,9 +16,9 @@ export const KakaoLoginBtn = () => {
   return (
     <Button
       onClick={handleKakaoLogin}
-      className="w-full bg-[#FEE500] text-[#000000] hover:bg-[#FEE500]/90 flex items-center justify-center gap-2 h-12 text-base font-semibold"
+      className="w-full bg-[#FEE500] text-[#000000] hover:bg-[#FEE500]/90 flex items-center justify-center gap-2 h-12 text-base font-bold rounded-xl border-none shadow-none"
     >
-      <i className="icon-kakao text-xl"></i>
+      <i className="icon icon-kakao"></i>
       카카오로 시작하기
     </Button>
   );
