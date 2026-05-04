@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const protectedRoutes = ["/mypage", "/settings", "/dashboard"];
+const protectedRoutes = ["/setting"];
 
 const authRoutes = ["/login"];
 
@@ -16,7 +16,7 @@ export function middleware(request: NextRequest) {
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
 
   if (isProtectedRoute && !authToken) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   if (isAuthRoute && authToken) {
