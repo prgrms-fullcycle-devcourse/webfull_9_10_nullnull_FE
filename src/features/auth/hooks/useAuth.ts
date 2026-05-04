@@ -20,7 +20,7 @@ export const useAuth = () => {
       queryClient.clear();
       setUser(null);
       Cookies.remove("access_token");
-      router.push("/login");
+      router.push("/");
     },
     onError: (error) => {
       console.error("로그아웃 실패:", error);

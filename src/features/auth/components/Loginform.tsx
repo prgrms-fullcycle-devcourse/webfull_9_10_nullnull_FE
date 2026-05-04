@@ -1,6 +1,11 @@
+"use client";
 import Link from "next/link";
 import { AppShell, AppContent, AppLogoLink } from "@/components/layout";
 import { KakaoLoginBtn } from "./KakaoLoginBtn";
+import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 const loginFeatures = [
   {
@@ -16,8 +21,36 @@ const loginFeatures = [
 ];
 
 export function LoginForm() {
+  const { setUser } = useAuthStore();
+  const router = useRouter();
+
+  const handleDevLogin = () => {
+    Cookies.set("access_token", "dev-token-temp");
+    setUser({
+      user_id: "dev-user",
+      nickname: "개발용계정",
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+    router.push("/");
+  };
+
   return (
-    <AppShell leftSlot={<AppLogoLink />} bottomSlot={<KakaoLoginBtn />}>
+    <AppShell
+      leftSlot={<AppLogoLink />}
+      bottomSlot={
+        <div className="flex w-full flex-col gap-2">
+          <Button
+            variant="outline"
+            className="w-full h-12 rounded-xl text-gray-400 border-gray-200"
+            onClick={handleDevLogin}
+          >
+            임시 로그인 (개발용)
+          </Button>
+          <KakaoLoginBtn />
+        </div>
+      }
+    >
       <AppContent>
         <section className="flex w-full flex-col items-center py-10 text-center">
           <h1 className="text-3xl font-bold leading-9 text-gray-950">
