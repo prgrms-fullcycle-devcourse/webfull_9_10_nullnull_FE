@@ -45,13 +45,13 @@ export function CreateRoomStep3() {
         <div className="flex items-center gap-2">
           <Input
             type="date"
-            className="flex-1 px-3 text-sm h-12 rounded-xl"
+            className="flex-1 px-3 text-sm h-[40px] rounded-[12px] border border-[#EFF1F7] bg-[#FCFCFC]"
             defaultValue="2026-05-01"
           />
           <span className="text-gray-400">~</span>
           <Input
             type="date"
-            className="flex-1 px-3 text-sm h-12 rounded-xl"
+            className="flex-1 px-3 text-sm h-[40px] rounded-[12px] border border-[#EFF1F7] bg-[#FCFCFC]"
             defaultValue="2026-05-30"
           />
         </div>
@@ -63,7 +63,7 @@ export function CreateRoomStep3() {
         </Label>
         <div className="flex items-center gap-2">
           <Select defaultValue="오후 6:00">
-            <SelectTrigger className="flex-1 h-12 px-3 rounded-xl border border-gray-200 bg-white">
+            <SelectTrigger className="flex-1 !h-[40px] px-3 rounded-[12px] border border-[#EFF1F7] bg-[#FCFCFC]">
               <SelectValue placeholder="시작 시간" />
             </SelectTrigger>
             <SelectContent>
@@ -76,7 +76,7 @@ export function CreateRoomStep3() {
           </Select>
           <span className="text-gray-400">~</span>
           <Select defaultValue="오후 10:00">
-            <SelectTrigger className="flex-1 h-12 px-3 rounded-xl border border-gray-200 bg-white">
+            <SelectTrigger className="flex-1 !h-[40px] px-3 rounded-[12px] border border-[#EFF1F7] bg-[#FCFCFC]">
               <SelectValue placeholder="종료 시간" />
             </SelectTrigger>
             <SelectContent>
@@ -94,7 +94,7 @@ export function CreateRoomStep3() {
         <Label className="text-gray-700">
           희망 요일 <span className="text-red-500">*</span>
         </Label>
-        <div className="flex rounded-xl overflow-hidden h-12 border border-gray-200 bg-white divide-x divide-gray-200">
+        <div className="flex rounded-[12px] overflow-hidden h-[40px] border border-[#EFF1F7] bg-[#FCFCFC] divide-x divide-[#EFF1F7]">
           <button
             onClick={() => setPreferredDay("weekday")}
             className={`flex-1 font-medium text-sm transition-colors relative ${
@@ -132,10 +132,10 @@ export function CreateRoomStep3() {
               <button
                 key={day}
                 onClick={() => toggleDay(day)}
-                className={`flex-1 h-10 rounded-xl font-medium text-sm transition-colors border ${
+                className={`flex-1 h-[40px] rounded-[12px] font-medium text-sm transition-colors border ${
                   customDays.includes(day)
                     ? "bg-primary-subtle text-primary border-primary"
-                    : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                    : "bg-[#FCFCFC] text-gray-700 border-[#EFF1F7] hover:bg-gray-50"
                 }`}
               >
                 {day}
@@ -153,11 +153,11 @@ export function CreateRoomStep3() {
         <div className="flex items-center gap-2">
           <Input
             type="date"
-            className="flex-1 px-3 text-sm h-12 rounded-xl"
+            className="flex-1 px-3 text-sm h-[40px] rounded-[12px] border border-[#EFF1F7] bg-[#FCFCFC]"
             defaultValue="2026-05-07"
           />
           <Select defaultValue="오전 9:00">
-            <SelectTrigger className="flex-1 h-12 px-3 rounded-xl border border-gray-200 bg-white">
+            <SelectTrigger className="flex-1 !h-[40px] px-3 rounded-[12px] border border-[#EFF1F7] bg-[#FCFCFC]">
               <SelectValue placeholder="마감 시간" />
             </SelectTrigger>
             <SelectContent>
@@ -181,23 +181,23 @@ export function CreateRoomStep3() {
             중간 지점을 계산해서 모임 장소를 추천해 드려요
           </p>
         </div>
-        <div className="flex gap-2 h-12">
+        <div className="flex gap-2 h-[40px]">
           <button
             onClick={() => setRecommendPlace(false)}
-            className={`flex-1 rounded-xl font-medium text-sm transition-colors border ${
+            className={`flex-1 rounded-[12px] font-medium text-sm transition-colors border ${
               !recommendPlace
                 ? "bg-primary-subtle text-primary border-primary"
-                : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                : "bg-[#FCFCFC] text-gray-700 border-[#EFF1F7] hover:bg-gray-50"
             }`}
           >
             아니오, 필요없어요
           </button>
           <button
             onClick={() => setRecommendPlace(true)}
-            className={`flex-1 rounded-xl font-medium text-sm transition-colors border ${
+            className={`flex-1 rounded-[12px] font-medium text-sm transition-colors border ${
               recommendPlace
                 ? "bg-primary-subtle text-primary border-primary"
-                : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                : "bg-[#FCFCFC] text-gray-700 border-[#EFF1F7] hover:bg-gray-50"
             }`}
           >
             네, 추천해주세요

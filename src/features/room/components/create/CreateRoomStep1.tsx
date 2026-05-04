@@ -20,6 +20,7 @@ export function CreateRoomStep1() {
           type="text"
           placeholder="발넓은모임장"
           defaultValue="발넓은모임장"
+          className="h-[40px] rounded-[12px] border border-[#EFF1F7] bg-[#FCFCFC]"
         />
       </div>
     </div>
