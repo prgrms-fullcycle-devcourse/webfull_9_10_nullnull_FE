@@ -17,7 +17,7 @@ const MOCK_API_ROOM: RoomApiResponse = {
   name: "우리 언제 밥 한번 먹지",
   category: "MEAL",
   status: "READY",
-  participationStatus: undefined,
+  responseStatus: undefined,
   hostNickname: "방만든모임장",
   badge: "마감",
   text: "모임장의 확정을 기다리고 있어요",
@@ -43,12 +43,11 @@ export function RoomDetail({ slug }: Props) {
   const [view, setView] = useState<View>("detail");
 
   const isGuestDashboard =
-    room.participationStatus === "SUBMITTED" ||
-    room.participationStatus === "DECLINED";
+    room.responseStatus === "SUBMITTED" || room.responseStatus === "DECLINED";
   const endedReason = getEndedReason(room);
   const isHostResultReady =
     (room.status === "READY" || room.status === "CONFIRM") &&
-    !room.participationStatus;
+    !room.responseStatus;
 
   const handleJoinComplete = (name: string, uuid: string) => {
     router.push(
@@ -164,14 +163,14 @@ function RoomDashboardBottomSlot({ room }: { room: RoomApiResponse }) {
 }
 
 function getEndedReason(room: RoomApiResponse) {
-  const { status, participationStatus } = room;
+  const { status, responseStatus } = room;
 
   if (status === "CLOSED") {
     return "closed" as const;
   }
 
   if (
-    participationStatus === "JOINED" &&
+    responseStatus === "JOINED" &&
     (status === "READY" || status === "CONFIRM")
   ) {
     return "joined-ended" as const;

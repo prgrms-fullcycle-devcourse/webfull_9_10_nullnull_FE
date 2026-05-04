@@ -1,11 +1,11 @@
-export type ParticipationStatus = "JOINED" | "SUBMITTED" | "DECLINED";
+export type RoomResponseStatus = "JOINED" | "SUBMITTED" | "DECLINED";
 
 export type RoomApiResponse = {
   slug: string;
   name: string;
   category: string;
   status: "COLLECT" | "READY" | "CONFIRM" | "CLOSED";
-  participationStatus?: ParticipationStatus;
+  responseStatus?: RoomResponseStatus;
   hostNickname: string;
   badge: string;
   text: string;
