@@ -1,21 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AppLogoLink, AppShell } from "@/components/layout";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { AppBackButton, AppLogoLink, AppShell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
-import { RoomDetailView } from "./components/detail/RoomDetailView";
+import { RoomDashboardView } from "./components/detail/RoomDashboardView";
 import { JoinNameStep } from "./components/detail/JoinNameStep";
+import { RoomDetailView } from "./components/detail/RoomDetailView";
 import { RoomEndedView } from "./components/detail/RoomEndedView";
+import { RoomResultView } from "./components/detail/RoomResultView";
 import type { RoomApiResponse } from "./types/room";
 
 const MOCK_API_ROOM: RoomApiResponse = {
   slug: "abc123",
-  name: "주말 홍대 보드게임 모임",
+  name: "우리 언제 밥 한번 먹지",
   category: "MEAL",
-  status: "CONFIRMED",
-  hostNickname: "발넓은모임장",
+  status: "READY",
+  participantStatus: undefined,
+  hostNickname: "방만든모임장",
   badge: "마감",
   text: "모임장의 확정을 기다리고 있어요",
   dateStart: "2024-05-24",
@@ -38,7 +41,14 @@ export function RoomDetail({ slug }: Props) {
   const router = useRouter();
   const room = { ...MOCK_API_ROOM, slug };
   const [view, setView] = useState<View>("detail");
-  const isEnded = MOCK_API_ROOM.status === "CLOSED";
+
+  const isGuestDashboard =
+    room.participantStatus === "SUBMITTED" ||
+    room.participantStatus === "DECLINED";
+  const endedReason = getEndedReason(room);
+  const isHostResultReady =
+    (room.status === "READY" || room.status === "CONFIRMED") &&
+    !room.participantStatus;
 
   const handleJoinComplete = (name: string, uuid: string) => {
     router.push(
@@ -46,7 +56,19 @@ export function RoomDetail({ slug }: Props) {
     );
   };
 
-  if (isEnded) {
+  if (isGuestDashboard) {
+    return (
+      <AppShell
+        title="모임 자세히 보기"
+        leftSlot={<AppBackButton onClick={() => router.back()} />}
+        bottomSlot={<RoomDashboardBottomSlot room={room} />}
+      >
+        <RoomDashboardView room={room} />
+      </AppShell>
+    );
+  }
+
+  if (endedReason) {
     return (
       <AppShell
         leftSlot={<AppLogoLink />}
@@ -56,7 +78,32 @@ export function RoomDetail({ slug }: Props) {
           </Button>
         }
       >
-        <RoomEndedView />
+        <RoomEndedView reason={endedReason} />
+      </AppShell>
+    );
+  }
+
+  if (isHostResultReady) {
+    return (
+      <AppShell
+        title="결과"
+        leftSlot={<AppBackButton onClick={() => router.back()} />}
+        bottomSlot={
+          <div className="flex flex-col gap-2.5">
+            <Button size="cta" onClick={() => {}}>
+              확정하기
+            </Button>
+            <Button
+              size="cta"
+              variant="secondary"
+              onClick={() => router.back()}
+            >
+              취소
+            </Button>
+          </div>
+        }
+      >
+        <RoomResultView />
       </AppShell>
     );
   }
@@ -82,4 +129,53 @@ export function RoomDetail({ slug }: Props) {
       <RoomDetailView room={room} />
     </AppShell>
   );
+}
+
+function RoomDashboardBottomSlot({ room }: { room: RoomApiResponse }) {
+  if (room.status === "COLLECTING") {
+    return (
+      <Button size="cta" variant="outline" onClick={() => {}}>
+        제출결과 수정하기
+      </Button>
+    );
+  }
+
+  if (room.status === "READY") {
+    return (
+      <Button size="cta" onClick={() => {}}>
+        모임장 재촉하기
+      </Button>
+    );
+  }
+
+  if (room.status === "CONFIRMED") {
+    return (
+      <Button size="cta" onClick={() => {}}>
+        지도 보기
+      </Button>
+    );
+  }
+
+  return (
+    <Button size="cta" asChild>
+      <Link href="/room">새 모임 만들기</Link>
+    </Button>
+  );
+}
+
+function getEndedReason(room: RoomApiResponse) {
+  const { status, participantStatus } = room;
+
+  if (status === "CLOSED") {
+    return "closed" as const;
+  }
+
+  if (
+    participantStatus === "JOINED" &&
+    (status === "READY" || status === "CONFIRMED")
+  ) {
+    return "joined-ended" as const;
+  }
+
+  return null;
 }
