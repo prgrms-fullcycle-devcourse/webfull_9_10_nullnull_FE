@@ -20,7 +20,7 @@ export function LocationPage({ slug }: Props) {
 
   const handleComplete = () => {
     // TODO: 출발지 정보를 API로 전송 후 이동
-    router.push(`/room/${slug}/schedule`);
+    router.push(`/room/${slug}`);
   };
 
   return (

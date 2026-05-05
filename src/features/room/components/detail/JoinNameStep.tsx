@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AppBackButton, AppContent, AppShell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PrivacyConsentSheet } from "./PrivacyConsentSheet";
 
 const RANDOM_NICKNAMES = [
   "핵인싸참여자",
@@ -19,28 +18,35 @@ function randomNickname() {
 }
 
 type Props = {
+  role: "guest" | "member";
+  nickname?: string;
   onBack: () => void;
   onComplete: (name: string, uuid: string) => void;
 };
 
-export function JoinNameStep({ onBack, onComplete }: Props) {
-  const [name, setName] = useState(() => randomNickname());
+export function JoinNameStep({ role, nickname, onBack, onComplete }: Props) {
+  const [name, setName] = useState(() =>
+    role === "guest" ? randomNickname() : (nickname ?? ""),
+  );
   const [error, setError] = useState("");
-  const [privacyOpen, setPrivacyOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const handleNext = () => {
-    if (!name.trim()) {
+    const trimmed = name.trim();
+    if (!trimmed) {
       setError("이름을 입력해 주세요.");
       return;
     }
+    if (trimmed.length < 2 || trimmed.length > 10) {
+      setError("이름은 2자 이상 10자 이하로 입력해주세요.");
+      return;
+    }
     setError("");
-    setPrivacyOpen(true);
-  };
-
-  const handleAgree = () => {
-    const uuid = crypto.randomUUID();
-    setPrivacyOpen(false);
-    onComplete(name.trim(), uuid);
+    onComplete(trimmed, crypto.randomUUID());
   };
 
   return (
@@ -48,17 +54,13 @@ export function JoinNameStep({ onBack, onComplete }: Props) {
       title={<span className="text-base">모임 참여하기</span>}
       leftSlot={<AppBackButton onClick={onBack} />}
       bottomSlot={
-        <Button size="cta" onClick={handleNext}>
+        <Button
+          size="cta"
+          onClick={handleNext}
+          disabled={name.trim().length < 2 || name.trim().length > 10}
+        >
           다음
         </Button>
-      }
-      overlaySlot={
-        privacyOpen && (
-          <PrivacyConsentSheet
-            onClose={() => setPrivacyOpen(false)}
-            onAgree={handleAgree}
-          />
-        )
       }
     >
       <AppContent className="flex flex-col gap-6">
@@ -76,13 +78,15 @@ export function JoinNameStep({ onBack, onComplete }: Props) {
             이름 <span className="text-red-500">*</span>
           </label>
           <Input
+            ref={inputRef}
             type="text"
             value={name}
             onChange={(e) => {
+              if (e.target.value.length > 10) return;
               setName(e.target.value);
               if (error) setError("");
             }}
-            placeholder="이름을 입력해 주세요"
+            placeholder="이름 또는 별명을 입력해 주세요"
             aria-invalid={!!error}
           />
           {error && <p className="text-xs text-red-500">{error}</p>}

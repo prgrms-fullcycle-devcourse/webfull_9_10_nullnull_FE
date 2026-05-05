@@ -271,3 +271,8 @@
 .icon-star {
   --icon-mask: var(--ico-star);
 }
+
+.icon-arrow-right {
+  --icon-mask: var(--ico-arrow);
+  transform: scaleX(-1);
+}

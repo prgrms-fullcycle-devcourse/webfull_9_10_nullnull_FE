@@ -1,9 +1,11 @@
+import { use } from "react";
 import { LocationPage } from "@/features/room/components/location/LocationPage";
 
 export default function LocationRoute({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  return <LocationPage slug={params.slug} />;
+  const { slug } = use(params);
+  return <LocationPage slug={slug} />;
 }
