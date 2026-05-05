@@ -10,26 +10,53 @@ import { JoinNameStep } from "./components/detail/JoinNameStep";
 import { RoomDetailView } from "./components/detail/RoomDetailView";
 import { RoomEndedView } from "./components/detail/RoomEndedView";
 import { RoomResultView } from "./components/detail/RoomResultView";
-import type { RoomApiResponse } from "./types/room";
+import { PrivacyConsentSheet } from "./components/detail/PrivacyConsentSheet";
+import { useRoomJoinStore } from "@/store/useRoomJoinStore";
+import type { RoomApiResponse, RoomDetailData } from "./types/room";
 
-const MOCK_API_ROOM: RoomApiResponse = {
-  slug: "abc123",
-  name: "우리 언제 밥 한번 먹지",
-  category: "MEAL",
-  status: "READY",
-  participantStatus: undefined,
-  hostNickname: "방만든모임장",
-  badge: "마감",
-  text: "모임장의 확정을 기다리고 있어요",
-  dateStart: "2024-05-24",
-  dateEnd: "2024-05-26",
-  availableDays: [6, 7, 1],
-  timeStart: "09:00",
-  timeEnd: "22:00",
-  deadlineAt: "2026-10-25T23:59:00+09:00",
-  participantCount: 6,
-  maxParticipants: 8,
+const MOCK_DETAIL_DATA: RoomDetailData = {
+  viewer: {
+    role: "GUEST",
+    participantStatus: undefined,
+    nickname: undefined,
+    consentRequired: true,
+  },
+  room: {
+    slug: "abc123",
+    name: "우리 언제 밥 한번 먹지",
+    category: "MEAL",
+    status: "CONFIRMED",
+    hostNickname: "방만든모임장",
+    badge: "진행중",
+    text: "안 되는 시간을 선택하고 모임을 확장해 보세요",
+    dateStart: "2026-05-24",
+    dateEnd: "2026-05-26",
+    availableDays: [6, 7, 1],
+    timeStart: "09:00",
+    timeEnd: "22:00",
+    collectOrigin: true,
+    deadlineAt: "2026-10-25T23:59:00+09:00",
+  },
+  summary: {
+    totalCount: 8,
+    submittedCount: 4,
+    declinedCount: 1,
+    joinedCount: 1,
+    submittedRatio: 55,
+  },
+  participants: {
+    submitted: ["김철수", "이영희", "박민수", "정지원"],
+    declined: ["최동훈"],
+    joined: ["강유리"],
+  },
+  mySubmission: null,
+  confirmedMeeting: null,
+  closed: null,
 };
+
+// 테스트할 케이스로 viewer.role / room.status 조합 변경
+// viewer.role: "HOST" | "MEMBER" | "GUEST"
+// room.status: "COLLECTING" | "READY" | "CONFIRMED" | "CLOSED"
 
 type View = "detail" | "join-name";
 
@@ -39,31 +66,59 @@ type Props = {
 
 export function RoomDetail({ slug }: Props) {
   const router = useRouter();
-  const room = { ...MOCK_API_ROOM, slug };
+  const data: RoomDetailData = {
+    ...MOCK_DETAIL_DATA,
+    room: { ...MOCK_DETAIL_DATA.room, slug },
+  };
   const [view, setView] = useState<View>("detail");
+  const [privacyOpen, setPrivacyOpen] = useState(false);
 
-  const isGuestDashboard =
-    room.participantStatus === "SUBMITTED" ||
-    room.participantStatus === "DECLINED";
-  const endedReason = getEndedReason(room);
-  const isHostResultReady =
-    (room.status === "READY" || room.status === "CONFIRMED") &&
-    !room.participantStatus;
+  const { viewer, room, summary } = data;
 
-  const handleJoinComplete = (name: string, uuid: string) => {
-    router.push(
-      `/room/${slug}/schedule?name=${encodeURIComponent(name)}&uuid=${uuid}`,
-    );
+  const roomForComponents: RoomApiResponse = {
+    ...room,
+    participantStatus: viewer.participantStatus,
+    role: viewer.role === "GUEST" ? "guest" : "member",
+    nickname: viewer.nickname,
+    participantCount:
+      summary.submittedCount + summary.declinedCount + summary.joinedCount,
+    maxParticipants: summary.totalCount,
   };
 
-  if (isGuestDashboard) {
+  const isMemberDashboard =
+    viewer.role === "MEMBER" &&
+    (viewer.participantStatus === "SUBMITTED" ||
+      viewer.participantStatus === "DECLINED");
+
+  const endedReason = getEndedReason(data);
+
+  const isHostResultReady =
+    viewer.role === "HOST" &&
+    (room.status === "READY" || room.status === "CONFIRMED");
+
+  const handleJoinClick = () => {
+    if (viewer.consentRequired) {
+      setPrivacyOpen(true);
+    } else {
+      setView("join-name");
+    }
+  };
+
+  const setJoin = useRoomJoinStore((s) => s.set);
+
+  const handleJoinComplete = (name: string, uuid: string) => {
+    setJoin(name, uuid);
+    router.push(`/room/${slug}/schedule`);
+  };
+
+  if (isMemberDashboard) {
     return (
       <AppShell
         title="모임 자세히 보기"
         leftSlot={<AppBackButton onClick={() => router.back()} />}
-        bottomSlot={<RoomDashboardBottomSlot room={room} />}
+        bottomSlot={<RoomDashboardBottomSlot room={roomForComponents} />}
       >
-        <RoomDashboardView room={room} />
+        <RoomDashboardView room={roomForComponents} />
       </AppShell>
     );
   }
@@ -111,6 +166,8 @@ export function RoomDetail({ slug }: Props) {
   if (view === "join-name") {
     return (
       <JoinNameStep
+        role="guest"
+        nickname={viewer.nickname}
         onBack={() => setView("detail")}
         onComplete={handleJoinComplete}
       />
@@ -121,12 +178,23 @@ export function RoomDetail({ slug }: Props) {
     <AppShell
       leftSlot={<AppLogoLink />}
       bottomSlot={
-        <Button size="cta" onClick={() => setView("join-name")}>
+        <Button size="cta" onClick={handleJoinClick}>
           참여하기
         </Button>
       }
+      overlaySlot={
+        privacyOpen && (
+          <PrivacyConsentSheet
+            onClose={() => setPrivacyOpen(false)}
+            onAgree={() => {
+              setPrivacyOpen(false);
+              setView("join-name");
+            }}
+          />
+        )
+      }
     >
-      <RoomDetailView room={room} />
+      <RoomDetailView room={roomForComponents} />
     </AppShell>
   );
 }
@@ -163,16 +231,16 @@ function RoomDashboardBottomSlot({ room }: { room: RoomApiResponse }) {
   );
 }
 
-function getEndedReason(room: RoomApiResponse) {
-  const { status, participantStatus } = room;
+function getEndedReason(data: RoomDetailData) {
+  const { room, viewer, closed } = data;
 
-  if (status === "CLOSED") {
+  if (closed !== null || room.status === "CLOSED") {
     return "closed" as const;
   }
 
   if (
-    participantStatus === "JOINED" &&
-    (status === "READY" || status === "CONFIRMED")
+    viewer.participantStatus === "JOINED" &&
+    (room.status === "READY" || room.status === "CONFIRMED")
   ) {
     return "joined-ended" as const;
   }
