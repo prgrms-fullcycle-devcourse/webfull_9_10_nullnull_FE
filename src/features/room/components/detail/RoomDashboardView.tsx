@@ -3,9 +3,8 @@ import {
   ROOM_STATUS_LABEL,
 } from "@/features/room/components/RoomTitle";
 import { RoomParticipationProgressCard } from "@/features/room/components/RoomParticipationProgressCard";
+import { Button } from "@/components/ui/button";
 import type { RoomApiResponse } from "@/features/room/types/room";
-
-// TODO : 추후에 guest와 host 분기하여 동일페이지 사용할 예정
 
 const MOCK_ATTENDANCE = {
   attending: [
@@ -33,6 +32,10 @@ type Props = {
 
 export function RoomDashboardView({ room }: Props) {
   const isConfirmed = room.status === "CONFIRMED" || room.status === "CLOSED";
+  const isHostCollecting =
+    room.viewerRole === "HOST" && room.status === "COLLECTING";
+  const hasUnsubmittedParticipants =
+    MOCK_ATTENDANCE.declined.length > 0 || MOCK_ATTENDANCE.pending.length > 0;
 
   return (
     <div className="flex flex-col gap-5 px-4 py-5">
@@ -47,7 +50,10 @@ export function RoomDashboardView({ room }: Props) {
         />
       )}
 
-      <AttendanceCard />
+      <AttendanceCard
+        compact={isHostCollecting && !hasUnsubmittedParticipants}
+        showReminder={isHostCollecting && hasUnsubmittedParticipants}
+      />
     </div>
   );
 }
@@ -133,24 +139,47 @@ function InfoRow({
   );
 }
 
-function AttendanceCard() {
+function AttendanceCard({
+  compact = false,
+  showReminder = false,
+}: {
+  compact?: boolean;
+  showReminder?: boolean;
+}) {
   return (
     <section className="flex flex-col gap-5 rounded-3xl border border-border-subtle bg-white p-5">
+      <h2 className="text-sm font-bold leading-[18px] text-text-primary">
+        참여자 명단
+      </h2>
       <AttendanceGroup
         tone="success"
         label="참석"
         names={MOCK_ATTENDANCE.attending}
       />
-      <AttendanceGroup
-        tone="danger"
-        label="불참"
-        names={MOCK_ATTENDANCE.declined}
-      />
-      <AttendanceGroup
-        tone="muted"
-        label="미정"
-        names={MOCK_ATTENDANCE.pending}
-      />
+      {!compact && (
+        <>
+          <AttendanceGroup
+            tone="danger"
+            label="불참"
+            names={MOCK_ATTENDANCE.declined}
+          />
+          <AttendanceGroup
+            tone="muted"
+            label="미정"
+            names={MOCK_ATTENDANCE.pending}
+          />
+        </>
+      )}
+      {showReminder && (
+        <Button
+          type="button"
+          variant="secondary"
+          className="h-10 w-full rounded-xl text-sm font-semibold text-text-primary"
+          onClick={() => {}}
+        >
+          리마인드 알림 보내기
+        </Button>
+      )}
     </section>
   );
 }
