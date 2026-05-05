@@ -25,7 +25,11 @@ export function CreateRoomStep2() {
         <Label className="text-gray-700">
           모임 이름 <span className="text-red-500">*</span>
         </Label>
-        <Input type="text" placeholder="2자 ~ 40자" />
+        <Input
+          type="text"
+          placeholder="2자 ~ 40자"
+          className="h-[40px] rounded-[12px] border border-[#EFF1F7] bg-[#FCFCFC]"
+        />
       </div>
 
       <div className="flex flex-col gap-2">
@@ -33,7 +37,7 @@ export function CreateRoomStep2() {
           모임 카테고리 <span className="text-red-500">*</span>
         </Label>
         <Select defaultValue="food">
-          <SelectTrigger className="w-full h-12 px-4 rounded-xl border border-gray-200 bg-white">
+          <SelectTrigger className="w-full !h-[40px] px-4 rounded-[12px] border border-[#EFF1F7] bg-[#FCFCFC]">
             <SelectValue placeholder="카테고리 선택" />
           </SelectTrigger>
           <SelectContent>

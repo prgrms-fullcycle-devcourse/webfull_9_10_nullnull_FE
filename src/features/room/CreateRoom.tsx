@@ -8,7 +8,7 @@ import { CreateRoomStep1 } from "@/features/room/components/create/CreateRoomSte
 import { CreateRoomStep2 } from "@/features/room/components/create/CreateRoomStep2";
 import { CreateRoomStep3 } from "@/features/room/components/create/CreateRoomStep3";
 import { CreateRoomComplete } from "@/features/room/components/create/CreateRoomComplete";
-import { AppBackButton, AppContent } from "@/components/layout";
+import { AppBackButton, AppContent, AppLogoLink } from "@/components/layout";
 
 export function CreateRoom() {
   const [step, setStep] = useState(1);
@@ -30,9 +30,11 @@ export function CreateRoom() {
 
   return (
     <AppShell
-      title={step === 4 ? "모임 생성 완료" : "모임 만들기"}
+      title={step === 4 ? undefined : "모임 만들기"}
       leftSlot={
-        step === 1 ? (
+        step === 4 ? (
+          <AppLogoLink />
+        ) : step === 1 ? (
           <AppBackButton href="/" />
         ) : (
           <AppBackButton onClick={handleBack} />
@@ -45,7 +47,7 @@ export function CreateRoom() {
           </Button>
         ) : (
           <Button size="cta" asChild>
-            <Link href={`/room/${roomId}`}>안되는 시간 선택하기</Link>
+            <Link href={`/room/${roomId}`}>내 일정 입력하기</Link>
           </Button>
         )
       }
