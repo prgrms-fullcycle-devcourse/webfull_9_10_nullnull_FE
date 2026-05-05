@@ -79,7 +79,7 @@ export function CreateRoomStep2() {
             </SelectItem>
             <SelectItem value="etc">
               <div className="flex items-center gap-2">
-                <i className="icon icon-star w-4 h-4 bg-gray-500"></i> 기타
+                <i className="icon icon-etc w-4 h-4 bg-gray-500"></i> 기타
               </div>
             </SelectItem>
           </SelectContent>
