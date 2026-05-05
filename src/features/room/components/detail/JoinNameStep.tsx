@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AppBackButton, AppContent, AppShell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +29,11 @@ export function JoinNameStep({ role, nickname, onBack, onComplete }: Props) {
     role === "guest" ? randomNickname() : (nickname ?? ""),
   );
   const [error, setError] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const handleNext = () => {
     const trimmed = name.trim();
@@ -36,8 +41,8 @@ export function JoinNameStep({ role, nickname, onBack, onComplete }: Props) {
       setError("이름을 입력해 주세요.");
       return;
     }
-    if (trimmed.length < 2) {
-      setError("닉네임은 2자 이상 입력해 주세요.");
+    if (trimmed.length < 2 || trimmed.length > 10) {
+      setError("이름은 2자 이상 10자 이하로 입력해주세요.");
       return;
     }
     setError("");
@@ -49,7 +54,11 @@ export function JoinNameStep({ role, nickname, onBack, onComplete }: Props) {
       title={<span className="text-base">모임 참여하기</span>}
       leftSlot={<AppBackButton onClick={onBack} />}
       bottomSlot={
-        <Button size="cta" onClick={handleNext} disabled={!name.trim()}>
+        <Button
+          size="cta"
+          onClick={handleNext}
+          disabled={name.trim().length < 2 || name.trim().length > 10}
+        >
           다음
         </Button>
       }
@@ -69,6 +78,7 @@ export function JoinNameStep({ role, nickname, onBack, onComplete }: Props) {
             이름 <span className="text-red-500">*</span>
           </label>
           <Input
+            ref={inputRef}
             type="text"
             value={name}
             onChange={(e) => {
