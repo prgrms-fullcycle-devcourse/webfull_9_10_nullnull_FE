@@ -1,5 +1,7 @@
 export type RoomStatus = "COLLECTING" | "READY" | "CONFIRMED" | "CLOSED";
 
+export type ClosedFromStatus = Exclude<RoomStatus, "CLOSED">;
+
 export type ParticipantStatus = "JOINED" | "SUBMITTED" | "DECLINED";
 
 export type ViewerRole = "HOST" | "MEMBER" | "GUEST";
@@ -65,7 +67,7 @@ export type ConfirmedMeeting = {
 
 export type ClosedInfo = {
   closedAt: string;
-  closedFromStatus: RoomStatus;
+  closedFromStatus: ClosedFromStatus;
   closedTrigger: string;
 } | null;
 
@@ -87,6 +89,7 @@ export type RoomApiResponse = {
   category: string;
   status: RoomStatus;
   participantStatus?: ParticipantStatus;
+  viewerRole?: ViewerRole;
   hostNickname: string;
   badge: string;
   text: string;
@@ -99,7 +102,7 @@ export type RoomApiResponse = {
   participantCount?: number;
   maxParticipants?: number;
   collectOrigin?: boolean;
-  role?: "guest" | "member";
+  role?: "guest" | "member" | "host";
   nickname?: string;
 };
 
