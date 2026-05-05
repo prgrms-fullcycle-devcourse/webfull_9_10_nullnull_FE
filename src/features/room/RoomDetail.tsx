@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppBackButton, AppLogoLink, AppShell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { RoomDashboardView } from "./components/detail/RoomDashboardView";
@@ -25,7 +25,7 @@ const MOCK_DETAIL_DATA: RoomDetailData = {
     slug: "abc123",
     name: "우리 언제 밥 한번 먹지",
     category: "MEAL",
-    status: "CONFIRMED",
+    status: "COLLECTING",
     hostNickname: "방만든모임장",
     badge: "진행중",
     text: "안 되는 시간을 선택하고 모임을 확장해 보세요",
@@ -74,6 +74,16 @@ export function RoomDetail({ slug }: Props) {
   const [privacyOpen, setPrivacyOpen] = useState(false);
 
   const { viewer, room, summary } = data;
+
+  useEffect(() => {
+    if (
+      viewer.role === "MEMBER" &&
+      viewer.participantStatus === "JOINED" &&
+      room.status === "COLLECTING"
+    ) {
+      router.replace(`/room/${slug}/schedule`);
+    }
+  }, [viewer.role, viewer.participantStatus, room.status, slug, router]);
 
   const roomForComponents: RoomApiResponse = {
     ...room,
@@ -232,15 +242,23 @@ function RoomDashboardBottomSlot({ room }: { room: RoomApiResponse }) {
 }
 
 function getEndedReason(data: RoomDetailData) {
-  const { room, viewer, closed } = data;
+  const { room, viewer } = data;
 
-  if (closed !== null || room.status === "CLOSED") {
+  if (
+    viewer.role === "GUEST" &&
+    (room.status === "READY" ||
+      room.status === "CONFIRMED" ||
+      room.status === "CLOSED")
+  ) {
     return "closed" as const;
   }
 
   if (
+    viewer.role === "MEMBER" &&
     viewer.participantStatus === "JOINED" &&
-    (room.status === "READY" || room.status === "CONFIRMED")
+    (room.status === "READY" ||
+      room.status === "CONFIRMED" ||
+      room.status === "CLOSED")
   ) {
     return "joined-ended" as const;
   }
