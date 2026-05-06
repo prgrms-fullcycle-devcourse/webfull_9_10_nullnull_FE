@@ -114,89 +114,91 @@ export function PrivacyConsentSheet({ onClose, onAgree }: Props) {
 
   return (
     <div
-      className="absolute inset-0 z-50 flex flex-col justify-end bg-black/20"
+      className="fixed inset-0 z-50 flex flex-col justify-end bg-black/20"
       onClick={onClose}
     >
-      <div
-        className="bg-white rounded-t-2xl px-5"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-4" />
+      <div className="w-full max-w-[750px] mx-auto">
+        <div
+          className="bg-white rounded-t-2xl px-5 w-full max-w-[var(--layout-mobile)] mx-auto lg:ml-auto lg:mr-0"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-4" />
 
-        {viewingTerm ? (
-          <>
-            <div className="flex items-center gap-2 mb-6">
-              <button
-                type="button"
-                className="icon icon-back text-gray-700"
-                onClick={() => setViewingTerm(null)}
-                aria-label="뒤로"
-              />
-              <h2 className="text-lg font-bold text-gray-900">
-                {TERM_CONTENT[viewingTerm].title}
+          {viewingTerm ? (
+            <>
+              <div className="flex items-center gap-2 mb-6">
+                <button
+                  type="button"
+                  className="icon icon-back text-gray-700"
+                  onClick={() => setViewingTerm(null)}
+                  aria-label="뒤로"
+                />
+                <h2 className="text-lg font-bold text-gray-900">
+                  {TERM_CONTENT[viewingTerm].title}
+                </h2>
+              </div>
+              <div className="max-h-72 overflow-y-auto pr-1 mb-6">
+                {TERM_CONTENT[viewingTerm].body}
+              </div>
+              <div className="pb-[calc(1rem+env(safe-area-inset-bottom))]">
+                <Button size="cta" onClick={() => setViewingTerm(null)}>
+                  확인
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className="text-xl font-bold text-gray-900 leading-snug mb-6">
+                모임을 시작하기 위해
+                <br />
+                약관에 동의해주세요
               </h2>
-            </div>
-            <div className="max-h-72 overflow-y-auto pr-1 mb-6">
-              {TERM_CONTENT[viewingTerm].body}
-            </div>
-            <div className="pb-[calc(1rem+env(safe-area-inset-bottom))]">
-              <Button size="cta" onClick={() => setViewingTerm(null)}>
-                확인
-              </Button>
-            </div>
-          </>
-        ) : (
-          <>
-            <h2 className="text-xl font-bold text-gray-900 leading-snug mb-6">
-              모임을 시작하기 위해
-              <br />
-              약관에 동의해주세요
-            </h2>
 
-            <div className="flex flex-col gap-0 border border-gray-200 rounded-xl overflow-hidden mb-6">
-              <button
-                type="button"
-                className="flex items-center justify-between px-4 py-3.5 bg-white"
-                onClick={toggleAll}
-              >
-                <span className="text-sm font-medium text-gray-900">
-                  필수 항목 모두 체크하기
-                </span>
-                <CheckboxIcon checked={allChecked} />
-              </button>
-
-              <div className="h-px bg-gray-100 mx-4" />
-
-              {TERMS.map((term) => (
-                <div key={term.id} className="flex items-center px-4 py-3.5">
-                  <span className="text-xs font-semibold text-blue-500 mr-2">
-                    필수
+              <div className="flex flex-col gap-0 border border-gray-200 rounded-xl overflow-hidden mb-6">
+                <button
+                  type="button"
+                  className="flex items-center justify-between px-4 py-3.5 bg-white"
+                  onClick={toggleAll}
+                >
+                  <span className="text-sm font-medium text-gray-900">
+                    필수 항목 모두 체크하기
                   </span>
-                  <button
-                    type="button"
-                    className="flex-1 text-left text-sm text-gray-700 flex items-center gap-0.5"
-                    onClick={() => setViewingTerm(term.id)}
-                  >
-                    {term.label}
-                    <span className="icon icon-arrow-right text-gray-400 text-xs ml-0.5" />
-                  </button>
-                  <button type="button" onClick={() => toggle(term.id)}>
-                    <CheckboxIcon checked={checked[term.id]} />
-                  </button>
-                </div>
-              ))}
-            </div>
+                  <CheckboxIcon checked={allChecked} />
+                </button>
 
-            <div className="flex flex-col gap-3 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-              <Button size="cta" onClick={onAgree} disabled={!allChecked}>
-                동의하고 계속하기
-              </Button>
-              <Button size="cta" variant="ghost" onClick={onClose}>
-                닫기
-              </Button>
-            </div>
-          </>
-        )}
+                <div className="h-px bg-gray-100 mx-4" />
+
+                {TERMS.map((term) => (
+                  <div key={term.id} className="flex items-center px-4 py-3.5">
+                    <span className="text-xs font-semibold text-blue-500 mr-2">
+                      필수
+                    </span>
+                    <button
+                      type="button"
+                      className="flex-1 text-left text-sm text-gray-700 flex items-center gap-0.5"
+                      onClick={() => setViewingTerm(term.id)}
+                    >
+                      {term.label}
+                      <span className="icon icon-arrow-right text-gray-400 text-xs ml-0.5" />
+                    </button>
+                    <button type="button" onClick={() => toggle(term.id)}>
+                      <CheckboxIcon checked={checked[term.id]} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex flex-col gap-3 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+                <Button size="cta" onClick={onAgree} disabled={!allChecked}>
+                  동의하고 계속하기
+                </Button>
+                <Button size="cta" variant="ghost" onClick={onClose}>
+                  닫기
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -15,13 +15,13 @@ export function ParticipationStatus({ current, max }: Props) {
           <span className="icon icon-person text-gray-400" aria-hidden="true" />
           참여 현황
         </span>
-        <span>
-          <span className="font-bold text-gray-900">{current}</span>
-          <span className="text-gray-400"> / {max}명</span>
+        <span className="flex items-baseline gap-0.5">
+          <span className="text-2xl font-bold text-gray-900">{current}</span>
+          <span className="text-sm text-gray-400"> / {max}명</span>
         </span>
       </div>
       <Progress value={ratio} className="h-2" />
-      <p className="text-xs text-gray-400 text-right">{ratio}% 채움 완료</p>
+      <p className="text-xs text-gray-400 text-right">{ratio}% 제출 완료</p>
     </div>
   );
 }

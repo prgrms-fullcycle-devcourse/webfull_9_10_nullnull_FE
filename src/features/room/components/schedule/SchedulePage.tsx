@@ -61,7 +61,7 @@ export function SchedulePage({ slug, room }: Props) {
     if (room.collectOrigin) {
       router.push(`/room/${slug}/location`);
     } else {
-      router.push(`/room/${slug}`);
+      router.push(`/room/${slug}/feedback?result=waiting`);
     }
   };
 
@@ -81,7 +81,7 @@ export function SchedulePage({ slug, room }: Props) {
             다음
           </Button>
           <Link
-            href={`/room/${slug}`}
+            href={`/room/${slug}/feedback?result=absent`}
             className="flex items-center justify-center h-11 text-sm text-gray-400 hover:text-gray-600 transition-colors"
           >
             이번 모임은 안 나갈래요

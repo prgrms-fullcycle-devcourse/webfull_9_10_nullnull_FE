@@ -35,7 +35,7 @@ import type { RoomApiResponse, RoomDetailData } from "./types/room";
 const MOCK_DETAIL_DATA: RoomDetailData = {
   viewer: {
     role: "MEMBER",
-    participantStatus: undefined,
+    participantStatus: "JOINED",
     nickname: undefined,
     consentRequired: true,
   },
@@ -43,7 +43,7 @@ const MOCK_DETAIL_DATA: RoomDetailData = {
     slug: "abc123",
     name: "우리 언제 밥 한번 먹지",
     category: "MEAL",
-    status: "CONFIRMED",
+    status: "COLLECTING",
     hostNickname: "방만든모임장",
     badge: "진행중",
     text: "안 되는 시간을 선택하고 모임을 확장해 보세요",

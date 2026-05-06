@@ -8,12 +8,18 @@ type KakaoPlaceResult = {
   y: string; // lat
 };
 
-/** window.kakao.maps 스크립트 로드 대기 (autoload=false이므로 load() 호출 필요) */
+type KakaoAddressResult = {
+  address_name: string;
+  address: { address_name: string } | null; // 지번주소
+  road_address: { address_name: string } | null; // 도로명주소
+  x: string; // lng
+  y: string; // lat
+};
+
 async function waitForKakaoSDK(maxWaitMs = 5000): Promise<boolean> {
   const interval = 100;
   const maxAttempts = maxWaitMs / interval;
 
-  // 1단계: window.kakao.maps 자체가 로드될 때까지 대기
   for (let i = 0; i < maxAttempts; i++) {
     if (window?.kakao?.maps) break;
     await new Promise((r) => setTimeout(r, interval));
@@ -21,7 +27,6 @@ async function waitForKakaoSDK(maxWaitMs = 5000): Promise<boolean> {
 
   if (!window?.kakao?.maps) return false;
 
-  // 2단계: services가 없으면 kakao.maps.load() 호출하여 초기화
   if (!window.kakao.maps.services) {
     await new Promise<void>((resolve) => {
       window.kakao.maps.load(resolve);
@@ -29,6 +34,46 @@ async function waitForKakaoSDK(maxWaitMs = 5000): Promise<boolean> {
   }
 
   return !!window.kakao?.maps?.services;
+}
+
+function searchByPlaces(query: string): Promise<RoomLocation[]> {
+  return new Promise((resolve) => {
+    const ps = new window.kakao.maps.services.Places();
+    ps.keywordSearch(query, (data, status) => {
+      if (status !== window.kakao.maps.services.Status.OK) {
+        resolve([]);
+        return;
+      }
+      resolve(
+        (data as KakaoPlaceResult[]).map((item) => ({
+          name: item.place_name,
+          address: item.road_address_name || item.address_name,
+          lat: parseFloat(item.y),
+          lng: parseFloat(item.x),
+        })),
+      );
+    });
+  });
+}
+
+function searchByAddress(query: string): Promise<RoomLocation[]> {
+  return new Promise((resolve) => {
+    const geocoder = new window.kakao.maps.services.Geocoder();
+    geocoder.addressSearch(query, (data: unknown[], status: string) => {
+      if (status !== window.kakao.maps.services.Status.OK) {
+        resolve([]);
+        return;
+      }
+      resolve(
+        (data as KakaoAddressResult[]).map((item) => ({
+          name: item.road_address?.address_name || item.address_name,
+          address: item.address?.address_name || item.address_name,
+          lat: parseFloat(item.y),
+          lng: parseFloat(item.x),
+        })),
+      );
+    });
+  });
 }
 
 export async function searchByKakaoPlaces(
@@ -53,21 +98,16 @@ export async function searchByKakaoPlaces(
     return [];
   }
 
-  return new Promise((resolve) => {
-    const ps = new window.kakao.maps.services.Places();
-    ps.keywordSearch(query, (data, status) => {
-      if (status !== window.kakao.maps.services.Status.OK) {
-        resolve([]);
-        return;
-      }
-      resolve(
-        (data as KakaoPlaceResult[]).map((item) => ({
-          name: item.place_name,
-          address: item.road_address_name || item.address_name,
-          lat: parseFloat(item.y),
-          lng: parseFloat(item.x),
-        })),
-      );
-    });
-  });
+  const [placeResults, addressResults] = await Promise.all([
+    searchByPlaces(query),
+    searchByAddress(query),
+  ]);
+
+  // 장소 결과 우선, 좌표가 겹치지 않는 주소 결과만 추가
+  const seen = new Set(placeResults.map((r) => `${r.lat},${r.lng}`));
+  const uniqueAddressResults = addressResults.filter(
+    (r) => !seen.has(`${r.lat},${r.lng}`),
+  );
+
+  return [...placeResults, ...uniqueAddressResults];
 }

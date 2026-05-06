@@ -20,7 +20,7 @@ export function LocationPage({ slug }: Props) {
 
   const handleComplete = () => {
     // TODO: 출발지 정보를 API로 전송 후 이동
-    router.push(`/room/${slug}`);
+    router.push(`/room/${slug}/feedback?result=waiting`);
   };
 
   return (
@@ -33,7 +33,7 @@ export function LocationPage({ slug }: Props) {
             완료
           </Button>
           <Link
-            href={`/room/${slug}`}
+            href={`/room/${slug}/feedback?result=absent`}
             className="flex items-center justify-center h-11 text-sm text-gray-400 hover:text-gray-600 transition-colors"
           >
             이번 모임은 안 나갈래요
