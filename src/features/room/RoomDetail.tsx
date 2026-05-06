@@ -35,7 +35,7 @@ import type { RoomApiResponse, RoomDetailData } from "./types/room";
 const MOCK_DETAIL_DATA: RoomDetailData = {
   viewer: {
     role: "MEMBER",
-    participantStatus: "",
+    participantStatus: undefined,
     nickname: undefined,
     consentRequired: true,
   },
