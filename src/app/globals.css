@@ -56,7 +56,7 @@
 }
 
 :root {
-  --layout-mobile: 375px;
+  --layout-mobile: 500px;
   --layout-desktop: 1024px;
   --layout-desktop-gutter: 24px;
   --layout-header-height: 61px;

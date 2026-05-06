@@ -2,11 +2,24 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
+
 import { AppBackButton, AppLogoLink, AppShell } from "@/components/layout";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { RoomDashboardView } from "./components/detail/RoomDashboardView";
+
 import { JoinNameStep } from "./components/detail/JoinNameStep";
+import { RoomDashboardView } from "./components/detail/RoomDashboardView";
 import { RoomDetailView } from "./components/detail/RoomDetailView";
 import { RoomEndedView } from "./components/detail/RoomEndedView";
 import { RoomResultView } from "./components/detail/RoomResultView";
@@ -16,8 +29,8 @@ import type { RoomApiResponse, RoomDetailData } from "./types/room";
 
 const MOCK_DETAIL_DATA: RoomDetailData = {
   viewer: {
-    role: "GUEST",
-    participantStatus: undefined,
+    role: "HOST",
+    participantStatus: "SUBMITTED",
     nickname: undefined,
     consentRequired: true,
   },
@@ -42,7 +55,7 @@ const MOCK_DETAIL_DATA: RoomDetailData = {
     submittedCount: 4,
     declinedCount: 1,
     joinedCount: 1,
-    submittedRatio: 55,
+    submittedRatio: 75,
   },
   participants: {
     submitted: ["김철수", "이영희", "박민수", "정지원"],
@@ -58,7 +71,7 @@ const MOCK_DETAIL_DATA: RoomDetailData = {
 // viewer.role: "HOST" | "MEMBER" | "GUEST"
 // room.status: "COLLECTING" | "READY" | "CONFIRMED" | "CLOSED"
 
-type View = "detail" | "join-name";
+type View = "detail" | "join-name" | "result";
 
 type Props = {
   slug: string;
@@ -66,14 +79,27 @@ type Props = {
 
 export function RoomDetail({ slug }: Props) {
   const router = useRouter();
-  const data: RoomDetailData = {
-    ...MOCK_DETAIL_DATA,
-    room: { ...MOCK_DETAIL_DATA.room, slug },
-  };
+  const [data, setData] = useState<RoomDetailData>(MOCK_DETAIL_DATA);
   const [view, setView] = useState<View>("detail");
   const [privacyOpen, setPrivacyOpen] = useState(false);
 
-  const { viewer, room, summary } = data;
+  const room = useMemo(() => toRoomApiResponse(data, slug), [data, slug]);
+  const { viewer, summary } = data;
+
+  const isMemberDashboard =
+    viewer.role === "MEMBER" &&
+    (viewer.participantStatus === "SUBMITTED" ||
+      viewer.participantStatus === "DECLINED");
+  const isHostDashboard =
+    viewer.role === "HOST" &&
+    (room.status === "COLLECTING" ||
+      room.status === "READY" ||
+      room.status === "CONFIRMED" ||
+      room.status === "CLOSED");
+  const canHostOpenResult =
+    viewer.role === "HOST" &&
+    (room.status === "READY" || room.status === "CONFIRMED");
+  const endedReason = getEndedReason(data);
 
   useEffect(() => {
     if (
@@ -88,23 +114,13 @@ export function RoomDetail({ slug }: Props) {
   const roomForComponents: RoomApiResponse = {
     ...room,
     participantStatus: viewer.participantStatus,
-    role: viewer.role === "GUEST" ? "guest" : "member",
+    viewerRole: viewer.role,
+    role: viewer.role.toLowerCase() as RoomApiResponse["role"],
     nickname: viewer.nickname,
     participantCount:
       summary.submittedCount + summary.declinedCount + summary.joinedCount,
     maxParticipants: summary.totalCount,
   };
-
-  const isMemberDashboard =
-    viewer.role === "MEMBER" &&
-    (viewer.participantStatus === "SUBMITTED" ||
-      viewer.participantStatus === "DECLINED");
-
-  const endedReason = getEndedReason(data);
-
-  const isHostResultReady =
-    viewer.role === "HOST" &&
-    (room.status === "READY" || room.status === "CONFIRMED");
 
   const handleJoinClick = () => {
     if (viewer.consentRequired) {
@@ -121,12 +137,49 @@ export function RoomDetail({ slug }: Props) {
     router.push(`/room/${slug}/schedule`);
   };
 
-  if (isMemberDashboard) {
+  const handleCloseCollecting = () => {
+    setData((currentData) => ({
+      ...currentData,
+      room: {
+        ...currentData.room,
+        status: "READY",
+        badge: "마감",
+        text: "모임장의 확정을 기다리고 있어요",
+      },
+    }));
+    setView("result");
+  };
+
+  if (view === "result" && canHostOpenResult) {
+    return (
+      <AppShell
+        title="모임 확정하기"
+        leftSlot={<AppBackButton onClick={() => setView("detail")} />}
+        rightSlot={<RoomShareButton />}
+        bottomSlot={
+          <Button size="cta" onClick={() => {}}>
+            선택완료
+          </Button>
+        }
+      >
+        <RoomResultView />
+      </AppShell>
+    );
+  }
+
+  if (isMemberDashboard || isHostDashboard) {
     return (
       <AppShell
         title="모임 자세히 보기"
         leftSlot={<AppBackButton onClick={() => router.back()} />}
-        bottomSlot={<RoomDashboardBottomSlot room={roomForComponents} />}
+        rightSlot={<RoomShareButton />}
+        bottomSlot={
+          <RoomDashboardBottomSlot
+            room={roomForComponents}
+            onCloseCollecting={handleCloseCollecting}
+            onOpenResult={() => setView("result")}
+          />
+        }
       >
         <RoomDashboardView room={roomForComponents} />
       </AppShell>
@@ -144,31 +197,6 @@ export function RoomDetail({ slug }: Props) {
         }
       >
         <RoomEndedView reason={endedReason} />
-      </AppShell>
-    );
-  }
-
-  if (isHostResultReady) {
-    return (
-      <AppShell
-        title="결과"
-        leftSlot={<AppBackButton onClick={() => router.back()} />}
-        bottomSlot={
-          <div className="flex flex-col gap-2.5">
-            <Button size="cta" onClick={() => {}}>
-              확정하기
-            </Button>
-            <Button
-              size="cta"
-              variant="secondary"
-              onClick={() => router.back()}
-            >
-              취소
-            </Button>
-          </div>
-        }
-      >
-        <RoomResultView />
       </AppShell>
     );
   }
@@ -209,7 +237,70 @@ export function RoomDetail({ slug }: Props) {
   );
 }
 
-function RoomDashboardBottomSlot({ room }: { room: RoomApiResponse }) {
+function RoomDashboardBottomSlot({
+  room,
+  onCloseCollecting,
+  onOpenResult,
+}: {
+  room: RoomApiResponse;
+  onCloseCollecting: () => void;
+  onOpenResult: () => void;
+}) {
+  if (room.viewerRole === "HOST" && room.status === "COLLECTING") {
+    return (
+      <div className="flex flex-col gap-3">
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button size="cta">모집 마감하기</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent
+            className="w-[calc(100%-40px)] max-w-[320px] rounded-2xl p-5"
+            overlayClassName="bg-black/70"
+          >
+            <AlertDialogHeader className="place-items-start gap-1 text-left">
+              <AlertDialogTitle className="text-base font-bold text-text-primary">
+                모집을 마감할까요?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-sm leading-[18px] text-text-secondary">
+                모집을 마감하면 더 이상 답변을 받을 수 없어요
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="-mx-0 -mb-0 grid grid-cols-2 gap-2 border-0 bg-transparent p-0 pt-2">
+              <AlertDialogCancel
+                variant="secondary"
+                className="!h-14 w-full rounded-xl text-sm font-semibold text-text-primary"
+              >
+                취소
+              </AlertDialogCancel>
+              <AlertDialogAction
+                className="!h-14 w-full rounded-xl text-sm font-semibold"
+                onClick={onCloseCollecting}
+              >
+                마감하기
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        <Button
+          size="cta"
+          variant="ghost"
+          className="h-10 text-sm font-semibold text-text-primary"
+          onClick={() => {}}
+        >
+          제출결과 수정하기
+        </Button>
+      </div>
+    );
+  }
+
+  if (room.viewerRole === "HOST" && room.status === "READY") {
+    return (
+      <Button size="cta" onClick={onOpenResult}>
+        모임 확정하기
+      </Button>
+    );
+  }
+
   if (room.status === "COLLECTING") {
     return (
       <Button size="cta" variant="outline" onClick={() => {}}>
@@ -241,6 +332,20 @@ function RoomDashboardBottomSlot({ room }: { room: RoomApiResponse }) {
   );
 }
 
+function RoomShareButton() {
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      aria-label="공유하기"
+      onClick={() => {}}
+    >
+      <span className="icon icon-share !size-4 text-text-primary" />
+    </Button>
+  );
+}
+
 function getEndedReason(data: RoomDetailData) {
   const { room, viewer } = data;
 
@@ -264,4 +369,21 @@ function getEndedReason(data: RoomDetailData) {
   }
 
   return null;
+}
+
+function toRoomApiResponse(
+  data: RoomDetailData,
+  slug: string,
+): RoomApiResponse {
+  const { viewer, room, summary } = data;
+
+  return {
+    ...room,
+    slug,
+    participantStatus: viewer.participantStatus,
+    viewerRole: viewer.role,
+    participantCount:
+      summary.submittedCount + summary.declinedCount + summary.joinedCount,
+    maxParticipants: summary.totalCount,
+  };
 }
