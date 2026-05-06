@@ -148,6 +148,8 @@
 
 .icon-logo {
   --icon-mask: var(--ico-logo);
+  width:2.5rem;
+  height: 2.5rem;
 }
 
 .icon-main-link {
@@ -282,4 +284,6 @@
 .icon-arrow-right {
   --icon-mask: var(--ico-arrow);
   transform: scaleX(-1);
+  width:1.0rem;
+  height: 1.0rem;
 }

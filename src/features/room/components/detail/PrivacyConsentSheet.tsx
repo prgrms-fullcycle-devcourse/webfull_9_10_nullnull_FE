@@ -114,7 +114,7 @@ export function PrivacyConsentSheet({ onClose, onAgree }: Props) {
 
   return (
     <div
-      className="absolute inset-0 z-50 flex flex-col justify-end bg-black/20"
+      className="fixed inset-0 z-50 flex flex-col justify-end bg-black/20"
       onClick={onClose}
     >
       <div

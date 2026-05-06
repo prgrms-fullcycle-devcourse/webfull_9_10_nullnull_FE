@@ -8,11 +8,13 @@ type InfoRowProps = {
 function InfoRow({ icon, label, value, valueClassName }: InfoRowProps) {
   return (
     <div className="flex items-start gap-3">
-      <span
-        className={`icon icon-${icon} text-gray-400 shrink-0 mt-0.5`}
-        aria-hidden="true"
-      />
-      <div className="flex flex-col gap-0.5">
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gray-100">
+        <span
+          className={`icon icon-${icon} !size-4 text-gray-400`}
+          aria-hidden="true"
+        />
+      </span>
+      <div className="flex flex-col gap-0.5 pt-0.5">
         <span className="text-xs text-gray-400">{label}</span>
         <span
           className={`text-sm font-medium text-gray-700 ${valueClassName ?? ""}`}
@@ -41,13 +43,13 @@ export function RoomInfoList({ dateRange, timeRange, days, deadline }: Props) {
       />
       <InfoRow
         icon="time"
-        label="활동 시간대"
+        label="희망 시간대"
         value={`${timeRange.start} - ${timeRange.end}`}
       />
       <InfoRow icon="deily" label="후보 요일" value={days.join(", ")} />
       <InfoRow
         icon="deadline"
-        label="마감 기한"
+        label="응답 마감"
         value={`${deadline} 까지`}
         valueClassName="text-red-500"
       />
