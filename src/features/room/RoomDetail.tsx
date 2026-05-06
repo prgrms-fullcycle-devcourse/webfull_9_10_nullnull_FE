@@ -4,7 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
-import { AppBackButton, AppLogoLink, AppShell } from "@/components/layout";
+import {
+  AppBackButton,
+  AppLogoLink,
+  AppShareButton,
+  AppShell,
+} from "@/components/layout";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,8 +34,8 @@ import type { RoomApiResponse, RoomDetailData } from "./types/room";
 
 const MOCK_DETAIL_DATA: RoomDetailData = {
   viewer: {
-    role: "HOST",
-    participantStatus: "SUBMITTED",
+    role: "MEMBER",
+    participantStatus: "",
     nickname: undefined,
     consentRequired: true,
   },
@@ -38,7 +43,7 @@ const MOCK_DETAIL_DATA: RoomDetailData = {
     slug: "abc123",
     name: "우리 언제 밥 한번 먹지",
     category: "MEAL",
-    status: "COLLECTING",
+    status: "CONFIRMED",
     hostNickname: "방만든모임장",
     badge: "진행중",
     text: "안 되는 시간을 선택하고 모임을 확장해 보세요",
@@ -155,7 +160,7 @@ export function RoomDetail({ slug }: Props) {
       <AppShell
         title="모임 확정하기"
         leftSlot={<AppBackButton onClick={() => setView("detail")} />}
-        rightSlot={<RoomShareButton />}
+        rightSlot={<AppShareButton />}
         bottomSlot={
           <Button size="cta" onClick={() => {}}>
             선택완료
@@ -172,7 +177,7 @@ export function RoomDetail({ slug }: Props) {
       <AppShell
         title="모임 자세히 보기"
         leftSlot={<AppBackButton onClick={() => router.back()} />}
-        rightSlot={<RoomShareButton />}
+        rightSlot={<AppShareButton />}
         bottomSlot={
           <RoomDashboardBottomSlot
             room={roomForComponents}
@@ -328,20 +333,6 @@ function RoomDashboardBottomSlot({
   return (
     <Button size="cta" asChild>
       <Link href="/room">새 모임 만들기</Link>
-    </Button>
-  );
-}
-
-function RoomShareButton() {
-  return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon"
-      aria-label="공유하기"
-      onClick={() => {}}
-    >
-      <span className="icon icon-share !size-4 text-text-primary" />
     </Button>
   );
 }
