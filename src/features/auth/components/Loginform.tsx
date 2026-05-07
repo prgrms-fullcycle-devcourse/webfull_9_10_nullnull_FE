@@ -20,19 +20,42 @@ const loginFeatures = [
   },
 ];
 
+import { supabase } from "@/lib/supabase/client";
+import { authApi } from "../api/auth.api";
+import { toast } from "sonner";
+
 export function LoginForm() {
   const { setUser } = useAuthStore();
   const router = useRouter();
 
-  const handleDevLogin = () => {
-    Cookies.set("access_token", "dev-token-temp");
-    setUser({
-      user_id: "dev-user",
-      nickname: "개발용계정",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    });
-    router.push("/");
+  const handleTestLogin = async (email: string, pass: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password: pass,
+      });
+
+      if (error) throw error;
+
+      if (data.session) {
+        // 백엔드와 동기화
+        const response = await authApi.sync(data.session.access_token);
+        setUser(response.data.user);
+
+        // 쿠키 설정
+        Cookies.set("access_token", data.session.access_token, { expires: 7 });
+
+        if (response.data.consentRequired) {
+          await authApi.consent(data.session.access_token);
+        }
+
+        toast.success(`${response.data.user.nickname}님, 환영합니다!`);
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("테스트 로그인 실패:", error);
+      toast.error("로그인에 실패했습니다. 계정 정보를 확인해주세요.");
+    }
   };
 
   return (
@@ -40,13 +63,22 @@ export function LoginForm() {
       leftSlot={<AppLogoLink />}
       bottomSlot={
         <div className="flex w-full flex-col gap-2">
-          <Button
-            variant="outline"
-            className="w-full h-12 rounded-xl text-gray-400 border-gray-200"
-            onClick={handleDevLogin}
-          >
-            임시 로그인 (개발용)
-          </Button>
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              variant="outline"
+              className="h-12 rounded-xl text-gray-600 border-gray-200 font-medium"
+              onClick={() => handleTestLogin("host@test.com", "host1234")}
+            >
+              호스트 로그인
+            </Button>
+            <Button
+              variant="outline"
+              className="h-12 rounded-xl text-gray-600 border-gray-200 font-medium"
+              onClick={() => handleTestLogin("member@test.com", "member1234")}
+            >
+              멤버 로그인
+            </Button>
+          </div>
           <KakaoLoginBtn />
         </div>
       }
