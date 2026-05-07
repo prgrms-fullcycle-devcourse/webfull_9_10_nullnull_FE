@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { type RoomData } from "../../CreateRoom";
 
 const TIME_OPTIONS = Array.from({ length: 24 }).map((_, i) => {
   const isPM = i >= 12;
@@ -18,15 +17,19 @@ const TIME_OPTIONS = Array.from({ length: 24 }).map((_, i) => {
   return `${ampm} ${hour}:00`;
 });
 
-export function CreateRoomStep3() {
-  const [preferredDay, setPreferredDay] = useState("weekday");
-  const [customDays, setCustomDays] = useState<string[]>([]);
+interface Props {
+  data: RoomData;
+  onUpdate: (data: Partial<RoomData>) => void;
+}
+
+export function CreateRoomStep3({ data, onUpdate }: Props) {
   const [recommendPlace, setRecommendPlace] = useState(false);
 
   const toggleDay = (day: string) => {
-    setCustomDays((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
-    );
+    const nextDays = data.customDays.includes(day)
+      ? data.customDays.filter((d) => d !== day)
+      : [...data.customDays, day];
+    onUpdate({ customDays: nextDays });
   };
 
   return (
@@ -46,13 +49,15 @@ export function CreateRoomStep3() {
           <Input
             type="date"
             className="flex-1 px-3 text-sm h-[40px] rounded-[12px] border border-[#EFF1F7] bg-[#FCFCFC]"
-            defaultValue="2026-05-01"
+            value={data.startDate}
+            onChange={(e) => onUpdate({ startDate: e.target.value })}
           />
           <span className="text-gray-400">~</span>
           <Input
             type="date"
             className="flex-1 px-3 text-sm h-[40px] rounded-[12px] border border-[#EFF1F7] bg-[#FCFCFC]"
-            defaultValue="2026-05-30"
+            value={data.endDate}
+            onChange={(e) => onUpdate({ endDate: e.target.value })}
           />
         </div>
       </div>
@@ -62,7 +67,10 @@ export function CreateRoomStep3() {
           희망 시간대 <span className="text-red-500">*</span>
         </Label>
         <div className="flex items-center gap-2">
-          <Select defaultValue="오후 6:00">
+          <Select
+            value={data.startTime}
+            onValueChange={(val) => onUpdate({ startTime: val })}
+          >
             <SelectTrigger className="flex-1 !h-[40px] px-3 rounded-[12px] border border-[#EFF1F7] bg-[#FCFCFC]">
               <SelectValue placeholder="시작 시간" />
             </SelectTrigger>
@@ -75,7 +83,10 @@ export function CreateRoomStep3() {
             </SelectContent>
           </Select>
           <span className="text-gray-400">~</span>
-          <Select defaultValue="오후 10:00">
+          <Select
+            value={data.endTime}
+            onValueChange={(val) => onUpdate({ endTime: val })}
+          >
             <SelectTrigger className="flex-1 !h-[40px] px-3 rounded-[12px] border border-[#EFF1F7] bg-[#FCFCFC]">
               <SelectValue placeholder="종료 시간" />
             </SelectTrigger>
@@ -96,9 +107,9 @@ export function CreateRoomStep3() {
         </Label>
         <div className="flex rounded-[12px] overflow-hidden h-[40px] border border-[#EFF1F7] bg-[#FCFCFC] divide-x divide-[#EFF1F7]">
           <button
-            onClick={() => setPreferredDay("weekday")}
+            onClick={() => onUpdate({ preferredDayType: "weekday" })}
             className={`flex-1 font-medium text-sm transition-colors relative ${
-              preferredDay === "weekday"
+              data.preferredDayType === "weekday"
                 ? "bg-primary text-primary-foreground z-10"
                 : "text-gray-700 hover:bg-gray-50"
             }`}
@@ -106,9 +117,9 @@ export function CreateRoomStep3() {
             주중
           </button>
           <button
-            onClick={() => setPreferredDay("weekend")}
+            onClick={() => onUpdate({ preferredDayType: "weekend" })}
             className={`flex-1 font-medium text-sm transition-colors relative ${
-              preferredDay === "weekend"
+              data.preferredDayType === "weekend"
                 ? "bg-primary text-primary-foreground z-10"
                 : "text-gray-700 hover:bg-gray-50"
             }`}
@@ -116,9 +127,9 @@ export function CreateRoomStep3() {
             주말
           </button>
           <button
-            onClick={() => setPreferredDay("custom")}
+            onClick={() => onUpdate({ preferredDayType: "custom" })}
             className={`flex-1 font-medium text-sm transition-colors relative ${
-              preferredDay === "custom"
+              data.preferredDayType === "custom"
                 ? "bg-primary text-primary-foreground z-10"
                 : "text-gray-700 hover:bg-gray-50"
             }`}
@@ -126,14 +137,14 @@ export function CreateRoomStep3() {
             요일 선택
           </button>
         </div>
-        {preferredDay === "custom" && (
+        {data.preferredDayType === "custom" && (
           <div className="flex gap-2 mt-1">
             {["월", "화", "수", "목", "금", "토", "일"].map((day) => (
               <button
                 key={day}
                 onClick={() => toggleDay(day)}
                 className={`flex-1 h-[40px] rounded-[12px] font-medium text-sm transition-colors border ${
-                  customDays.includes(day)
+                  data.customDays.includes(day)
                     ? "bg-primary-subtle text-primary border-primary"
                     : "bg-[#FCFCFC] text-gray-700 border-[#EFF1F7] hover:bg-gray-50"
                 }`}
@@ -154,9 +165,13 @@ export function CreateRoomStep3() {
           <Input
             type="date"
             className="flex-1 px-3 text-sm h-[40px] rounded-[12px] border border-[#EFF1F7] bg-[#FCFCFC]"
-            defaultValue="2026-05-07"
+            value={data.deadlineDate}
+            onChange={(e) => onUpdate({ deadlineDate: e.target.value })}
           />
-          <Select defaultValue="오전 9:00">
+          <Select
+            value={data.deadlineTime}
+            onValueChange={(val) => onUpdate({ deadlineTime: val })}
+          >
             <SelectTrigger className="flex-1 !h-[40px] px-3 rounded-[12px] border border-[#EFF1F7] bg-[#FCFCFC]">
               <SelectValue placeholder="마감 시간" />
             </SelectTrigger>

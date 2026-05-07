@@ -1,8 +1,14 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { RoomData } from "../../CreateRoom";
 
-export function CreateRoomStep1() {
+interface Props {
+  data: RoomData;
+  onUpdate: (data: Partial<RoomData>) => void;
+}
+
+export function CreateRoomStep1({ data, onUpdate }: Props) {
   return (
     <div className="flex-1 flex flex-col gap-6">
       <div>
@@ -19,7 +25,10 @@ export function CreateRoomStep1() {
         <Input
           type="text"
           placeholder="발넓은모임장"
-          defaultValue="발넓은모임장"
+          value={data.nickname}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            onUpdate({ nickname: e.target.value })
+          }
           className="h-[40px] rounded-[12px] border border-[#EFF1F7] bg-[#FCFCFC]"
         />
       </div>
