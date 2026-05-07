@@ -5,7 +5,7 @@ const protectedRoutes = ["/setting"];
 
 const authRoutes = ["/login"];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const authToken = request.cookies.get("access_token")?.value;
