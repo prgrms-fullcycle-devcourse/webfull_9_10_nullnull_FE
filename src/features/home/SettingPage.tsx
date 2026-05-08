@@ -1,23 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { AppShell, AppContent } from "@/components/layout";
-import { useAuthStore } from "@/store/useAuthStore";
-import { useAuth } from "@/features/auth/hooks/useAuth";
-import { Switch } from "@/components/ui/switch";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+import { AppContent, AppShell } from "@/components/layout";
+import { AppDialog } from "@/components/dialog";
+import { Switch } from "@/components/ui/switch";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export function SettingPage() {
   const router = useRouter();
@@ -98,71 +89,45 @@ export function SettingPage() {
             </div>
           </section>
 
-          {/* 하단 여백 채우기 */}
-          <div className="flex-1"></div>
+          <div className="flex-1" />
 
-          <section className="px-5 pb-10 pt-4 flex items-center justify-center gap-4 text-sm font-medium">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <button className="text-gray-400 hover:text-gray-600">
-                  로그아웃
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="w-[320px] rounded-2xl">
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="text-center text-lg font-bold">
-                    로그아웃을 진행하시겠어요?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription className="text-center text-sm text-gray-500">
-                    로그아웃 하면 알림을 받을 수 없어요
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter className="flex-row items-center gap-3 sm:justify-center mt-4">
-                  <AlertDialogCancel className="mt-0 flex-1 rounded-xl h-12 text-sm font-semibold bg-gray-50 border-none hover:bg-gray-100">
-                    취소
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => logout()}
-                    disabled={isLoggingOut}
-                    className="flex-1 rounded-xl h-12 text-sm font-semibold bg-blue-500 text-white hover:bg-blue-600"
-                  >
-                    로그아웃
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+          <section className="flex items-center justify-center gap-4 px-5 pb-10 pt-4 text-sm font-medium">
+            <AppDialog
+              type="confirm"
+              dialogSize="compact"
+              title="로그아웃을 진행하시겠어요?"
+              description="로그아웃하면 알림을 받을 수 없어요"
+              actions={[
+                { label: "취소", variant: "secondary" },
+                { label: "로그아웃", onClick: logout, disabled: isLoggingOut },
+              ]}
+            >
+              <button className="text-gray-400 hover:text-gray-600">
+                로그아웃
+              </button>
+            </AppDialog>
 
             <span className="text-gray-300">|</span>
 
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <button className="text-red-400 hover:text-red-500">
-                  회원탈퇴
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="w-[320px] rounded-2xl">
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="text-center text-lg font-bold">
-                    탈퇴 시 모든 모임 기록이 사라져요
-                  </AlertDialogTitle>
-                  <AlertDialogDescription className="text-center text-sm text-gray-500">
-                    그래도 탈퇴 하시겠어요?
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter className="flex-row items-center gap-3 sm:justify-center mt-4">
-                  <AlertDialogCancel className="mt-0 flex-1 rounded-xl h-12 text-sm font-semibold bg-gray-50 border-none hover:bg-gray-100">
-                    취소
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => withdraw()}
-                    disabled={isWithdrawing}
-                    className="flex-1 rounded-xl h-12 text-sm font-semibold bg-red-500 text-white hover:bg-red-600"
-                  >
-                    회원탈퇴
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <AppDialog
+              type="confirm"
+              dialogSize="compact"
+              title="탈퇴 시 모든 모임 기록이 사라져요"
+              description="그래도 탈퇴하시겠어요?"
+              actions={[
+                { label: "취소", variant: "secondary" },
+                {
+                  label: "회원탈퇴",
+                  variant: "danger",
+                  onClick: withdraw,
+                  disabled: isWithdrawing,
+                },
+              ]}
+            >
+              <button className="text-red-400 hover:text-red-500">
+                회원탈퇴
+              </button>
+            </AppDialog>
           </section>
         </div>
       </AppContent>

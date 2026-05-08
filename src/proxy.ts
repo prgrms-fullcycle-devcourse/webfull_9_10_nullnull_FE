@@ -5,10 +5,23 @@ const protectedRoutes = ["/setting"];
 
 const authRoutes = ["/login"];
 
+// TODO: 설정 확인용 임시 우회입니다. 확인 후 이 블록만 삭제해주세요.
+const temporarySettingCheckRoutes = ["/setting"];
+// END
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const authToken = request.cookies.get("access_token")?.value;
+  // TODO: 설정 확인용 임시 우회입니다. 확인 후 이 블록만 삭제해주세요.
+  const isTemporarySettingCheckRoute = temporarySettingCheckRoutes.some(
+    (route) => pathname.startsWith(route),
+  );
+
+  if (isTemporarySettingCheckRoute) {
+    return NextResponse.next();
+  }
+  //END
 
   const isProtectedRoute = protectedRoutes.some((route) =>
     pathname.startsWith(route),

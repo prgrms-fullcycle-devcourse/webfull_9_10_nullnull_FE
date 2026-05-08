@@ -83,9 +83,16 @@ export function HomePage() {
     <AppShell
       leftSlot={<AppLogoLink />}
       rightSlot={
-        <Button className="h-10 rounded-xl px-4" asChild>
-          <Link href="/login">로그인</Link>
-        </Button>
+        <>
+          <Button className="h-10 rounded-xl px-4" asChild>
+            <Link href="/login">로그인</Link>
+          </Button>
+          {/* TODO: 설정 dialog 확인용 임시 버튼입니다. 확인 후 삭제해주세요. */}
+          <Button className="h-10 rounded-xl px-4" variant="outline" asChild>
+            <Link href="/setting">설정 확인</Link>
+          </Button>
+          {/* END */}
+        </>
       }
       bottomSlot={
         <Button size="cta" asChild>

@@ -10,32 +10,22 @@ import {
   AppShareButton,
   AppShell,
 } from "@/components/layout";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { AppDialog } from "@/components/dialog";
 import { Button } from "@/components/ui/button";
+import { useRoomJoinStore } from "@/store/useRoomJoinStore";
 
 import { JoinNameStep } from "./components/detail/JoinNameStep";
+import { PrivacyConsentSheet } from "./components/detail/PrivacyConsentSheet";
 import { RoomDashboardView } from "./components/detail/RoomDashboardView";
 import { RoomDetailView } from "./components/detail/RoomDetailView";
 import { RoomEndedView } from "./components/detail/RoomEndedView";
 import { RoomResultView } from "./components/detail/RoomResultView";
-import { PrivacyConsentSheet } from "./components/detail/PrivacyConsentSheet";
-import { useRoomJoinStore } from "@/store/useRoomJoinStore";
 import type { RoomApiResponse, RoomDetailData } from "./types/room";
 
 const MOCK_DETAIL_DATA: RoomDetailData = {
   viewer: {
     role: "MEMBER",
-    participantStatus: "JOINED",
+    participantStatus: "SUBMITTED",
     nickname: undefined,
     consentRequired: true,
   },
@@ -46,7 +36,7 @@ const MOCK_DETAIL_DATA: RoomDetailData = {
     status: "COLLECTING",
     hostNickname: "방만든모임장",
     badge: "진행중",
-    text: "안 되는 시간을 선택하고 모임을 확장해 보세요",
+    text: "안 되는 시간을 선택하고 모임을 확정해 보세요",
     dateStart: "2026-05-24",
     dateEnd: "2026-05-26",
     availableDays: [6, 7, 1],
@@ -87,6 +77,7 @@ export function RoomDetail({ slug }: Props) {
   const [data, setData] = useState<RoomDetailData>(MOCK_DETAIL_DATA);
   const [view, setView] = useState<View>("detail");
   const [privacyOpen, setPrivacyOpen] = useState(false);
+  const setJoin = useRoomJoinStore((state) => state.set);
 
   const room = useMemo(() => toRoomApiResponse(data, slug), [data, slug]);
   const { viewer, summary } = data;
@@ -134,8 +125,6 @@ export function RoomDetail({ slug }: Props) {
       setView("join-name");
     }
   };
-
-  const setJoin = useRoomJoinStore((s) => s.set);
 
   const handleJoinComplete = (name: string, uuid: string) => {
     setJoin(name, uuid);
@@ -254,38 +243,17 @@ function RoomDashboardBottomSlot({
   if (room.viewerRole === "HOST" && room.status === "COLLECTING") {
     return (
       <div className="flex flex-col gap-3">
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button size="cta">모집 마감하기</Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent
-            className="w-[calc(100%-40px)] max-w-[320px] rounded-2xl p-5"
-            overlayClassName="bg-black/70"
-          >
-            <AlertDialogHeader className="place-items-start gap-1 text-left">
-              <AlertDialogTitle className="text-base font-bold text-text-primary">
-                모집을 마감할까요?
-              </AlertDialogTitle>
-              <AlertDialogDescription className="text-sm leading-[18px] text-text-secondary">
-                모집을 마감하면 더 이상 답변을 받을 수 없어요
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter className="-mx-0 -mb-0 grid grid-cols-2 gap-2 border-0 bg-transparent p-0 pt-2">
-              <AlertDialogCancel
-                variant="secondary"
-                className="!h-14 w-full rounded-xl text-sm font-semibold text-text-primary"
-              >
-                취소
-              </AlertDialogCancel>
-              <AlertDialogAction
-                className="!h-14 w-full rounded-xl text-sm font-semibold"
-                onClick={onCloseCollecting}
-              >
-                마감하기
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <AppDialog
+          type="confirm"
+          title="모집을 마감할까요?"
+          description="모집을 마감하면 더 이상 답변을 받을 수 없어요"
+          actions={[
+            { label: "취소", variant: "secondary" },
+            { label: "마감하기", onClick: onCloseCollecting },
+          ]}
+        >
+          <Button size="cta">모집 마감하기</Button>
+        </AppDialog>
         <Button
           size="cta"
           variant="ghost"
