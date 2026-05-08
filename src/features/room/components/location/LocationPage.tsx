@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppBackButton, AppContent, AppShell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
-import { MapView } from "@/components/MapView";
+import { MapView } from "@/components/kakao";
 import { LocationSearchSheet } from "./LocationSearchSheet";
 import { useFeedbackStore } from "@/features/room/model/useFeedbackStore";
 import type { RoomLocation } from "@/features/room/types/room";

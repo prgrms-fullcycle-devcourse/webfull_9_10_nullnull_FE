@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { MapView } from "@/components/MapView";
+import { MapView } from "@/components/kakao";
 
 const MOCK_TIMES = [
   {
