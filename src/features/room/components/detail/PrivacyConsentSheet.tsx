@@ -143,7 +143,6 @@ export function PrivacyConsentSheet({ onClose, onAgree }: Props) {
       aria-modal="true"
       aria-label="약관에 동의해주세요"
     >
-      {/* 딤 */}
       <div className="absolute inset-0 bg-black/20" onClick={onClose} />
 
       {/* .Wrap 너비(750px) 기준으로 정렬 */}
@@ -241,7 +240,7 @@ function TermsSheetBody({
             약관에 동의해주세요
           </h2>
 
-          <div className="flex flex-col gap-0 border border-gray-200 rounded-xl overflow-hidden mb-6">
+          <div className="flex flex-col border border-gray-200 rounded-xl overflow-hidden mb-6">
             <button
               type="button"
               className="flex items-center justify-between px-4 py-3.5 bg-white"
