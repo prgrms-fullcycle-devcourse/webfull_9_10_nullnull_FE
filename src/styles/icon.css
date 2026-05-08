@@ -46,6 +46,9 @@
 
   /* 달력  */
   --ico-calendar: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_3420_2170)'%3E%3Cpath d='M19 4H18V3C18 2.45 17.55 2 17 2C16.45 2 16 2.45 16 3V4H8V3C8 2.45 7.55 2 7 2C6.45 2 6 2.45 6 3V4H5C3.89 4 3.01 4.9 3.01 6L3 20C3 21.1 3.89 22 5 22H19C20.1 22 21 21.1 21 20V6C21 4.9 20.1 4 19 4ZM19 19C19 19.55 18.55 20 18 20H6C5.45 20 5 19.55 5 19V9H19V19ZM7 11H9V13H7V11ZM11 11H13V13H11V11ZM15 11H17V13H15V11Z' fill='%23323232'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_3420_2170'%3E%3Crect width='24' height='24' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
+  
+  /* 체크 표시 */
+  --ico-checked: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_4565_2750)'%3E%3Cpath d='M9 16.1998L5.5 12.6998C5.11 12.3098 4.49 12.3098 4.1 12.6998C3.71 13.0898 3.71 13.7098 4.1 14.0998L8.29 18.2898C8.68 18.6798 9.31 18.6798 9.7 18.2898L20.3 7.69982C20.69 7.30982 20.69 6.68982 20.3 6.29982C19.91 5.90982 19.29 5.90982 18.9 6.29982L9 16.1998Z' fill='black'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_4565_2750'%3E%3Crect width='24' height='24' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
 
   /* 사람추가  */
   --ico-person_add: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_3441_4661)'%3E%3Cpath d='M15 12C17.21 12 19 10.21 19 8C19 5.79 17.21 4 15 4C12.79 4 11 5.79 11 8C11 10.21 12.79 12 15 12ZM6 10V8C6 7.45 5.55 7 5 7C4.45 7 4 7.45 4 8V10H2C1.45 10 1 10.45 1 11C1 11.55 1.45 12 2 12H4V14C4 14.55 4.45 15 5 15C5.55 15 6 14.55 6 14V12H8C8.55 12 9 11.55 9 11C9 10.45 8.55 10 8 10H6ZM15 14C12.33 14 7 15.34 7 18V19C7 19.55 7.45 20 8 20H22C22.55 20 23 19.55 23 19V18C23 15.34 17.67 14 15 14Z' fill='%23323232'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_3441_4661'%3E%3Crect width='24' height='24' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A");
@@ -211,6 +214,10 @@
 
 .icon-calendar {
   --icon-mask: var(--ico-calendar);
+}
+
+.icon-checked {
+  --icon-mask: var(--ico-checked);
 }
 
 .icon-person-add {
