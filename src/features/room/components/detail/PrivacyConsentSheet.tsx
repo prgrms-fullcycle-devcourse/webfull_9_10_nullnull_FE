@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { BottomSheet } from "@/components/dialog/BottomSheet";
 
 type Props = {
   onClose: () => void;
@@ -94,92 +95,20 @@ const TERM_CONTENT: Record<TermId, { title: string; body: React.ReactNode }> = {
   },
 };
 
-const DISMISS_THRESHOLD = 120;
-
 export function PrivacyConsentSheet({ onClose, onAgree }: Props) {
-  const [translateY, setTranslateY] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const startYRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = prev;
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [onClose]);
-
-  const handlePointerDown = (e: React.PointerEvent) => {
-    startYRef.current = e.clientY;
-    setIsDragging(true);
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-  };
-
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (startYRef.current === null) return;
-    const dy = Math.max(0, e.clientY - startYRef.current);
-    setTranslateY(dy);
-  };
-
-  const handlePointerUp = () => {
-    setIsDragging(false);
-    startYRef.current = null;
-    if (translateY >= DISMISS_THRESHOLD) {
-      onClose();
-    } else {
-      setTranslateY(0);
-    }
-  };
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex flex-col justify-end"
-      role="dialog"
-      aria-modal="true"
-      aria-label="약관에 동의해주세요"
-    >
-      <div className="absolute inset-0 bg-black/20" onClick={onClose} />
-
-      {/* .Wrap 너비(750px) 기준으로 정렬 */}
-      <div className="relative w-full max-w-[750px] mx-auto">
-        {/* .wrap-container 너비(500px) 기준: 모바일은 중앙, lg 이상은 우측 */}
-        <div
-          className="w-full max-w-[var(--layout-mobile)] mx-auto lg:ml-auto lg:mr-0"
-          style={{
-            transform: `translateY(${translateY}px)`,
-            transition: isDragging ? "none" : "transform 0.3s ease",
-          }}
-        >
-          <TermsSheetBody
-            onAgree={onAgree}
-            onClose={onClose}
-            onHandlePointerDown={handlePointerDown}
-            onHandlePointerMove={handlePointerMove}
-            onHandlePointerUp={handlePointerUp}
-          />
-        </div>
-      </div>
-    </div>
+    <BottomSheet onClose={onClose} aria-label="약관에 동의해주세요">
+      <TermsSheetBody onAgree={onAgree} onClose={onClose} />
+    </BottomSheet>
   );
 }
 
 function TermsSheetBody({
   onAgree,
   onClose,
-  onHandlePointerDown,
-  onHandlePointerMove,
-  onHandlePointerUp,
 }: {
   onAgree: () => void;
   onClose: () => void;
-  onHandlePointerDown: (e: React.PointerEvent) => void;
-  onHandlePointerMove: (e: React.PointerEvent) => void;
-  onHandlePointerUp: () => void;
 }) {
   const [checked, setChecked] = useState<Record<TermId, boolean>>({
     service: false,
@@ -199,17 +128,7 @@ function TermsSheetBody({
   };
 
   return (
-    <div className="bg-white rounded-t-2xl px-5">
-      <div
-        className="w-full pt-3 pb-4 flex justify-center cursor-grab active:cursor-grabbing touch-none select-none"
-        onPointerDown={onHandlePointerDown}
-        onPointerMove={onHandlePointerMove}
-        onPointerUp={onHandlePointerUp}
-        onPointerCancel={onHandlePointerUp}
-      >
-        <div className="w-10 h-1 bg-gray-300 rounded-full" />
-      </div>
-
+    <div className="px-5">
       {viewingTerm ? (
         <>
           <div className="flex items-center gap-2 mb-6">
