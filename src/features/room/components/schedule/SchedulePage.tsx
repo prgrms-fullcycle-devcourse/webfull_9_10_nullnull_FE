@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/button";
 import { TimeTable } from "./TimeTable";
 import { useRoomJoinStore } from "@/store/useRoomJoinStore";
+import { useFeedbackStore } from "@/features/room/model/useFeedbackStore";
 import type { RoomApiResponse } from "@/features/room/types/room";
 
 function generateDates(
@@ -47,6 +47,7 @@ type Props = {
 export function SchedulePage({ slug, room }: Props) {
   const router = useRouter();
   const { name, uuid, clear } = useRoomJoinStore();
+  const setFeedback = useFeedbackStore((s) => s.set);
   const [selectedSlots, setSelectedSlots] = useState<Set<string>>(new Set());
 
   const dates = generateDates(room.dateStart, room.dateEnd, room.availableDays);
@@ -61,8 +62,14 @@ export function SchedulePage({ slug, room }: Props) {
     if (room.collectOrigin) {
       router.push(`/room/${slug}/location`);
     } else {
-      router.push(`/room/${slug}/feedback?result=waiting`);
+      setFeedback("waiting");
+      router.push(`/room/${slug}`);
     }
+  };
+
+  const handleAbsent = () => {
+    setFeedback("absent");
+    router.push(`/room/${slug}`);
   };
 
   return (
@@ -80,12 +87,12 @@ export function SchedulePage({ slug, room }: Props) {
           <Button size="cta" onClick={handleNext}>
             다음
           </Button>
-          <Link
-            href={`/room/${slug}/feedback?result=absent`}
+          <button
+            onClick={handleAbsent}
             className="flex items-center justify-center h-11 text-sm text-gray-400 hover:text-gray-600 transition-colors"
           >
             이번 모임은 안 나갈래요
-          </Link>
+          </button>
         </div>
       }
     >

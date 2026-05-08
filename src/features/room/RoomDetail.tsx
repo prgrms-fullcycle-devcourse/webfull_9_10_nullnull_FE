@@ -19,13 +19,15 @@ import { PrivacyConsentSheet } from "./components/detail/PrivacyConsentSheet";
 import { RoomDashboardView } from "./components/detail/RoomDashboardView";
 import { RoomDetailView } from "./components/detail/RoomDetailView";
 import { RoomEndedView } from "./components/detail/RoomEndedView";
+import { RoomFeedbackView } from "./components/detail/RoomFeedbackView";
 import { RoomResultView } from "./components/detail/RoomResultView";
+import { useFeedbackStore } from "@/features/room/model/useFeedbackStore";
 import type { RoomApiResponse, RoomDetailData } from "./types/room";
 
 const MOCK_DETAIL_DATA: RoomDetailData = {
   viewer: {
-    role: "MEMBER",
-    participantStatus: "SUBMITTED",
+    role: "GUEST",
+    participantStatus: "JOINED",
     nickname: undefined,
     consentRequired: true,
   },
@@ -96,16 +98,26 @@ export function RoomDetail({ slug }: Props) {
     viewer.role === "HOST" &&
     (room.status === "READY" || room.status === "CONFIRMED");
   const endedReason = getEndedReason(data);
+  const feedbackResult = useFeedbackStore((s) => s.result);
+  const clearFeedback = useFeedbackStore((s) => s.clear);
 
   useEffect(() => {
     if (
+      !feedbackResult &&
       viewer.role === "MEMBER" &&
       viewer.participantStatus === "JOINED" &&
       room.status === "COLLECTING"
     ) {
       router.replace(`/room/${slug}/schedule`);
     }
-  }, [viewer.role, viewer.participantStatus, room.status, slug, router]);
+  }, [
+    feedbackResult,
+    viewer.role,
+    viewer.participantStatus,
+    room.status,
+    slug,
+    router,
+  ]);
 
   const roomForComponents: RoomApiResponse = {
     ...room,
@@ -126,6 +138,14 @@ export function RoomDetail({ slug }: Props) {
     }
   };
 
+  useEffect(() => {
+    if (!feedbackResult) return;
+    const timer = setTimeout(() => {
+      clearFeedback();
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [feedbackResult, clearFeedback]);
+
   const handleJoinComplete = (name: string, uuid: string) => {
     setJoin(name, uuid);
     router.push(`/room/${slug}/schedule`);
@@ -143,6 +163,14 @@ export function RoomDetail({ slug }: Props) {
     }));
     setView("result");
   };
+
+  if (feedbackResult) {
+    return (
+      <AppShell leftSlot={<AppLogoLink />}>
+        <RoomFeedbackView result={feedbackResult} roomStatus={room.status} />
+      </AppShell>
+    );
+  }
 
   if (view === "result" && canHostOpenResult) {
     return (

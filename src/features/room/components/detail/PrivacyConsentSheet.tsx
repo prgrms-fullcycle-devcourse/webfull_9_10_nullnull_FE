@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 type Props = {
@@ -94,7 +94,94 @@ const TERM_CONTENT: Record<TermId, { title: string; body: React.ReactNode }> = {
   },
 };
 
+const DISMISS_THRESHOLD = 120;
+
 export function PrivacyConsentSheet({ onClose, onAgree }: Props) {
+  const [translateY, setTranslateY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const startYRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [onClose]);
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    startYRef.current = e.clientY;
+    setIsDragging(true);
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (startYRef.current === null) return;
+    const dy = Math.max(0, e.clientY - startYRef.current);
+    setTranslateY(dy);
+  };
+
+  const handlePointerUp = () => {
+    setIsDragging(false);
+    startYRef.current = null;
+    if (translateY >= DISMISS_THRESHOLD) {
+      onClose();
+    } else {
+      setTranslateY(0);
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex flex-col justify-end"
+      role="dialog"
+      aria-modal="true"
+      aria-label="약관에 동의해주세요"
+    >
+      {/* 딤 */}
+      <div className="absolute inset-0 bg-black/20" onClick={onClose} />
+
+      {/* .Wrap 너비(750px) 기준으로 정렬 */}
+      <div className="relative w-full max-w-[750px] mx-auto">
+        {/* .wrap-container 너비(500px) 기준: 모바일은 중앙, lg 이상은 우측 */}
+        <div
+          className="w-full max-w-[var(--layout-mobile)] mx-auto lg:ml-auto lg:mr-0"
+          style={{
+            transform: `translateY(${translateY}px)`,
+            transition: isDragging ? "none" : "transform 0.3s ease",
+          }}
+        >
+          <TermsSheetBody
+            onAgree={onAgree}
+            onClose={onClose}
+            onHandlePointerDown={handlePointerDown}
+            onHandlePointerMove={handlePointerMove}
+            onHandlePointerUp={handlePointerUp}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TermsSheetBody({
+  onAgree,
+  onClose,
+  onHandlePointerDown,
+  onHandlePointerMove,
+  onHandlePointerUp,
+}: {
+  onAgree: () => void;
+  onClose: () => void;
+  onHandlePointerDown: (e: React.PointerEvent) => void;
+  onHandlePointerMove: (e: React.PointerEvent) => void;
+  onHandlePointerUp: () => void;
+}) {
   const [checked, setChecked] = useState<Record<TermId, boolean>>({
     service: false,
     privacy: false,
@@ -113,93 +200,91 @@ export function PrivacyConsentSheet({ onClose, onAgree }: Props) {
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex flex-col justify-end bg-black/20"
-      onClick={onClose}
-    >
-      <div className="w-full max-w-[750px] mx-auto">
-        <div
-          className="bg-white rounded-t-2xl px-5 w-full max-w-[var(--layout-mobile)] mx-auto lg:ml-auto lg:mr-0"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-4" />
-
-          {viewingTerm ? (
-            <>
-              <div className="flex items-center gap-2 mb-6">
-                <button
-                  type="button"
-                  className="icon icon-back text-gray-700"
-                  onClick={() => setViewingTerm(null)}
-                  aria-label="뒤로"
-                />
-                <h2 className="text-lg font-bold text-gray-900">
-                  {TERM_CONTENT[viewingTerm].title}
-                </h2>
-              </div>
-              <div className="max-h-72 overflow-y-auto pr-1 mb-6">
-                {TERM_CONTENT[viewingTerm].body}
-              </div>
-              <div className="pb-[calc(1rem+env(safe-area-inset-bottom))]">
-                <Button size="cta" onClick={() => setViewingTerm(null)}>
-                  확인
-                </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <h2 className="text-xl font-bold text-gray-900 leading-snug mb-6">
-                모임을 시작하기 위해
-                <br />
-                약관에 동의해주세요
-              </h2>
-
-              <div className="flex flex-col gap-0 border border-gray-200 rounded-xl overflow-hidden mb-6">
-                <button
-                  type="button"
-                  className="flex items-center justify-between px-4 py-3.5 bg-white"
-                  onClick={toggleAll}
-                >
-                  <span className="text-sm font-medium text-gray-900">
-                    필수 항목 모두 체크하기
-                  </span>
-                  <CheckboxIcon checked={allChecked} />
-                </button>
-
-                <div className="h-px bg-gray-100 mx-4" />
-
-                {TERMS.map((term) => (
-                  <div key={term.id} className="flex items-center px-4 py-3.5">
-                    <span className="text-xs font-semibold text-blue-500 mr-2">
-                      필수
-                    </span>
-                    <button
-                      type="button"
-                      className="flex-1 text-left text-sm text-gray-700 flex items-center gap-0.5"
-                      onClick={() => setViewingTerm(term.id)}
-                    >
-                      {term.label}
-                      <span className="icon icon-arrow-right text-gray-400 text-xs ml-0.5" />
-                    </button>
-                    <button type="button" onClick={() => toggle(term.id)}>
-                      <CheckboxIcon checked={checked[term.id]} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex flex-col gap-3 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-                <Button size="cta" onClick={onAgree} disabled={!allChecked}>
-                  동의하고 계속하기
-                </Button>
-                <Button size="cta" variant="ghost" onClick={onClose}>
-                  닫기
-                </Button>
-              </div>
-            </>
-          )}
-        </div>
+    <div className="bg-white rounded-t-2xl px-5">
+      <div
+        className="w-full pt-3 pb-4 flex justify-center cursor-grab active:cursor-grabbing touch-none select-none"
+        onPointerDown={onHandlePointerDown}
+        onPointerMove={onHandlePointerMove}
+        onPointerUp={onHandlePointerUp}
+        onPointerCancel={onHandlePointerUp}
+      >
+        <div className="w-10 h-1 bg-gray-300 rounded-full" />
       </div>
+
+      {viewingTerm ? (
+        <>
+          <div className="flex items-center gap-2 mb-6">
+            <button
+              type="button"
+              className="icon icon-back text-gray-700"
+              onClick={() => setViewingTerm(null)}
+              aria-label="뒤로"
+            />
+            <h2 className="text-lg font-bold text-gray-900">
+              {TERM_CONTENT[viewingTerm].title}
+            </h2>
+          </div>
+          <div className="max-h-72 overflow-y-auto pr-1 mb-6">
+            {TERM_CONTENT[viewingTerm].body}
+          </div>
+          <div className="pb-[calc(1rem+env(safe-area-inset-bottom))]">
+            <Button size="cta" onClick={() => setViewingTerm(null)}>
+              확인
+            </Button>
+          </div>
+        </>
+      ) : (
+        <>
+          <h2 className="text-xl font-bold text-gray-900 leading-snug mb-6">
+            모임을 시작하기 위해
+            <br />
+            약관에 동의해주세요
+          </h2>
+
+          <div className="flex flex-col gap-0 border border-gray-200 rounded-xl overflow-hidden mb-6">
+            <button
+              type="button"
+              className="flex items-center justify-between px-4 py-3.5 bg-white"
+              onClick={toggleAll}
+            >
+              <span className="text-sm font-medium text-gray-900">
+                필수 항목 모두 체크하기
+              </span>
+              <CheckboxIcon checked={allChecked} />
+            </button>
+
+            <div className="h-px bg-gray-100 mx-4" />
+
+            {TERMS.map((term) => (
+              <div key={term.id} className="flex items-center px-4 py-3.5">
+                <span className="text-xs font-semibold text-blue-500 mr-2">
+                  필수
+                </span>
+                <button
+                  type="button"
+                  className="flex-1 text-left text-sm text-gray-700 flex items-center gap-0.5"
+                  onClick={() => setViewingTerm(term.id)}
+                >
+                  {term.label}
+                  <span className="icon icon-arrow-right text-gray-400 text-xs ml-0.5" />
+                </button>
+                <button type="button" onClick={() => toggle(term.id)}>
+                  <CheckboxIcon checked={checked[term.id]} />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-col gap-3 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+            <Button size="cta" onClick={onAgree} disabled={!allChecked}>
+              동의하고 계속하기
+            </Button>
+            <Button size="cta" variant="ghost" onClick={onClose}>
+              닫기
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
