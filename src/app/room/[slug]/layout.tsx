@@ -1,4 +1,4 @@
-import { KakaoScript } from "@/components/KakaoScript";
+import { KakaoScript } from "@/components/kakao";
 
 export default function RoomLayout({
   children,

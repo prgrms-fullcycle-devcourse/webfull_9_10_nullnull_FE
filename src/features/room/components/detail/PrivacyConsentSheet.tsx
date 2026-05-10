@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 
 type Props = {
   onClose: () => void;
@@ -95,6 +97,40 @@ const TERM_CONTENT: Record<TermId, { title: string; body: React.ReactNode }> = {
 };
 
 export function PrivacyConsentSheet({ onClose, onAgree }: Props) {
+  return (
+    <Drawer
+      open
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+      direction="bottom"
+    >
+      <DrawerContent
+        scope="viewport"
+        className="!border-0 bg-transparent shadow-none [&>div:first-child]:hidden"
+        style={{ maxHeight: "none" }}
+      >
+        <div className="Wrap">
+          <div className="wrap-container !min-h-0 bg-white rounded-t-2xl">
+            <div className="w-full pt-3 pb-4 flex justify-center">
+              <div className="w-10 h-1 bg-gray-300 rounded-full" />
+            </div>
+            <DrawerTitle className="sr-only">약관에 동의해주세요</DrawerTitle>
+            <TermsSheetBody onAgree={onAgree} onClose={onClose} />
+          </div>
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+}
+
+function TermsSheetBody({
+  onAgree,
+  onClose,
+}: {
+  onAgree: () => void;
+  onClose: () => void;
+}) {
   const [checked, setChecked] = useState<Record<TermId, boolean>>({
     service: false,
     privacy: false,
@@ -113,121 +149,93 @@ export function PrivacyConsentSheet({ onClose, onAgree }: Props) {
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex flex-col justify-end bg-black/20"
-      onClick={onClose}
-    >
-      <div className="w-full max-w-[750px] mx-auto">
-        <div
-          className="bg-white rounded-t-2xl px-5 w-full max-w-[var(--layout-mobile)] mx-auto lg:ml-auto lg:mr-0"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-4" />
+    <div className="px-5">
+      {viewingTerm ? (
+        <>
+          <div className="flex items-center gap-2 mb-6">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="icon icon-back text-gray-700"
+              onClick={() => setViewingTerm(null)}
+              aria-label="뒤로"
+            />
+            <h2 className="text-lg font-bold text-gray-900">
+              {TERM_CONTENT[viewingTerm].title}
+            </h2>
+          </div>
+          <div className="max-h-72 overflow-y-auto pr-1 mb-6">
+            {TERM_CONTENT[viewingTerm].body}
+          </div>
+          <div className="pb-[calc(1rem+env(safe-area-inset-bottom))]">
+            <Button size="cta" onClick={() => setViewingTerm(null)}>
+              확인
+            </Button>
+          </div>
+        </>
+      ) : (
+        <>
+          <h2 className="text-xl font-bold text-gray-900 leading-snug mb-6">
+            모임을 시작하기 위해
+            <br />
+            약관에 동의해주세요
+          </h2>
 
-          {viewingTerm ? (
-            <>
-              <div className="flex items-center gap-2 mb-6">
-                <button
-                  type="button"
-                  className="icon icon-back text-gray-700"
-                  onClick={() => setViewingTerm(null)}
-                  aria-label="뒤로"
-                />
-                <h2 className="text-lg font-bold text-gray-900">
-                  {TERM_CONTENT[viewingTerm].title}
-                </h2>
-              </div>
-              <div className="max-h-72 overflow-y-auto pr-1 mb-6">
-                {TERM_CONTENT[viewingTerm].body}
-              </div>
-              <div className="pb-[calc(1rem+env(safe-area-inset-bottom))]">
-                <Button size="cta" onClick={() => setViewingTerm(null)}>
-                  확인
-                </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <h2 className="text-xl font-bold text-gray-900 leading-snug mb-6">
-                모임을 시작하기 위해
-                <br />
-                약관에 동의해주세요
-              </h2>
+          <div className="flex flex-col border border-gray-200 rounded-xl overflow-hidden mb-6">
+            <div
+              role="button"
+              tabIndex={0}
+              className="flex items-center justify-between px-4 py-3.5 bg-white cursor-pointer"
+              onClick={toggleAll}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") toggleAll();
+              }}
+            >
+              <span className="text-sm font-medium text-gray-900">
+                필수 항목 모두 체크하기
+              </span>
+              <Checkbox
+                checked={allChecked}
+                tabIndex={-1}
+                aria-hidden="true"
+                className="size-5 pointer-events-none data-checked:bg-blue-500 data-checked:border-blue-500"
+              />
+            </div>
 
-              <div className="flex flex-col gap-0 border border-gray-200 rounded-xl overflow-hidden mb-6">
-                <button
-                  type="button"
-                  className="flex items-center justify-between px-4 py-3.5 bg-white"
-                  onClick={toggleAll}
+            <div className="h-px bg-gray-100 mx-4" />
+
+            {TERMS.map((term) => (
+              <div key={term.id} className="flex items-center px-4 py-3.5">
+                <span className="text-xs font-semibold text-blue-500 mr-2">
+                  필수
+                </span>
+                <Button
+                  variant="ghost"
+                  className="flex-1 justify-start h-auto px-0 py-0 text-sm text-gray-700 hover:bg-transparent gap-0.5"
+                  onClick={() => setViewingTerm(term.id)}
                 >
-                  <span className="text-sm font-medium text-gray-900">
-                    필수 항목 모두 체크하기
-                  </span>
-                  <CheckboxIcon checked={allChecked} />
-                </button>
-
-                <div className="h-px bg-gray-100 mx-4" />
-
-                {TERMS.map((term) => (
-                  <div key={term.id} className="flex items-center px-4 py-3.5">
-                    <span className="text-xs font-semibold text-blue-500 mr-2">
-                      필수
-                    </span>
-                    <button
-                      type="button"
-                      className="flex-1 text-left text-sm text-gray-700 flex items-center gap-0.5"
-                      onClick={() => setViewingTerm(term.id)}
-                    >
-                      {term.label}
-                      <span className="icon icon-arrow-right text-gray-400 text-xs ml-0.5" />
-                    </button>
-                    <button type="button" onClick={() => toggle(term.id)}>
-                      <CheckboxIcon checked={checked[term.id]} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex flex-col gap-3 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-                <Button size="cta" onClick={onAgree} disabled={!allChecked}>
-                  동의하고 계속하기
+                  {term.label}
+                  <span className="icon icon-arrow-right text-gray-400 text-xs ml-0.5" />
                 </Button>
-                <Button size="cta" variant="ghost" onClick={onClose}>
-                  닫기
-                </Button>
+                <Checkbox
+                  checked={checked[term.id]}
+                  onCheckedChange={() => toggle(term.id)}
+                  className="size-5 data-checked:bg-blue-500 data-checked:border-blue-500"
+                />
               </div>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
+            ))}
+          </div>
 
-function CheckboxIcon({ checked }: { checked: boolean }) {
-  return (
-    <span
-      className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 transition-colors ${
-        checked ? "bg-blue-500 border-blue-500" : "bg-white border-gray-300"
-      }`}
-    >
-      {checked && (
-        <svg
-          width="12"
-          height="9"
-          viewBox="0 0 12 9"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M1 4L4.5 7.5L11 1"
-            stroke="white"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+          <div className="flex flex-col gap-3 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+            <Button size="cta" onClick={onAgree} disabled={!allChecked}>
+              동의하고 계속하기
+            </Button>
+            <Button size="cta" variant="ghost" onClick={onClose}>
+              닫기
+            </Button>
+          </div>
+        </>
       )}
-    </span>
+    </div>
   );
 }
