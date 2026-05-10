@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { AppContent, AppShell } from "@/components/layout";
+import { AppContent, AppIconLink, AppShell } from "@/components/layout";
 import { AppDialog } from "@/components/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -19,79 +21,95 @@ export function SettingPage() {
 
   return (
     <AppShell
+      title="설정"
       leftSlot={
-        <button
+        <AppIconLink
+          icon="back"
+          label="뒤로가기"
           onClick={() => router.back()}
-          className="flex items-center text-gray-900"
-          aria-label="뒤로 가기"
-        >
-          <ChevronLeft className="size-6" />
-          <span className="ml-1 text-lg font-bold">설정</span>
-        </button>
+        />
       }
     >
-      <AppContent>
-        <div className="flex flex-col h-full bg-gray-50/30">
-          <section className="px-5 py-6">
-            <h2 className="text-sm font-semibold text-gray-500 mb-2">닉네임</h2>
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={user?.nickname || ""}
-                disabled
-                className="flex-1 rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-500 outline-none"
-              />
-              <button
-                disabled
-                className="rounded-xl bg-gray-100 px-4 py-3 text-sm font-semibold text-gray-400"
-              >
-                저장
-              </button>
-            </div>
-          </section>
-
-          <section className="px-5 py-2">
-            <h2 className="text-sm font-semibold text-gray-500 mb-2">알림</h2>
-            <div className="flex items-center justify-between py-2">
-              <div>
-                <p className="text-base font-semibold text-gray-900">
-                  Push 알림
-                </p>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  모임의 중요한 순간만 알려드려요
-                </p>
+      <AppContent className="flex flex-1 flex-col px-4 pb-10 pt-5">
+        <div className="flex min-h-0 flex-1 flex-col justify-between">
+          <div>
+            <section>
+              <h2 className="block px-[5px] text-sm font-semibold leading-[18px] text-text-primary">
+                <Label htmlFor="nickname" className="font-semibold">
+                  닉네임
+                </Label>
+              </h2>
+              <div className="mt-2 flex items-center gap-2">
+                <Input
+                  id="nickname"
+                  type="text"
+                  value={user?.nickname || ""}
+                  disabled
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  disabled
+                  className="h-10 rounded-xl bg-bg-muted px-4 text-sm font-medium leading-5 text-text-disabled hover:bg-bg-muted hover:text-text-disabled disabled:opacity-100"
+                >
+                  저장
+                </Button>
               </div>
-              <Switch
-                checked={isPushEnabled}
-                onCheckedChange={setIsPushEnabled}
-                className="data-[state=checked]:bg-blue-500"
-              />
-            </div>
-          </section>
+            </section>
 
-          <section className="px-5 py-6">
-            <h2 className="text-sm font-semibold text-gray-500 mb-2">
-              고객센터
-            </h2>
-            <div className="flex flex-col gap-1">
-              <button className="flex items-center justify-between py-3 text-sm font-semibold text-gray-900">
-                서비스 이용약관
-                <ChevronRight className="size-5 text-gray-400" />
-              </button>
-              <button className="flex items-center justify-between py-3 text-sm font-semibold text-gray-900">
-                개인정보처리방침
-                <ChevronRight className="size-5 text-gray-400" />
-              </button>
-              <button className="flex items-center justify-between py-3 text-sm font-semibold text-gray-900">
-                문의하기
-                <ChevronRight className="size-5 text-gray-400" />
-              </button>
-            </div>
-          </section>
+            <section className="mt-5">
+              <h2 className="px-[5px] text-sm font-semibold leading-[18px] text-text-primary">
+                알림
+              </h2>
+              <div className="mt-6 flex items-center justify-between gap-5">
+                <div>
+                  <p className="text-base font-semibold leading-5 text-text-primary">
+                    Push 알림
+                  </p>
+                  <p className="mt-2 text-sm font-medium leading-[18px] text-text-primary">
+                    모임의 중요한 순간만 알려드려요
+                  </p>
+                </div>
+                <Switch
+                  checked={isPushEnabled}
+                  onCheckedChange={setIsPushEnabled}
+                />
+              </div>
+            </section>
 
-          <div className="flex-1" />
+            <section className="mt-9">
+              <h2 className="px-[5px] text-sm font-semibold leading-[18px] text-text-primary">
+                고객센터
+              </h2>
+              <div className="mt-2 flex flex-col gap-1">
+                <button className="flex h-[52px] items-center justify-between text-base font-semibold leading-5 text-text-primary">
+                  서비스 이용약관
+                  <span
+                    className="icon icon-arrow-right text-text-primary"
+                    aria-hidden="true"
+                  />
+                </button>
+                <button className="flex h-[52px] items-center justify-between text-base font-semibold leading-5 text-text-primary">
+                  개인정보처리방침
+                  <span
+                    className="icon icon-arrow-right text-text-primary"
+                    aria-hidden="true"
+                  />
+                </button>
+                <button className="flex h-[52px] items-center justify-between text-base font-semibold leading-5 text-text-primary">
+                  문의하기
+                  <span
+                    className="icon icon-arrow-right text-text-primary"
+                    aria-hidden="true"
+                  />
+                </button>
+              </div>
+            </section>
+          </div>
 
-          <section className="flex items-center justify-center gap-4 px-5 pb-10 pt-4 text-sm font-medium">
+          <section className="flex items-center justify-center gap-1 text-sm font-normal leading-[18px]">
             <AppDialog
               type="confirm"
               dialogSize="compact"
@@ -102,12 +120,12 @@ export function SettingPage() {
                 { label: "로그아웃", onClick: logout, disabled: isLoggingOut },
               ]}
             >
-              <button className="text-gray-400 hover:text-gray-600">
+              <button className="h-10 w-20 text-text-disabled hover:text-text-secondary">
                 로그아웃
               </button>
             </AppDialog>
 
-            <span className="text-gray-300">|</span>
+            <span className="h-3.5 text-border-strong">|</span>
 
             <AppDialog
               type="confirm"
@@ -124,7 +142,7 @@ export function SettingPage() {
                 },
               ]}
             >
-              <button className="text-red-400 hover:text-red-500">
+              <button className="h-10 w-20 text-danger hover:text-danger-darker">
                 회원탈퇴
               </button>
             </AppDialog>
