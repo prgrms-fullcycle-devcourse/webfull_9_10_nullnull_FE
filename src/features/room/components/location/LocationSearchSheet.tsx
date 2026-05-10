@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { Input } from "@/components/ui/input";
 import { searchByKakaoPlaces } from "@/shared/utils/kakaoSearch";
 import type { RoomLocation } from "@/features/room/types/room";
 
@@ -47,13 +48,13 @@ export function LocationSearchSheet({ onClose, onSelect }: Props) {
           aria-label="뒤로가기"
         />
         <div className="flex-1 flex items-center gap-2 bg-gray-100 rounded-xl px-3 h-10">
-          <input
+          <Input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="장소 또는 주소 검색"
-            className="flex-1 bg-transparent text-sm text-gray-800 placeholder:text-gray-400 outline-none"
+            className="h-full flex-1 border-0 bg-transparent px-0 py-0 text-sm text-gray-800 shadow-none placeholder:text-gray-400 focus-visible:ring-0"
           />
           {query && (
             <button

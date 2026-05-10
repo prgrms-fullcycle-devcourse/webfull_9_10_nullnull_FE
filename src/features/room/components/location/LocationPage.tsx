@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AppBackButton, AppContent, AppShell } from "@/components/layout";
+import Link from "next/link";
+import { AppContent, AppIconLink, AppShell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { MapView } from "@/components/kakao";
 import { LocationSearchSheet } from "./LocationSearchSheet";
@@ -33,28 +34,30 @@ export function LocationPage({ slug }: Props) {
   return (
     <AppShell
       title={<span className="text-base">모임 참여하기</span>}
-      leftSlot={<AppBackButton onClick={() => router.back()} />}
+      leftSlot={
+        <AppIconLink
+          icon="back"
+          label="뒤로가기"
+          onClick={() => router.back()}
+        />
+      }
       bottomSlot={
-        <div className="flex flex-col gap-1">
-          <Button size="cta" disabled={!location} onClick={handleComplete}>
+        <>
+          <Button disabled={!location} onClick={handleComplete}>
             완료
           </Button>
-          <Button
-            variant="ghost"
-            onClick={handleAbsent}
-            className="h-11 text-sm text-gray-400 hover:text-gray-600"
-          >
+          <Button variant="ghost" onClick={handleAbsent}>
             이번 모임은 안 나갈래요
           </Button>
-        </div>
+        </>
       }
     >
-      <AppContent className="flex flex-col gap-6">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-2xl font-bold text-gray-900">
+      <AppContent className="flex flex-col gap-5">
+        <div>
+          <h2 className="text-2xl font-bold leading-tight text-gray-950">
             어디서 출발할까요?
           </h2>
-          <p className="text-sm text-gray-500 leading-relaxed">
+          <p className="mt-3 text-lg font-medium text-gray-400 leading-relaxed">
             출발지를 입력하면 모두가 모이기 편한 중간 지점을 찾아드려요
           </p>
         </div>
@@ -62,7 +65,7 @@ export function LocationPage({ slug }: Props) {
         <Button
           variant="outline"
           onClick={() => setSearchOpen(true)}
-          className="w-full h-12 px-4 rounded-xl justify-start text-sm text-gray-400 hover:border-[#6B4EFF] hover:text-gray-400 hover:bg-white"
+          className="w-full h-10 px-4 rounded-xl justify-start text-sm text-gray-400 hover:border-[#6B4EFF] hover:text-gray-400 hover:bg-white"
         >
           장소 또는 주소 검색
         </Button>

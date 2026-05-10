@@ -4,12 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
-import {
-  AppBackButton,
-  AppLogoLink,
-  AppShareButton,
-  AppShell,
-} from "@/components/layout";
+import { AppIconLink, AppLogoLink, AppShell } from "@/components/layout";
 import { AppDialog } from "@/components/dialog";
 import { Button } from "@/components/ui/button";
 import { useRoomJoinStore } from "@/store/useRoomJoinStore";
@@ -176,13 +171,15 @@ export function RoomDetail({ slug }: Props) {
     return (
       <AppShell
         title="모임 확정하기"
-        leftSlot={<AppBackButton onClick={() => setView("detail")} />}
-        rightSlot={<AppShareButton />}
-        bottomSlot={
-          <Button size="cta" onClick={() => {}}>
-            선택완료
-          </Button>
+        leftSlot={
+          <AppIconLink
+            icon="back"
+            label="뒤로가기"
+            onClick={() => setView("detail")}
+          />
         }
+        rightSlot={<AppIconLink icon="share" label="공유하기" />}
+        bottomSlot={<Button onClick={() => {}}>선택완료</Button>}
       >
         <RoomResultView />
       </AppShell>
@@ -193,8 +190,14 @@ export function RoomDetail({ slug }: Props) {
     return (
       <AppShell
         title="모임 자세히 보기"
-        leftSlot={<AppBackButton onClick={() => router.back()} />}
-        rightSlot={<AppShareButton />}
+        leftSlot={
+          <AppIconLink
+            icon="back"
+            label="뒤로가기"
+            onClick={() => router.back()}
+          />
+        }
+        rightSlot={<AppIconLink icon="share" label="공유하기" />}
         bottomSlot={
           <RoomDashboardBottomSlot
             room={roomForComponents}
@@ -213,7 +216,7 @@ export function RoomDetail({ slug }: Props) {
       <AppShell
         leftSlot={<AppLogoLink />}
         bottomSlot={
-          <Button size="cta" asChild>
+          <Button asChild>
             <Link href="/room">새 모임 만들기</Link>
           </Button>
         }
@@ -237,11 +240,7 @@ export function RoomDetail({ slug }: Props) {
   return (
     <AppShell
       leftSlot={<AppLogoLink />}
-      bottomSlot={
-        <Button size="cta" onClick={handleJoinClick}>
-          참여하기
-        </Button>
-      }
+      bottomSlot={<Button onClick={handleJoinClick}>참여하기</Button>}
     >
       <RoomDetailView room={roomForComponents} />
       {privacyOpen && (
@@ -278,10 +277,9 @@ function RoomDashboardBottomSlot({
             { label: "마감하기", onClick: onCloseCollecting },
           ]}
         >
-          <Button size="cta">모집 마감하기</Button>
+          <Button>모집 마감하기</Button>
         </AppDialog>
         <Button
-          size="cta"
           variant="ghost"
           className="h-10 text-sm font-semibold text-text-primary"
           onClick={() => {}}
@@ -293,39 +291,27 @@ function RoomDashboardBottomSlot({
   }
 
   if (room.viewerRole === "HOST" && room.status === "READY") {
-    return (
-      <Button size="cta" onClick={onOpenResult}>
-        모임 확정하기
-      </Button>
-    );
+    return <Button onClick={onOpenResult}>모임 확정하기</Button>;
   }
 
   if (room.status === "COLLECTING") {
     return (
-      <Button size="cta" variant="outline" onClick={() => {}}>
+      <Button variant="outline" onClick={() => {}}>
         제출결과 수정하기
       </Button>
     );
   }
 
   if (room.status === "READY") {
-    return (
-      <Button size="cta" onClick={() => {}}>
-        모임장 재촉하기
-      </Button>
-    );
+    return <Button onClick={() => {}}>모임장 재촉하기</Button>;
   }
 
   if (room.status === "CONFIRMED") {
-    return (
-      <Button size="cta" onClick={() => {}}>
-        지도 보기
-      </Button>
-    );
+    return <Button onClick={() => {}}>지도 보기</Button>;
   }
 
   return (
-    <Button size="cta" asChild>
+    <Button asChild>
       <Link href="/room">새 모임 만들기</Link>
     </Button>
   );
