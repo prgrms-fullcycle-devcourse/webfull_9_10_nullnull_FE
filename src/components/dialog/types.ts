@@ -6,7 +6,7 @@ export type BottomDialogEngine = "drawer" | "sheet";
 
 export type DialogSize = "default" | "compact";
 
-export type DialogActionVariant = "primary" | "secondary" | "danger" | "ghost";
+export type DialogActionVariant = "default" | "secondary" | "danger" | "ghost";
 
 export type DialogAction = {
   label: string;

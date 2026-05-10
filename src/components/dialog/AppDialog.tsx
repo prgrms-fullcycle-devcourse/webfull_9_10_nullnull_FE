@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 import {
   AlertDialog,
@@ -44,7 +44,7 @@ const DEFAULT_CONFIRM_ACTIONS: DialogAction[] = [
 
 const alertContentClassName: Record<DialogSize, string> = {
   default: "w-[calc(100%-40px)] max-w-[320px] rounded-2xl p-5",
-  compact: "w-[calc(100%-40px)] max-w-[320px] rounded-3xl p-4",
+  compact: "w-[calc(100%-40px)] max-w-[320px] rounded-3xl px-4 pb-4 pt-7",
 };
 
 const alertTitleClassName: Record<DialogSize, string> = {
@@ -142,8 +142,21 @@ function AlertDialogContentByType({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const [lastDialogText, setLastDialogText] = useState({ title, description });
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      setLastDialogText({ title, description });
+    }
+
+    onOpenChange(nextOpen);
+  };
+
+  const displayTitle = title ?? lastDialogText.title;
+  const displayDescription =
+    description || (!open ? lastDialogText.description : undefined);
+
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog open={open} onOpenChange={handleOpenChange}>
       {trigger && <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>}
       <AlertDialogContent
         className={cn(alertContentClassName[dialogSize], className)}
@@ -157,7 +170,7 @@ function AlertDialogContentByType({
           <AlertDialogTitle
             className={cn("text-text-primary", alertTitleClassName[dialogSize])}
           >
-            {title ?? (type === "alert" ? "알림" : "확인")}
+            {displayTitle ?? (type === "alert" ? "알림" : "확인")}
           </AlertDialogTitle>
           <AlertDialogDescription
             className={cn(
@@ -165,7 +178,7 @@ function AlertDialogContentByType({
               alertDescriptionClassName[dialogSize],
             )}
           >
-            {description ?? "내용을 확인해주세요."}
+            {displayDescription ?? "내용을 확인해주세요."}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
@@ -173,10 +186,11 @@ function AlertDialogContentByType({
 
         <AlertDialogFooter
           className={cn(
-            "grid border-0 bg-transparent p-0",
+            "!grid border-0 bg-transparent p-0",
             alertFooterClassName[dialogSize],
-            actions.length === 2 && "grid-cols-2",
-            actions.length === 3 && "grid-cols-3",
+            actions.length === 1 && "!grid-cols-1",
+            actions.length === 2 && "!grid-cols-2",
+            actions.length === 3 && "!grid-cols-3",
           )}
         >
           <DialogActions

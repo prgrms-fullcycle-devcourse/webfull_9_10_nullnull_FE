@@ -27,7 +27,7 @@
     { label: "마감하기", onClick: handleCloseRecruit },
   ]}
 >
-  <Button size="cta">모집 마감하기</Button>
+  <Button>모집 마감하기</Button>
 </AppDialog>
 ```
 
@@ -64,7 +64,7 @@ type DialogType = "alert" | "confirm" | "bottom";
 
 `compact`는 Production Figma 기준으로 다음 규칙을 따릅니다.
 
-- alert padding: `p-4` = 16px
+- alert padding: `px-4 pb-4 pt-7` = left/right/bottom 16px, top 28px
 - 버튼 높이: `h-14` = 56px
 - 버튼 간격: `gap-3` = 12px
 - title: `text-xl font-semibold` = 20px semibold
@@ -89,7 +89,7 @@ actions={[
 | 속성 | 설명 |
 | --- | --- |
 | `label` | 버튼 텍스트 |
-| `variant` | `primary`, `secondary`, `danger`, `ghost` |
+| `variant` | `default`, `secondary`, `danger`, `ghost` |
 | `onClick` | 버튼 클릭 시 실행할 함수 |
 | `disabled` | 버튼 비활성화 |
 | `closeOnClick` | `false`면 클릭 후 dialog를 닫지 않음 |

@@ -22,10 +22,25 @@ function AlertDialogTrigger({
 }
 
 function AlertDialogPortal({
+  container,
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Portal>) {
+  const portalContainer = React.useSyncExternalStore(
+    () => () => {},
+    () => container ?? getDialogContainer() ?? document.body,
+    () => null,
+  );
+
+  if (!portalContainer) {
+    return null;
+  }
+
   return (
-    <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal" {...props} />
+    <AlertDialogPrimitive.Portal
+      data-slot="alert-dialog-portal"
+      container={portalContainer}
+      {...props}
+    />
   );
 }
 
@@ -62,10 +77,8 @@ function AlertDialogContent({
   size?: "default" | "sm";
   scope?: "viewport" | "container";
 }) {
-  const container = portalContainer ?? getDialogContainer();
-
   return (
-    <AlertDialogPortal container={container}>
+    <AlertDialogPortal container={portalContainer}>
       <AlertDialogOverlay className={overlayClassName} scope={scope} />
       <AlertDialogPrimitive.Content
         data-slot="alert-dialog-content"
