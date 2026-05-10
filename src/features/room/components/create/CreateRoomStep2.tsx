@@ -20,24 +20,19 @@ interface Props {
   onUpdate: (data: Partial<RoomData>) => void;
 }
 
-const inputBaseClass =
-  "h-10! w-full rounded-xl border border-border-subtle bg-white px-4 text-sm transition-all outline-none focus-visible:border-primary-default focus-visible:ring-1 focus-visible:ring-primary-default/10";
-const selectTriggerClass =
-  "h-10! w-full rounded-xl border border-border-subtle bg-white px-4 text-sm transition-all outline-none focus:border-primary-default focus:ring-1 focus:ring-primary-default/10";
-
 export function CreateRoomStep2({ data, errors, onUpdate }: Props) {
   return (
-    <div className="flex-1 flex flex-col gap-10">
+    <div className="flex-1 flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold leading-tight text-gray-950">
+        <h2 className="text-2xl font-bold leading-tight text-gray-950">
           모임을 소개해 주세요
-        </h1>
-        <p className="mt-2 text-lg font-medium text-gray-400 leading-relaxed">
+        </h2>
+        <p className="mt-3 text-lg font-medium text-gray-400 leading-relaxed">
           참여자들이 한눈에 이해할 수 있게 해요
         </p>
       </div>
 
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6">
         <TitleInput data={data} errors={errors} onUpdate={onUpdate} />
         <CategorySelect data={data} errors={errors} onUpdate={onUpdate} />
       </div>
@@ -58,7 +53,6 @@ function TitleInput({ data, errors, onUpdate }: Props) {
         value={data.title}
         onChange={(e) => onUpdate({ title: e.target.value })}
         className={cn(
-          inputBaseClass,
           "placeholder:text-gray-300",
           errors.title &&
             "border-red-500 ring-1 ring-red-500/10 focus-visible:ring-red-500/20",
@@ -85,7 +79,6 @@ function CategorySelect({ data, errors, onUpdate }: Props) {
       >
         <SelectTrigger
           className={cn(
-            selectTriggerClass,
             errors.category && "border-red-500 ring-1 ring-red-500/10",
           )}
         >

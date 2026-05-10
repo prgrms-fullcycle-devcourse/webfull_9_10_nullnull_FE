@@ -13,12 +13,12 @@ interface Props {
 
 export function CreateRoomStep1({ data, errors, onUpdate }: Props) {
   return (
-    <div className="flex-1 flex flex-col gap-10">
+    <div className="flex-1 flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold leading-tight text-gray-950">
+        <h2 className="text-2xl font-bold leading-tight text-gray-950">
           닉네임을 확인해 주세요
-        </h1>
-        <p className="mt-2 text-lg font-medium text-gray-400 leading-relaxed">
+        </h2>
+        <p className="mt-3 text-lg font-medium text-gray-400 leading-relaxed">
           모임에서 표시될 이름이에요
         </p>
       </div>
