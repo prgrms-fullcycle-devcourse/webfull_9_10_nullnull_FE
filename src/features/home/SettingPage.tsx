@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -9,13 +9,64 @@ import { AppDialog } from "@/components/dialog";
 import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useAuthStore } from "@/store/useAuthStore";
+import { ServiceTerms } from "@/components/terms/ServiceTerms";
+import { PrivacyPolicy } from "@/components/terms/PrivacyPolicy";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export function SettingPage() {
   const router = useRouter();
   const { user } = useAuthStore();
-  const { logout, withdraw, isLoggingOut, isWithdrawing } = useAuth();
+  const {
+    logout,
+    withdraw,
+    updateNickname,
+    isLoggingOut,
+    isWithdrawing,
+    isUpdatingNickname,
+  } = useAuth();
 
+  const [newNickname, setNewNickname] = useState(user?.nickname || "");
+  const [prevUserNickname, setPrevUserNickname] = useState(user?.nickname);
   const [isPushEnabled, setIsPushEnabled] = useState(true);
+  const [nicknameError, setNicknameError] = useState("");
+
+  if (user?.nickname !== prevUserNickname) {
+    setPrevUserNickname(user?.nickname);
+    setNewNickname(user?.nickname || "");
+    setNicknameError("");
+  }
+
+  // 약관 팝업 상태
+  const [showServiceTerms, setShowServiceTerms] = useState(false);
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
+
+  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setNewNickname(value);
+
+    if (
+      value.trim().length > 0 &&
+      (value.trim().length < 2 || value.trim().length > 10)
+    ) {
+      setNicknameError("닉네임은 2~10글자 사이로 입력해주세요.");
+    } else {
+      setNicknameError("");
+    }
+  };
+
+  const handleUpdateNickname = () => {
+    const trimmedNickname = newNickname.trim();
+
+    if (trimmedNickname.length < 2 || trimmedNickname.length > 10) {
+      toast.error("닉네임은 2~10글자 사이로 입력해주세요.");
+      return;
+    }
+
+    if (trimmedNickname === user?.nickname) return;
+
+    updateNickname(trimmedNickname);
+  };
 
   return (
     <AppShell
@@ -34,19 +85,36 @@ export function SettingPage() {
         <div className="flex flex-col h-full bg-gray-50/30">
           <section className="px-5 py-6">
             <h2 className="text-sm font-semibold text-gray-500 mb-2">닉네임</h2>
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={user?.nickname || ""}
-                disabled
-                className="flex-1 rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-500 outline-none"
-              />
-              <button
-                disabled
-                className="rounded-xl bg-gray-100 px-4 py-3 text-sm font-semibold text-gray-400"
-              >
-                저장
-              </button>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={newNickname}
+                  onChange={handleNicknameChange}
+                  placeholder="닉네임을 입력하세요"
+                  className={cn(
+                    "flex-1 rounded-xl border bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-colors focus:border-blue-500",
+                    nicknameError ? "border-red-500" : "border-gray-200",
+                  )}
+                />
+                <button
+                  onClick={handleUpdateNickname}
+                  disabled={
+                    isUpdatingNickname ||
+                    newNickname.trim().length < 2 ||
+                    newNickname.trim().length > 10 ||
+                    newNickname.trim() === user?.nickname
+                  }
+                  className="rounded-xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white disabled:bg-gray-100 disabled:text-gray-400 transition-colors shrink-0"
+                >
+                  {isUpdatingNickname ? "저장 중..." : "저장"}
+                </button>
+              </div>
+              {nicknameError && (
+                <p className="text-xs font-medium text-red-500 px-1">
+                  {nicknameError}
+                </p>
+              )}
             </div>
           </section>
 
@@ -74,20 +142,36 @@ export function SettingPage() {
               고객센터
             </h2>
             <div className="flex flex-col gap-1">
-              <button className="flex items-center justify-between py-3 text-sm font-semibold text-gray-900">
+              <button
+                onClick={() => setShowServiceTerms(true)}
+                className="flex items-center justify-between py-3 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-100/50"
+              >
                 서비스 이용약관
                 <ChevronRight className="size-5 text-gray-400" />
               </button>
-              <button className="flex items-center justify-between py-3 text-sm font-semibold text-gray-900">
+              <button
+                onClick={() => setShowPrivacyPolicy(true)}
+                className="flex items-center justify-between py-3 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-100/50"
+              >
                 개인정보처리방침
                 <ChevronRight className="size-5 text-gray-400" />
               </button>
-              <button className="flex items-center justify-between py-3 text-sm font-semibold text-gray-900">
+              <button className="flex items-center justify-between py-3 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-100/50">
                 문의하기
                 <ChevronRight className="size-5 text-gray-400" />
               </button>
             </div>
           </section>
+
+          {/* 약관 상세 팝업 */}
+          <ServiceTerms
+            open={showServiceTerms}
+            onOpenChange={setShowServiceTerms}
+          />
+          <PrivacyPolicy
+            open={showPrivacyPolicy}
+            onOpenChange={setShowPrivacyPolicy}
+          />
 
           <div className="flex-1" />
 

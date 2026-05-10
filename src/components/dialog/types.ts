@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export type DialogType = "alert" | "confirm" | "bottom" /*| "dialog" | "full"*/;
+export type DialogType = "alert" | "confirm" | "bottom" | "full";
 
 export type BottomDialogEngine = "drawer" | "sheet";
 
