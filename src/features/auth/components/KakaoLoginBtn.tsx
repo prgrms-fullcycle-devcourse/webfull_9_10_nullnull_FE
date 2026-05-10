@@ -16,10 +16,10 @@ export const KakaoLoginBtn = () => {
   return (
     <Button
       onClick={handleKakaoLogin}
-      className="w-full bg-[#FEE500] text-[#000000] hover:bg-[#FEE500]/90 flex items-center justify-center gap-2 h-12 text-base font-bold rounded-xl border-none shadow-none"
+      className="flex w-full items-center justify-center gap-2 rounded-xl border-none bg-[#FEE500] text-[15px] font-semibold leading-[22.5px] text-[#000000] shadow-none hover:bg-[#FEE500]/90"
     >
-      <i className="icon icon-kakao"></i>
-      카카오로 시작하기
+      <i className="icon icon-kakao" aria-hidden="true" />
+      카카오로 3초 만에 시작하기
     </Button>
   );
 };

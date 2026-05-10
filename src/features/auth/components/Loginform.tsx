@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import TitlePositiveBg from "@/assets/images/components/bg_positive_title.svg";
 
 const loginFeatures = [
   {
@@ -82,14 +83,12 @@ export function LoginForm() {
             <div className="grid grid-cols-2 gap-2">
               <Button
                 variant="outline"
-                className="h-12 rounded-xl text-gray-600 border-gray-200 font-medium"
                 onClick={() => handleTestLogin("host@test.com", "host1234")}
               >
                 호스트 로그인
               </Button>
               <Button
                 variant="outline"
-                className="h-12 rounded-xl text-gray-600 border-gray-200 font-medium"
                 onClick={() => handleTestLogin("member@test.com", "member1234")}
               >
                 멤버 로그인
@@ -99,65 +98,78 @@ export function LoginForm() {
           </div>
         }
       >
-        <AppContent>
-          <section className="flex w-full flex-col items-center py-10 text-center">
-            <h1 className="text-3xl font-bold leading-9 text-gray-950">
-              <span className="block">모두의 시간을</span>
-              <span className="block bg-linear-to-r from-[#5B6EE1] to-[#5FA8D3] bg-clip-text text-transparent">
-                하나로 맞추다
-              </span>
-            </h1>
+        <AppContent className="px-0 py-0">
+          <div className="relative min-h-[inherit] overflow-hidden">
+            <div
+              className="pointer-events-none absolute left-0 top-8 h-[280px] w-full bg-contain bg-center bg-no-repeat"
+              style={{ backgroundImage: `url(${TitlePositiveBg.src})` }}
+            />
 
-            <div className="mt-5 text-base font-medium leading-5 text-gray-500">
-              <p>복잡한 일정 조율은 이제 그만,</p>
-              <p className="mt-1">링크 하나로 간편하게 약속을 잡아보세요</p>
-            </div>
-          </section>
+            <section className="relative z-10 flex w-full flex-col items-center pt-[52px] text-center">
+              <h1 className="text-[30px] font-bold leading-9 text-text-primary">
+                <span className="block">모두의 시간을</span>
+                <span className="block bg-gradient-to-r from-[#5B6EE1] to-[#5FA8D3] bg-clip-text text-transparent">
+                  하나로 맞추다
+                </span>
+              </h1>
 
-          <section className="mt-5 flex w-full max-w-[311px] flex-col gap-4">
-            {loginFeatures.map((feature) => (
-              <div
-                key={feature.title}
-                className="flex items-center gap-4 rounded-2xl border border-gray-100 bg-white p-4"
-              >
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-50 text-gray-500">
-                  <span
-                    className={`icon ${feature.icon} size-5`}
-                    aria-hidden="true"
-                  />
-                </div>
-                <div className="min-w-0 text-left">
-                  <p className="text-sm font-semibold leading-[18px] text-foreground">
-                    {feature.title}
-                  </p>
-                  <p className="mt-1 text-xs leading-4 text-gray-500">
-                    {feature.description}
-                  </p>
-                </div>
+              <div className="mt-4 text-base font-medium leading-5 text-text-tertiary">
+                <p>복잡한 일정 조율은 이제 그만,</p>
+                <p className="mt-1">링크 하나로 간편하게 약속을 잡아보세요</p>
               </div>
-            ))}
-          </section>
+            </section>
 
-          <section className="mt-10 flex flex-col items-center text-center">
-            <p className="text-xs leading-4 text-gray-400">
-              가입 시 NULLNULL의 서비스 이용약관과
-              <br />
-              개인정보 처리방침에 동의하게 됩니다.
-            </p>
+            <section className="relative z-10 mt-15 flex w-full flex-col gap-4 px-4">
+              {loginFeatures.map((feature) => (
+                <div
+                  key={feature.title}
+                  className="flex h-[72px] items-center gap-4 rounded-2xl border border-border-subtle bg-white px-4"
+                >
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-bg-subtle text-text-tertiary">
+                    <span
+                      className={`icon ${feature.icon} size-5`}
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <div className="min-w-0 text-left">
+                    <p className="text-sm font-semibold leading-[18px] text-foreground">
+                      {feature.title}
+                    </p>
+                    <p className="mt-1 text-xs leading-4 text-text-tertiary">
+                      {feature.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </section>
 
-            <div className="mt-5 flex items-center gap-2 text-xs font-medium leading-4 text-gray-400">
-              <Link href="/terms" className="border-b border-gray-300 pb-px">
-                이용약관
-              </Link>
-              <span
-                className="size-[3px] rounded-full bg-gray-300"
-                aria-hidden="true"
-              />
-              <Link href="/privacy" className="border-b border-gray-300 pb-px">
-                개인정보 수집・이용 동의
-              </Link>
-            </div>
-          </section>
+            <section className="relative z-10 mt-10 flex flex-col items-center text-center">
+              <p className="text-xs leading-4 text-text-disabled">
+                가입 시 NULLNULL의 서비스 이용약관과
+                <br />
+                개인정보 처리방침에 동의하게 됩니다.
+              </p>
+
+              <div className="mt-5 flex items-center gap-2 text-xs font-medium leading-4 text-text-disabled">
+                <Link
+                  href="/terms"
+                  className="border-b border-border-strong pb-px"
+                >
+                  이용약관
+                </Link>
+                <span
+                  className="size-[3px] rounded-full bg-border-strong"
+                  aria-hidden="true"
+                />
+                <Link
+                  href="/privacy"
+                  className="border-b border-border-strong pb-px"
+                >
+                  개인정보 수집・이용 동의
+                </Link>
+              </div>
+            </section>
+          </div>
         </AppContent>
       </AppShell>
     </>

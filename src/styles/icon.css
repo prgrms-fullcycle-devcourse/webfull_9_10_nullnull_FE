@@ -165,6 +165,8 @@
 
 .icon-kakao {
   --icon-mask: var(--ico-kakao);
+  width:1.25rem;
+  height: 1.25rem;
 }
 
 .icon-noti {

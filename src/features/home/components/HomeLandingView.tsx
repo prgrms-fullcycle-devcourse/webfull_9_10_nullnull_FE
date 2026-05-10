@@ -16,28 +16,25 @@ export function HomeLandingView() {
         </Button>
       }
       bottomSlot={
-        <Button size="cta" asChild>
+        <Button asChild>
           <Link href="/login">모임 만들기</Link>
         </Button>
       }
     >
-      <AppContent>
-        <section
-          className="relative flex flex-col items-center overflow-hidden bg-contain bg-no-repeat bg-position-[center_top_-2rem] pb-10 pt-10 text-center"
-          style={{ backgroundImage: `url(${TitlePositiveBg.src})` }}
-        >
+      <AppContent className="px-0 py-0">
+        <section className="relative flex flex-col items-center overflow-hidden pb-10 pt-[52px] text-center">
+          <div
+            className="pointer-events-none absolute left-0 top-8 h-[280px] w-full bg-contain bg-center bg-no-repeat"
+            style={{ backgroundImage: `url(${TitlePositiveBg.src})` }}
+          />
           <div className="relative z-10 px-5">
-            <h1 className="text-3xl font-extrabold leading-tight text-gray-950">
+            <h1 className="text-[30px] font-bold leading-9 text-text-primary">
               <span className="block">안되는 시간 빼고,</span>
-              <span className="block bg-linear-to-r from-[#5B6EE1] to-[#5FA8D3] bg-clip-text text-transparent">
-                널널한 시간 찾기
-              </span>
+              <span className="block text-primary">널널한 시간 찾기</span>
             </h1>
-            <div className="mt-4 text-[17px] font-medium leading-relaxed text-gray-400">
-              <p>복잡한 일정 조율은 이제 그만.</p>
-              <p className="mt-0.5">
-                안 되는 시간만 알려주면 널널이 찾아드려요.
-              </p>
+            <div className="mt-4 text-base font-medium leading-5 text-text-secondary">
+              <p>안 되는 시간만 알려주세요.</p>
+              <p className="mt-1">가장 완벽한 약속 시간을 찾아드려요.</p>
             </div>
           </div>
 
