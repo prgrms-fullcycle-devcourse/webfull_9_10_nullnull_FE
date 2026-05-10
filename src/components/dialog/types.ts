@@ -14,6 +14,7 @@ export type DialogAction = {
   onClick?: () => void | Promise<void>;
   disabled?: boolean;
   closeOnClick?: boolean;
+  className?: string;
 };
 
 export type DialogBase = {

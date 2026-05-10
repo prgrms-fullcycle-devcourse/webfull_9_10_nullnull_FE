@@ -27,11 +27,37 @@ import { authApi } from "../api/auth.api";
 import { toast } from "sonner";
 
 import { AppDialog } from "@/components/dialog";
+import { ConsentDialog } from "./ConsentDialog";
 
 export function LoginForm() {
   const { setUser } = useAuthStore();
   const router = useRouter();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [showConsent, setShowConsent] = useState(false);
+  const [pendingToken, setPendingToken] = useState<string | null>(null);
+
+  const handleLoginSuccess = async (token: string, user: any) => {
+    setUser(user);
+
+    Cookies.set("access_token", token, {
+      expires: 1 / 24,
+    });
+
+    toast.success(`${user.nickname}님, 환영합니다!`);
+    router.push("/");
+  };
+
+  const handleConsentConfirm = async () => {
+    if (!pendingToken) return;
+    try {
+      await authApi.consent(pendingToken);
+      setShowConsent(false);
+      router.push("/");
+    } catch (error) {
+      console.error("동의 실패:", error);
+      toast.error("동의 처리 중 문제가 발생했습니다.");
+    }
+  };
 
   const handleTestLogin = async (email: string, pass: string) => {
     try {
@@ -43,19 +69,17 @@ export function LoginForm() {
       if (error) throw error;
 
       if (data.session) {
-        const response = await authApi.sync(data.session.access_token);
-        setUser(response.data.user);
-
-        Cookies.set("access_token", data.session.access_token, {
-          expires: 1 / 24,
-        });
+        const token = data.session.access_token;
+        const response = await authApi.sync(token);
 
         if (response.data.consentRequired) {
-          await authApi.consent(data.session.access_token);
+          setPendingToken(token);
+          setUser(response.data.user);
+          setShowConsent(true);
+          return;
         }
 
-        toast.success(`${response.data.user.nickname}님, 환영합니다!`);
-        router.push("/");
+        await handleLoginSuccess(token, response.data.user);
       }
     } catch (error: any) {
       console.error("테스트 로그인 실패:", error);
@@ -73,6 +97,12 @@ export function LoginForm() {
         onOpenChange={(open) => !open && setErrorMsg(null)}
         title="로그인 실패"
         description={errorMsg || ""}
+      />
+
+      <ConsentDialog
+        open={showConsent}
+        onOpenChange={setShowConsent}
+        onConfirm={handleConsentConfirm}
       />
 
       <AppShell

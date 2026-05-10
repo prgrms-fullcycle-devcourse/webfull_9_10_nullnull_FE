@@ -41,6 +41,7 @@ export function DialogActions({
             "w-full font-semibold",
             actionSizeClassName[size],
             actionVariantClassName[action.variant ?? "primary"],
+            action.className,
           )}
           disabled={action.disabled}
           onClick={async () => {
