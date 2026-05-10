@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -40,7 +40,7 @@ export function CreateRoomStep3({ data, onUpdate }: Props) {
         <TimeRangePicker data={data} onUpdate={onUpdate} />
         <DaySelector data={data} onUpdate={onUpdate} />
         <DeadlinePicker data={data} onUpdate={onUpdate} />
-        <PlaceRecommendation />
+        <PlaceRecommendation data={data} onUpdate={onUpdate} />
       </div>
     </div>
   );
@@ -234,8 +234,7 @@ function DeadlinePicker({ data, onUpdate }: Props) {
   );
 }
 
-function PlaceRecommendation() {
-  const [recommendPlace, setRecommendPlace] = useState(false);
+function PlaceRecommendation({ data, onUpdate }: Props) {
   return (
     <div className="space-y-3">
       <div className="flex flex-col gap-1">
@@ -248,10 +247,10 @@ function PlaceRecommendation() {
         {[false, true].map((val) => (
           <button
             key={val ? "yes" : "no"}
-            onClick={() => setRecommendPlace(val)}
+            onClick={() => onUpdate({ collectOrigin: val })}
             className={cn(
               "flex-1 h-10! rounded-xl text-sm font-bold transition-all border",
-              recommendPlace === val
+              data.collectOrigin === val
                 ? "bg-primary-subtle text-primary-default border-primary-default shadow-sm"
                 : "border-border-subtle bg-white text-gray-400 hover:bg-gray-50",
             )}
