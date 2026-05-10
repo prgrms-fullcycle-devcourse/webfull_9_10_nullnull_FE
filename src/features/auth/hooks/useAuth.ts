@@ -12,10 +12,11 @@ export const useAuth = () => {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
+      // 프론트엔드 세션 종료 (Supabase)
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      // Optional: authApi.logout() if backend adds it later
     },
+
     onSuccess: () => {
       queryClient.clear();
       setUser(null);

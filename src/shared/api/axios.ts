@@ -17,7 +17,7 @@ api.interceptors.request.use(async (config) => {
   if (session?.access_token) {
     config.headers.Authorization = `Bearer ${session.access_token}`;
     // 쿠키 최신화 (미들웨어용)
-    Cookies.set("access_token", session.access_token, { expires: 7 });
+    Cookies.set("access_token", session.access_token, { expires: 1 / 24 });
   } else {
     // 세션이 없을 경우 기존 쿠키 폴백
     const token = Cookies.get("access_token");

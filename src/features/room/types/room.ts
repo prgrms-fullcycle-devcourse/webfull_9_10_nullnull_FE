@@ -112,3 +112,19 @@ export type RoomLocation = {
   lat: number;
   lng: number;
 };
+
+export interface RoomData {
+  nickname: string;
+  title: string;
+  description?: string;
+  category: string;
+  startDate: string;
+  endDate: string;
+  startTime: string;
+  endTime: string;
+  preferredDayType: string;
+  customDays: string[];
+  deadlineDate: string;
+  deadlineTime: string;
+  collectOrigin: boolean;
+}

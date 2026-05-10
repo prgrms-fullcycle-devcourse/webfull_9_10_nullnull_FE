@@ -61,7 +61,6 @@ export function RoomTitle({ title, hostName, category, status }: Props) {
   return (
     <div className="px-5 pt-5 pb-4 flex flex-col gap-3">
       <div className="flex gap-2 flex-wrap">
-        {/* 카테고리 뱃지 */}
         <span className="flex items-center gap-1 text-xs font-medium text-teal-600 bg-teal-50 px-3 py-1 rounded-full">
           <span
             className={`icon icon-${categoryConfig.icon} text-teal-600`}
@@ -71,7 +70,6 @@ export function RoomTitle({ title, hostName, category, status }: Props) {
           {categoryConfig.label}
         </span>
 
-        {/* 상태 뱃지 */}
         <span
           className={`text-xs font-medium px-3 py-1 rounded-full ${statusStyle}`}
         >
