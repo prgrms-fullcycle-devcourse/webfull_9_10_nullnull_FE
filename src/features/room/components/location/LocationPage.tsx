@@ -39,24 +39,14 @@ export function LocationPage({ slug }: Props) {
           <Button size="cta" disabled={!location} onClick={handleComplete}>
             완료
           </Button>
-          <button
+          <Button
+            variant="ghost"
             onClick={handleAbsent}
-            className="flex items-center justify-center h-11 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+            className="h-11 text-sm text-gray-400 hover:text-gray-600"
           >
             이번 모임은 안 나갈래요
-          </button>
+          </Button>
         </div>
-      }
-      overlaySlot={
-        searchOpen && (
-          <LocationSearchSheet
-            onClose={() => setSearchOpen(false)}
-            onSelect={(loc) => {
-              setLocation(loc);
-              setSearchOpen(false);
-            }}
-          />
-        )
       }
     >
       <AppContent className="flex flex-col gap-6">
@@ -69,12 +59,13 @@ export function LocationPage({ slug }: Props) {
           </p>
         </div>
 
-        <button
+        <Button
+          variant="outline"
           onClick={() => setSearchOpen(true)}
-          className="w-full h-12 px-4 rounded-xl border border-gray-200 bg-white text-left text-sm text-gray-400 hover:border-[#6B4EFF] transition-colors"
+          className="w-full h-12 px-4 rounded-xl justify-start text-sm text-gray-400 hover:border-[#6B4EFF] hover:text-gray-400 hover:bg-white"
         >
           장소 또는 주소 검색
-        </button>
+        </Button>
 
         {location && (
           <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
@@ -105,6 +96,15 @@ export function LocationPage({ slug }: Props) {
           </div>
         )}
       </AppContent>
+      {searchOpen && (
+        <LocationSearchSheet
+          onClose={() => setSearchOpen(false)}
+          onSelect={(loc) => {
+            setLocation(loc);
+            setSearchOpen(false);
+          }}
+        />
+      )}
     </AppShell>
   );
 }

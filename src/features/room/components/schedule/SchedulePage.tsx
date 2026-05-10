@@ -76,7 +76,9 @@ export function SchedulePage({ slug, room }: Props) {
     <AppShell
       title={<span className="text-base">모임 참여하기</span>}
       leftSlot={
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={() => router.back()}
           className="icon icon-back"
           aria-label="뒤로가기"
@@ -87,12 +89,13 @@ export function SchedulePage({ slug, room }: Props) {
           <Button size="cta" onClick={handleNext}>
             다음
           </Button>
-          <button
+          <Button
+            variant="ghost"
             onClick={handleAbsent}
-            className="flex items-center justify-center h-11 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+            className="h-11 text-sm text-gray-400 hover:text-gray-600"
           >
             이번 모임은 안 나갈래요
-          </button>
+          </Button>
         </div>
       }
     >

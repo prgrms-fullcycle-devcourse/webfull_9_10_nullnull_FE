@@ -242,19 +242,17 @@ export function RoomDetail({ slug }: Props) {
           참여하기
         </Button>
       }
-      overlaySlot={
-        privacyOpen && (
-          <PrivacyConsentSheet
-            onClose={() => setPrivacyOpen(false)}
-            onAgree={() => {
-              setPrivacyOpen(false);
-              setView("join-name");
-            }}
-          />
-        )
-      }
     >
       <RoomDetailView room={roomForComponents} />
+      {privacyOpen && (
+        <PrivacyConsentSheet
+          onClose={() => setPrivacyOpen(false)}
+          onAgree={() => {
+            setPrivacyOpen(false);
+            setView("join-name");
+          }}
+        />
+      )}
     </AppShell>
   );
 }
