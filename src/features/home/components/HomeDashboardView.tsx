@@ -7,12 +7,14 @@ import { AppShell, AppContent, AppLogoLink } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { AppDialog } from "@/components/dialog";
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 interface HomeDashboardViewProps {
   userNickname: string;
 }
 
 export function HomeDashboardView({ userNickname }: HomeDashboardViewProps) {
-  const [activeTab, setActiveTab] = useState<"created" | "joined">("created");
+  const [activeTab, setActiveTab] = useState("created");
   const [showBellDialog, setShowBellDialog] = useState(false);
 
   return (
@@ -27,21 +29,26 @@ export function HomeDashboardView({ userNickname }: HomeDashboardViewProps) {
       <AppShell
         leftSlot={<AppLogoLink />}
         rightSlot={
-          <div className="flex items-center gap-3 text-gray-700">
-            <button
+          <div className="flex items-center gap-1 text-gray-700">
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => setShowBellDialog(true)}
               aria-label="알림"
-              className="hover:text-gray-900 transition-colors"
+              className="rounded-full"
             >
               <Bell className="size-6" />
-            </button>
-            <Link
-              href="/setting"
-              aria-label="설정"
-              className="hover:text-gray-900 transition-colors"
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              asChild
+              className="rounded-full"
             >
-              <Settings className="size-6" />
-            </Link>
+              <Link href="/setting" aria-label="설정">
+                <Settings className="size-6" />
+              </Link>
+            </Button>
           </div>
         }
         bottomSlot={
@@ -62,46 +69,64 @@ export function HomeDashboardView({ userNickname }: HomeDashboardViewProps) {
               어떤 약속을 널널하게 맞춰볼까요?
             </h1>
 
-            <div className="mt-6 flex rounded-xl bg-gray-50 p-1">
-              <button
-                onClick={() => setActiveTab("created")}
-                className={`flex-1 rounded-lg py-2 text-sm font-semibold transition-all ${
-                  activeTab === "created"
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                만든 모임
-              </button>
-              <button
-                onClick={() => setActiveTab("joined")}
-                className={`flex-1 rounded-lg py-2 text-sm font-semibold transition-all ${
-                  activeTab === "joined"
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                참여한 모임
-              </button>
-            </div>
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="mt-6 w-full"
+            >
+              <TabsList className="grid w-full grid-cols-2 rounded-xl bg-gray-50 p-1 h-11">
+                <TabsTrigger
+                  value="created"
+                  className="rounded-lg text-sm font-semibold transition-all data-active:bg-white data-active:text-gray-900 data-active:shadow-sm text-gray-500"
+                >
+                  만든 모임
+                </TabsTrigger>
+                <TabsTrigger
+                  value="joined"
+                  className="rounded-lg text-sm font-semibold transition-all data-active:bg-white data-active:text-gray-900 data-active:shadow-sm text-gray-500"
+                >
+                  참여한 모임
+                </TabsTrigger>
+              </TabsList>
 
-            <div className="mt-16 flex flex-col items-center justify-center text-center">
-              <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-gray-50">
-                <CalendarX className="size-8 text-gray-300" />
-              </div>
-              <p className="text-sm font-medium text-gray-400">
-                {activeTab === "created"
-                  ? "아직 만들어진 모임이 없어요."
-                  : "아직 참여한 모임이 없어요."}
-                <br />
-                {activeTab === "created"
-                  ? "새로운 모임을 만들어보세요!"
-                  : "친구의 초대 링크로 참여해 보세요!"}
-              </p>
-            </div>
+              <TabsContent value="created" className="mt-16">
+                <EmptyState
+                  message="아직 만들어진 모임이 없어요."
+                  subMessage="새로운 모임을 만들어보세요!"
+                />
+              </TabsContent>
+
+              <TabsContent value="joined" className="mt-16">
+                <EmptyState
+                  message="아직 참여한 모임이 없어요."
+                  subMessage="친구의 초대 링크로 참여해 보세요!"
+                />
+              </TabsContent>
+            </Tabs>
           </section>
         </AppContent>
       </AppShell>
     </>
+  );
+}
+
+function EmptyState({
+  message,
+  subMessage,
+}: {
+  message: string;
+  subMessage: string;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center text-center">
+      <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-gray-50">
+        <CalendarX className="size-8 text-gray-300" />
+      </div>
+      <p className="text-sm font-medium text-gray-400">
+        {message}
+        <br />
+        {subMessage}
+      </p>
+    </div>
   );
 }
