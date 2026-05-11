@@ -23,8 +23,7 @@ export function MapView({ markers, className = "h-44" }: Props) {
     const initMap = () => {
       if (!containerRef.current) return;
 
-      const { Map, LatLng, LatLngBounds, Marker, InfoWindow } =
-        window.kakao.maps;
+      const { Map, LatLng, LatLngBounds, Marker } = window.kakao.maps;
 
       const center = new LatLng(markers[0].lat, markers[0].lng);
       const map = new Map(containerRef.current, { center, level: 4 });
@@ -37,10 +36,12 @@ export function MapView({ markers, className = "h-44" }: Props) {
         bounds.extend(position);
 
         if (m.label) {
-          const infoWindow = new InfoWindow({
-            content: `<div style="padding:5px 8px;font-size:12px;white-space:nowrap;">${m.label}</div>`,
+          const overlay = new window.kakao.maps.CustomOverlay({
+            position,
+            content: `<div style="padding:4px 10px;font-size:12px;white-space:nowrap;border-radius:999px;background:#fff;border:1px solid #e5e7eb;box-shadow:0 1px 4px rgba(0,0,0,0.12);">${m.label}</div>`,
+            yAnchor: 2.8,
           });
-          infoWindow.open(map, new Marker({ position, map }));
+          overlay.setMap(map);
         }
       });
 

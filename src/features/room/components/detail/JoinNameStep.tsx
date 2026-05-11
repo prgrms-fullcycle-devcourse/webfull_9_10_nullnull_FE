@@ -38,11 +38,11 @@ export function JoinNameStep({ role, nickname, onBack, onComplete }: Props) {
   const handleNext = () => {
     const trimmed = name.trim();
     if (!trimmed) {
-      setError("이름을 입력해 주세요.");
+      setError("닉네임을 입력해 주세요.");
       return;
     }
     if (trimmed.length < 2 || trimmed.length > 10) {
-      setError("이름은 2자 이상 10자 이하로 입력해주세요.");
+      setError("닉네임은 2자 이상 10자 이하로 입력해주세요.");
       return;
     }
     setError("");
@@ -65,16 +65,16 @@ export function JoinNameStep({ role, nickname, onBack, onComplete }: Props) {
       <AppContent className="flex flex-col gap-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            어떤 이름으로 참여할까요?
+            어떤 닉네임으로 참여할까요?
           </h2>
           <p className="text-sm text-gray-500">
-            모임장이 알아볼 수 있는 이름을 입력해 주세요
+            모임장이 알아볼 수 있는 닉네임을 입력해 주세요
           </p>
         </div>
 
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium text-gray-700">
-            이름 <span className="text-red-500">*</span>
+            닉네임 <span className="text-red-500">*</span>
           </label>
           <Input
             ref={inputRef}
@@ -85,7 +85,7 @@ export function JoinNameStep({ role, nickname, onBack, onComplete }: Props) {
               setName(e.target.value);
               if (error) setError("");
             }}
-            placeholder="이름 또는 별명을 입력해 주세요"
+            placeholder="닉네임을 입력해 주세요"
             aria-invalid={!!error}
           />
           {error && <p className="text-xs text-red-500">{error}</p>}

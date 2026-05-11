@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { AppIconLink } from "@/components/layout";
 import { searchByKakaoPlaces } from "@/shared/utils/kakaoSearch";
 import type { RoomLocation } from "@/features/room/types/room";
 
@@ -39,31 +41,19 @@ export function LocationSearchSheet({ onClose, onSelect }: Props) {
   }, [query]);
 
   return (
-    <div className="absolute inset-0 z-50 bg-white flex flex-col">
+    <div className="fixed inset-y-0 left-1/2 z-[60] flex w-full max-w-[var(--layout-mobile)] -translate-x-1/2 flex-col bg-white lg:left-[calc(50%+125px)]">
       {/* 검색 헤더 */}
       <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
-        <button
-          onClick={onClose}
-          className="icon icon-back text-gray-700 shrink-0"
-          aria-label="뒤로가기"
-        />
+        <AppIconLink icon="back" label="뒤로가기" onClick={onClose} />
         <div className="flex-1 flex items-center gap-2 bg-gray-100 rounded-xl px-3 h-10">
           <Input
             ref={inputRef}
-            type="text"
+            type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="장소 또는 주소 검색"
             className="h-full flex-1 border-0 bg-transparent px-0 py-0 text-sm text-gray-800 shadow-none placeholder:text-gray-400 focus-visible:ring-0"
           />
-          {query && (
-            <button
-              onClick={() => setQuery("")}
-              className="icon icon-close text-gray-400 shrink-0"
-              style={{ width: "1rem", height: "1rem" }}
-              aria-label="지우기"
-            />
-          )}
         </div>
       </div>
 
@@ -94,12 +84,13 @@ export function LocationSearchSheet({ onClose, onSelect }: Props) {
           <ul>
             {results.map((loc, i) => (
               <li key={i}>
-                <button
-                  className="w-full flex items-start gap-3 px-5 py-4 text-left hover:bg-gray-50 active:bg-gray-100 transition-colors cursor-pointer"
+                <Button
+                  variant="ghost"
+                  className="w-full h-auto flex items-start justify-start gap-3 px-5 py-4 text-left rounded-none hover:bg-gray-50 active:bg-gray-100"
                   onClick={() => onSelect(loc)}
                 >
                   <span
-                    className="icon icon-deadline text-primary shrink-0 mt-0.5"
+                    className="icon icon-pin text-primary shrink-0 mt-0.5"
                     aria-hidden="true"
                   />
                   <div className="flex flex-col gap-0.5 min-w-0">
@@ -110,7 +101,7 @@ export function LocationSearchSheet({ onClose, onSelect }: Props) {
                       {loc.address}
                     </span>
                   </div>
-                </button>
+                </Button>
                 {i < results.length - 1 && (
                   <div className="h-px bg-gray-50 mx-5" />
                 )}
