@@ -57,12 +57,8 @@
 
 :root {
   --layout-mobile: 500px;
-  --layout-content-width: 400px;
-  --layout-content-padding: 1rem; /* Tailwind px-4 */
-  --layout-content: calc(
-    var(--layout-content-width) + var(--layout-content-padding) +
-      var(--layout-content-padding)
-  );
+  --layout-content: 432px;
+
   --layout-desktop: 1024px;
   --layout-desktop-gutter: 24px;
   --layout-header-height: 61px;

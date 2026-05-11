@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { AppContent, AppIconLink, AppShell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { MapView } from "@/components/kakao";
@@ -71,32 +70,36 @@ export function LocationPage({ slug }: Props) {
         </Button>
 
         {location && (
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
-            {/* 장소명 */}
-            <div className="px-4 pt-4 pb-1">
-              <span className="text-lg font-bold text-gray-900">
+          <>
+            {/* 장소 정보 카드 */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-4 py-4">
+              <span className="text-lg font-bold text-gray-900 block mb-1">
                 {location.name}
               </span>
+              <div className="flex items-start gap-2">
+                <span className="text-xs text-gray-400 shrink-0 pt-0.5">
+                  출발지
+                </span>
+                <span className="text-xs text-gray-600 leading-relaxed">
+                  {location.address}
+                </span>
+              </div>
             </div>
 
-            {/* 도로명 주소 */}
-            <div className="flex items-start gap-2 px-4 pb-4">
-              <span className="text-xs text-gray-400 shrink-0 pt-0.5">
-                출발지
-              </span>
-              <span className="text-xs text-gray-600 leading-relaxed">
-                {location.address}
-              </span>
+            {/* 지도 카드 */}
+            <div className="rounded-2xl overflow-hidden shadow-sm">
+              <MapView
+                markers={[
+                  {
+                    lat: location.lat,
+                    lng: location.lng,
+                    label: location.name,
+                  },
+                ]}
+                className="h-44"
+              />
             </div>
-
-            {/* 지도 미리보기 */}
-            <MapView
-              markers={[
-                { lat: location.lat, lng: location.lng, label: location.name },
-              ]}
-              className="h-44"
-            />
-          </div>
+          </>
         )}
       </AppContent>
       {searchOpen && (

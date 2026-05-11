@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 type Props = {
   dates: Date[];
@@ -10,14 +13,17 @@ type Props = {
 };
 
 const DAY = ["일", "월", "화", "수", "목", "금", "토"];
+const TIME_COLUMN_WIDTH = "3.25rem";
+const DATE_COLUMN_WIDTH = "2.25rem";
+const TIME_ROW_HEIGHT = "2.5rem";
 
 function slotKey(date: Date, time: string) {
   return `${date.toISOString().slice(0, 10)}_${time}`;
 }
 
 function formatDateHeader(date: Date) {
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
+  const m = String(date.getMonth() + 1);
+  const d = String(date.getDate());
   return { date: `${m}.${d}`, day: DAY[date.getDay()] };
 }
 
@@ -27,9 +33,15 @@ export function TimeTable({
   selectedSlots,
   onChange,
 }: Props) {
-  const dragMode = useRef<boolean | null>(null);
   const cellScrollRef = useRef<HTMLDivElement>(null);
   const headerScrollRef = useRef<HTMLDivElement>(null);
+  const headerDragRef = useRef({
+    didDrag: false,
+    pointerId: null as number | null,
+    startScrollLeft: 0,
+    startX: 0,
+  });
+  const suppressHeaderClickRef = useRef(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
@@ -81,62 +93,83 @@ export function TimeTable({
     };
   }, [handleCellScroll, handleHeaderScroll]);
 
-  /* ─── 셀 드래그 선택 ─── */
-  const handleCellPointerDown = useCallback(
+  const handleCellClick = useCallback(
     (date: Date, time: string) => {
       const key = slotKey(date, time);
-      const mode = !selectedSlots.has(key);
-      dragMode.current = mode;
       onChange((prev) => {
         const next = new Set(prev);
-        mode ? next.add(key) : next.delete(key);
-        return next;
-      });
-    },
-    [selectedSlots, onChange],
-  );
-
-  const handleCellPointerEnter = useCallback(
-    (key: string) => {
-      if (dragMode.current === null) return;
-      onChange((prev) => {
-        const next = new Set(prev);
-        if (dragMode.current) next.add(key);
-        else next.delete(key);
+        if (next.has(key)) next.delete(key);
+        else next.add(key);
         return next;
       });
     },
     [onChange],
   );
 
-  const handlePointerMove = useCallback(
-    (e: React.PointerEvent) => {
-      if (dragMode.current === null) return;
-      const el = document.elementFromPoint(e.clientX, e.clientY);
-      if (!el) return;
-      const cell = el.closest("[data-slot]");
-      if (!cell) return;
-      const key = cell.getAttribute("data-slot");
-      if (key) handleCellPointerEnter(key);
+  const handleHeaderPointerDown = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+
+      const header = headerScrollRef.current;
+      if (!header) return;
+
+      headerDragRef.current = {
+        didDrag: false,
+        pointerId: event.pointerId,
+        startScrollLeft: header.scrollLeft,
+        startX: event.clientX,
+      };
     },
-    [handleCellPointerEnter],
+    [],
   );
 
-  useEffect(() => {
-    const stop = () => {
-      dragMode.current = null;
-    };
-    window.addEventListener("pointerup", stop);
-    window.addEventListener("pointercancel", stop);
-    return () => {
-      window.removeEventListener("pointerup", stop);
-      window.removeEventListener("pointercancel", stop);
-    };
-  }, []);
+  const handleHeaderPointerMove = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      const drag = headerDragRef.current;
+      if (drag.pointerId !== event.pointerId) return;
+
+      const header = headerScrollRef.current;
+      if (!header) return;
+
+      const deltaX = event.clientX - drag.startX;
+      if (Math.abs(deltaX) > 3) {
+        drag.didDrag = true;
+      }
+
+      if (drag.didDrag) {
+        header.scrollLeft = drag.startScrollLeft - deltaX;
+        event.preventDefault();
+      }
+    },
+    [],
+  );
+
+  const handleHeaderPointerEnd = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      const drag = headerDragRef.current;
+      if (drag.pointerId !== event.pointerId) return;
+
+      if (drag.didDrag) {
+        suppressHeaderClickRef.current = true;
+        window.setTimeout(() => {
+          suppressHeaderClickRef.current = false;
+        }, 0);
+      }
+
+      drag.pointerId = null;
+      drag.didDrag = false;
+    },
+    [],
+  );
 
   /* ─── 날짜 헤더 클릭: 해당 날짜 전체 토글 ─── */
   const handleDateHeaderClick = useCallback(
     (dateIndex: number) => {
+      if (suppressHeaderClickRef.current) {
+        suppressHeaderClickRef.current = false;
+        return;
+      }
+
       const allSelected = timeSlots.every((t) =>
         selectedSlots.has(slotKey(dates[dateIndex], t)),
       );
@@ -145,7 +178,8 @@ export function TimeTable({
         const next = new Set(prev);
         timeSlots.forEach((t) => {
           const k = slotKey(dates[dateIndex], t);
-          mode ? next.add(k) : next.delete(k);
+          if (mode) next.add(k);
+          else next.delete(k);
         });
         return next;
       });
@@ -164,7 +198,8 @@ export function TimeTable({
         const next = new Set(prev);
         dates.forEach((d) => {
           const k = slotKey(d, timeSlots[timeIndex]);
-          mode ? next.add(k) : next.delete(k);
+          if (mode) next.add(k);
+          else next.delete(k);
         });
         return next;
       });
@@ -178,166 +213,201 @@ export function TimeTable({
   }, []);
 
   return (
-    <div className="select-none">
-      {/* ── 날짜 헤더: 세로 고정(sticky), 가로는 셀과 scrollLeft 동기화 ── */}
-      <div className="sticky top-0 z-20 flex bg-gray-50">
-        {/* 시간 열 spacer */}
-        <div className="w-12 flex-shrink-0" />
-        {/*
-          overflow-y-hidden(h-12)으로 스크롤바를 잘라냄.
-          안쪽 div는 overflow-x-auto + 더 큰 높이로 스크롤바가 생기지만 가려짐.
-        */}
-        <div
-          className="flex-1 min-w-0 overflow-y-hidden"
-          style={{ height: "3rem" }}
-        >
+    <Card
+      size="sm"
+      className="select-none gap-0 rounded-[28px] border-0 bg-white py-0 ring-gray-100 shadow-[0_0_0_1px_rgba(13,12,29,0.02)]"
+    >
+      <CardContent className="px-5 pb-0 pt-4">
+        <div className="flex">
           <div
-            ref={headerScrollRef}
-            className="overflow-x-auto"
-            style={{ height: "calc(3rem + 20px)" }}
+            className="flex shrink-0 items-start justify-center pt-1 text-xs font-medium text-gray-500"
+            style={{ width: TIME_COLUMN_WIDTH }}
+          />
+          <div
+            className="min-w-0 flex-1 overflow-y-hidden"
+            style={{ height: "4.25rem" }}
           >
             <div
-              className="inline-grid"
-              style={{
-                gridTemplateColumns: `repeat(${dates.length}, 2.75rem)`,
-              }}
+              ref={headerScrollRef}
+              className="cursor-grab overflow-x-auto active:cursor-grabbing"
+              style={{ height: "calc(4.25rem + 20px)" }}
+              onPointerCancel={handleHeaderPointerEnd}
+              onPointerDown={handleHeaderPointerDown}
+              onPointerMove={handleHeaderPointerMove}
+              onPointerUp={handleHeaderPointerEnd}
             >
-              {dates.map((date, i) => {
-                const { date: d, day } = formatDateHeader(date);
-                const allSelected = timeSlots.every((t) =>
-                  selectedSlots.has(slotKey(date, t)),
-                );
-                return (
-                  <button
-                    key={i}
-                    onClick={() => handleDateHeaderClick(i)}
-                    className={`h-12 flex flex-col items-center justify-center pb-2 border-b transition-colors cursor-pointer ${
-                      allSelected
-                        ? "bg-[#F0EDFF] border-[#6B4EFF]"
-                        : "bg-gray-50 border-gray-200 hover:bg-gray-100"
-                    }`}
-                  >
-                    <span
-                      className={`text-xs font-medium ${allSelected ? "text-[#6B4EFF]" : "text-gray-700"}`}
-                    >
-                      {d}
-                    </span>
-                    <span
-                      className={`text-[10px] ${allSelected ? "text-[#6B4EFF]" : "text-gray-400"}`}
-                    >
-                      {day}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── 시간 레이블(좌측 고정) + 셀(가로 스크롤) ── */}
-      <div className="flex">
-        {/* 시간 레이블 */}
-        <div className="flex-shrink-0 w-12">
-          {timeSlots.map((time, ti) => {
-            const allSelected = dates.every((d) =>
-              selectedSlots.has(slotKey(d, time)),
-            );
-            return (
-              <button
-                key={time}
-                onClick={() => handleTimeHeaderClick(ti)}
-                className={`h-8 w-full flex items-start justify-end pr-2 pt-1 cursor-pointer transition-colors ${
-                  allSelected ? "bg-[#F0EDFF]" : "bg-gray-50 hover:bg-gray-100"
-                }`}
+              <div
+                className="inline-grid gap-x-1"
+                style={{
+                  gridTemplateColumns: `repeat(${dates.length}, ${DATE_COLUMN_WIDTH})`,
+                }}
               >
-                <span
-                  className={`text-[10px] leading-none ${
-                    allSelected
-                      ? "text-[#6B4EFF] font-semibold"
-                      : "text-gray-400"
-                  }`}
-                >
-                  {time}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* 셀 영역 */}
-        <div className="relative flex-1 min-w-0">
-          {canScrollLeft && (
-            <button
-              className="absolute left-0 top-0 bottom-0 z-30 w-6 flex items-center justify-center"
-              onClick={() => scrollBy(-110)}
-              aria-label="왼쪽으로 스크롤"
-            >
-              <span className="text-gray-400 text-lg leading-none">‹</span>
-            </button>
-          )}
-          {canScrollRight && (
-            <button
-              className="absolute right-0 top-0 bottom-0 z-30 w-6 flex items-center justify-center"
-              onClick={() => scrollBy(110)}
-              aria-label="오른쪽으로 스크롤"
-            >
-              <span className="text-gray-400 text-lg leading-none">›</span>
-            </button>
-          )}
-
-          <div
-            ref={cellScrollRef}
-            className="overflow-x-auto"
-            onPointerMove={handlePointerMove}
-            onPointerLeave={() => {
-              dragMode.current = null;
-            }}
-          >
-            <div
-              className="inline-grid"
-              style={{
-                gridTemplateColumns: `repeat(${dates.length}, 2.75rem)`,
-              }}
-            >
-              {timeSlots.map((time) =>
-                dates.map((date, di) => {
-                  const key = slotKey(date, time);
-                  const selected = selectedSlots.has(key);
-                  return (
-                    <div
-                      key={`${di}-${time}`}
-                      data-slot={key}
-                      className={`h-8 mx-0.5 rounded-sm border transition-colors cursor-pointer touch-none ${
-                        selected
-                          ? "bg-[#6B4EFF] border-[#6B4EFF]"
-                          : "bg-white border-gray-200 hover:border-[#6B4EFF]/40"
-                      }`}
-                      onPointerDown={(e) => {
-                        e.preventDefault();
-                        handleCellPointerDown(date, time);
-                      }}
-                      onPointerEnter={() => handleCellPointerEnter(key)}
-                    />
+                {dates.map((date, i) => {
+                  const { date: d, day } = formatDateHeader(date);
+                  const allSelected = timeSlots.every((t) =>
+                    selectedSlots.has(slotKey(date, t)),
                   );
-                }),
-              )}
+                  return (
+                    <Button
+                      key={i}
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      aria-pressed={allSelected}
+                      onClick={() => handleDateHeaderClick(i)}
+                      className={cn(
+                        "flex h-[4.25rem] w-full flex-col items-center justify-start rounded-lg px-0 pt-1 hover:bg-gray-50",
+                        allSelected && "bg-gray-100 hover:bg-gray-100",
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "text-[10px] leading-3",
+                          i === 0 ? "text-gray-500" : "invisible",
+                        )}
+                      >
+                        {date.getFullYear()}
+                      </span>
+                      <span
+                        className={cn(
+                          "mt-1 text-[10px] leading-3",
+                          allSelected
+                            ? "font-semibold text-gray-700"
+                            : "font-medium text-gray-500",
+                        )}
+                      >
+                        {d}
+                      </span>
+                      <span
+                        className={cn(
+                          "mt-1 text-sm leading-5",
+                          allSelected
+                            ? "font-bold text-gray-950"
+                            : "font-semibold text-gray-950",
+                        )}
+                      >
+                        {day}
+                      </span>
+                    </Button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* 범례 */}
-      <div className="flex items-center justify-end gap-4 mt-3 px-1">
-        <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 rounded-sm bg-white border border-gray-200" />
-          <span className="text-xs text-gray-500">가능</span>
+        <div className="flex">
+          <div
+            className="flex shrink-0 flex-col gap-1"
+            style={{ width: TIME_COLUMN_WIDTH }}
+          >
+            {timeSlots.map((time, ti) => {
+              const allSelected = dates.every((d) =>
+                selectedSlots.has(slotKey(d, time)),
+              );
+              return (
+                <Button
+                  key={time}
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  aria-pressed={allSelected}
+                  onClick={() => handleTimeHeaderClick(ti)}
+                  className={cn(
+                    "flex w-full justify-end rounded-lg px-0 pr-3 hover:bg-gray-50",
+                    allSelected && "bg-gray-100 hover:bg-gray-100",
+                  )}
+                  style={{ height: TIME_ROW_HEIGHT }}
+                >
+                  <span
+                    className={cn(
+                      "text-[10px] leading-3",
+                      allSelected
+                        ? "font-semibold text-gray-700"
+                        : "font-medium text-gray-500",
+                    )}
+                  >
+                    {time}
+                  </span>
+                </Button>
+              );
+            })}
+          </div>
+
+          <div className="relative min-w-0 flex-1">
+            {canScrollLeft && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                className="absolute bottom-0 left-0 top-0 z-30 h-full w-6 rounded-none text-lg text-gray-400"
+                onClick={() => scrollBy(-110)}
+                aria-label="왼쪽으로 스크롤"
+              >
+                ‹
+              </Button>
+            )}
+            {canScrollRight && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                className="absolute bottom-0 right-0 top-0 z-30 h-full w-6 rounded-none text-lg text-gray-400"
+                onClick={() => scrollBy(110)}
+                aria-label="오른쪽으로 스크롤"
+              >
+                ›
+              </Button>
+            )}
+
+            <div ref={cellScrollRef} className="overflow-x-auto">
+              <div
+                className="inline-grid gap-x-1 gap-y-1"
+                style={{
+                  gridTemplateColumns: `repeat(${dates.length}, ${DATE_COLUMN_WIDTH})`,
+                }}
+              >
+                {timeSlots.map((time) =>
+                  dates.map((date, di) => {
+                    const key = slotKey(date, time);
+                    const selected = selectedSlots.has(key);
+                    return (
+                      <Button
+                        key={`${di}-${time}`}
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        data-time-slot={key}
+                        aria-pressed={selected}
+                        aria-label={`${formatDateHeader(date).date} ${time} 불가능`}
+                        className={cn(
+                          "w-full rounded-lg border p-0 hover:bg-white",
+                          selected
+                            ? "border-gray-200 bg-gray-200 hover:bg-gray-200"
+                            : "border-gray-100 bg-white hover:border-gray-300",
+                        )}
+                        style={{ height: TIME_ROW_HEIGHT }}
+                        onClick={() => handleCellClick(date, time)}
+                      />
+                    );
+                  }),
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 rounded-sm bg-[#6B4EFF]" />
-          <span className="text-xs text-gray-500">불가능</span>
+      </CardContent>
+
+      <CardFooter className="mx-5 mt-2 justify-end gap-3 border-gray-100 bg-white px-0 py-4">
+        <div className="flex items-center gap-1">
+          <div className="size-2 rounded-sm border border-gray-100 bg-white" />
+          <span className="text-[10px] text-gray-500">가능</span>
         </div>
-      </div>
-    </div>
+        <div className="flex items-center gap-1">
+          <div className="size-2 rounded-sm bg-gray-200" />
+          <span className="text-[10px] text-gray-500">불가능</span>
+        </div>
+      </CardFooter>
+    </Card>
   );
 }

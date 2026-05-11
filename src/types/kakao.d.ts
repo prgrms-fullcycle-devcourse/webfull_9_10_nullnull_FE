@@ -3,6 +3,7 @@ type KakaoLatLngBounds = { extend: (latlng: KakaoLatLng) => void };
 type KakaoMap = { setBounds: (bounds: KakaoLatLngBounds) => void };
 type KakaoMarker = object;
 type KakaoInfoWindow = { open: (map: KakaoMap, marker: KakaoMarker) => void };
+type KakaoCustomOverlay = { setMap: (map: KakaoMap | null) => void };
 
 interface Window {
   kakao: {
@@ -22,6 +23,12 @@ interface Window {
         content: string;
         removable?: boolean;
       }) => KakaoInfoWindow;
+      CustomOverlay: new (options: {
+        position: KakaoLatLng;
+        content: string;
+        yAnchor?: number;
+        xAnchor?: number;
+      }) => KakaoCustomOverlay;
       services: {
         Places: new () => {
           keywordSearch: (
