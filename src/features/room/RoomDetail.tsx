@@ -4,13 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
+import { AgreementDialog, AppDialog } from "@/components/dialog";
 import { AppIconLink, AppLogoLink, AppShell } from "@/components/layout";
-import { AppDialog } from "@/components/dialog";
 import { Button } from "@/components/ui/button";
 import { useRoomJoinStore } from "@/store/useRoomJoinStore";
 
 import { JoinNameStep } from "./components/detail/JoinNameStep";
-import { PrivacyConsentSheet } from "./components/detail/PrivacyConsentSheet";
 import { RoomDashboardView } from "./components/detail/RoomDashboardView";
 import { RoomDetailView } from "./components/detail/RoomDetailView";
 import { RoomEndedView } from "./components/detail/RoomEndedView";
@@ -73,7 +72,6 @@ export function RoomDetail({ slug }: Props) {
   const router = useRouter();
   const [data, setData] = useState<RoomDetailData>(MOCK_DETAIL_DATA);
   const [view, setView] = useState<View>("detail");
-  const [privacyOpen, setPrivacyOpen] = useState(false);
   const setJoin = useRoomJoinStore((state) => state.set);
 
   const room = useMemo(() => toRoomApiResponse(data, slug), [data, slug]);
@@ -126,11 +124,7 @@ export function RoomDetail({ slug }: Props) {
   };
 
   const handleJoinClick = () => {
-    if (viewer.consentRequired) {
-      setPrivacyOpen(true);
-    } else {
-      setView("join-name");
-    }
+    setView("join-name");
   };
 
   useEffect(() => {
@@ -240,18 +234,17 @@ export function RoomDetail({ slug }: Props) {
   return (
     <AppShell
       leftSlot={<AppLogoLink />}
-      bottomSlot={<Button onClick={handleJoinClick}>참여하기</Button>}
+      bottomSlot={
+        viewer.consentRequired ? (
+          <AgreementDialog onAgree={handleJoinClick}>
+            <Button>참여하기</Button>
+          </AgreementDialog>
+        ) : (
+          <Button onClick={handleJoinClick}>참여하기</Button>
+        )
+      }
     >
       <RoomDetailView room={roomForComponents} />
-      {privacyOpen && (
-        <PrivacyConsentSheet
-          onClose={() => setPrivacyOpen(false)}
-          onAgree={() => {
-            setPrivacyOpen(false);
-            setView("join-name");
-          }}
-        />
-      )}
     </AppShell>
   );
 }
