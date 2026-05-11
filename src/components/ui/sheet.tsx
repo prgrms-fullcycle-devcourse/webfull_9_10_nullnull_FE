@@ -25,9 +25,26 @@ function SheetClose({
 }
 
 function SheetPortal({
+  container,
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Portal>) {
-  return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />;
+  const portalContainer = React.useSyncExternalStore(
+    () => () => {},
+    () => container ?? getDialogContainer() ?? document.body,
+    () => null,
+  );
+
+  if (!portalContainer) {
+    return null;
+  }
+
+  return (
+    <SheetPrimitive.Portal
+      data-slot="sheet-portal"
+      container={portalContainer}
+      {...props}
+    />
+  );
 }
 
 function SheetOverlay({
@@ -64,10 +81,8 @@ function SheetContent({
   showCloseButton?: boolean;
   scope?: "viewport" | "container";
 }) {
-  const container = portalContainer ?? getDialogContainer();
-
   return (
-    <SheetPortal container={container}>
+    <SheetPortal container={portalContainer}>
       <SheetOverlay scope={scope} />
       <SheetPrimitive.Content
         data-slot="sheet-content"

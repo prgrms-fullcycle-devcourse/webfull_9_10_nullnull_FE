@@ -19,9 +19,26 @@ function DrawerTrigger({
 }
 
 function DrawerPortal({
+  container,
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Portal>) {
-  return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />;
+  const portalContainer = React.useSyncExternalStore(
+    () => () => {},
+    () => container ?? getDialogContainer() ?? document.body,
+    () => null,
+  );
+
+  if (!portalContainer) {
+    return null;
+  }
+
+  return (
+    <DrawerPrimitive.Portal
+      data-slot="drawer-portal"
+      container={portalContainer}
+      {...props}
+    />
+  );
 }
 
 function DrawerClose({
@@ -60,10 +77,8 @@ function DrawerContent({
   portalContainer?: HTMLElement | null;
   scope?: "viewport" | "container";
 }) {
-  const container = portalContainer ?? getDialogContainer();
-
   return (
-    <DrawerPortal data-slot="drawer-portal" container={container}>
+    <DrawerPortal data-slot="drawer-portal" container={portalContainer}>
       <DrawerOverlay scope={scope} />
       <DrawerPrimitive.Content
         data-slot="drawer-content"

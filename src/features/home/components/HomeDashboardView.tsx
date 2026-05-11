@@ -2,8 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Bell, Settings, CalendarX } from "lucide-react";
-import { AppShell, AppContent, AppLogoLink } from "@/components/layout";
+import { CalendarX } from "lucide-react";
+import {
+  AppShell,
+  AppContent,
+  AppIconLink,
+  AppLogoLink,
+} from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { AppDialog } from "@/components/dialog";
 
@@ -29,41 +34,26 @@ export function HomeDashboardView({ userNickname }: HomeDashboardViewProps) {
       <AppShell
         leftSlot={<AppLogoLink />}
         rightSlot={
-          <div className="flex items-center gap-1 text-gray-700">
-            <Button
-              variant="ghost"
-              size="icon"
+          <>
+            <AppIconLink
+              icon="alarm"
+              label="알림"
               onClick={() => setShowBellDialog(true)}
-              aria-label="알림"
-              className="rounded-full"
-            >
-              <Bell className="size-6" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              asChild
-              className="rounded-full"
-            >
-              <Link href="/setting" aria-label="설정">
-                <Settings className="size-6" />
-              </Link>
-            </Button>
-          </div>
+            />
+            <AppIconLink href="/setting" icon="setting" label="설정" />
+          </>
         }
         bottomSlot={
           activeTab === "created" ? (
-            <div className="px-5 w-full">
-              <Button size="cta" className="w-full" asChild>
-                <Link href="/room">모임 만들기</Link>
-              </Button>
-            </div>
+            <Button asChild>
+              <Link href="/room">모임 만들기</Link>
+            </Button>
           ) : null // 참여한 모임 탭에서는 하단 버튼을 숨깁니다.
         }
       >
         <AppContent>
-          <section className="px-5 pt-8 pb-10">
-            <h1 className="text-2xl font-bold leading-8 text-gray-950">
+          <section className="pb-10 pt-8">
+            <h1 className="text-2xl font-bold leading-8 text-text-primary">
               {userNickname} 님,
               <br />
               어떤 약속을 널널하게 맞춰볼까요?
@@ -74,19 +64,9 @@ export function HomeDashboardView({ userNickname }: HomeDashboardViewProps) {
               onValueChange={setActiveTab}
               className="mt-6 w-full"
             >
-              <TabsList className="grid w-full grid-cols-2 rounded-xl bg-gray-50 p-1 h-11">
-                <TabsTrigger
-                  value="created"
-                  className="rounded-lg text-sm font-semibold transition-all data-active:bg-white data-active:text-gray-900 data-active:shadow-sm text-gray-500"
-                >
-                  만든 모임
-                </TabsTrigger>
-                <TabsTrigger
-                  value="joined"
-                  className="rounded-lg text-sm font-semibold transition-all data-active:bg-white data-active:text-gray-900 data-active:shadow-sm text-gray-500"
-                >
-                  참여한 모임
-                </TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="created">만든 모임</TabsTrigger>
+                <TabsTrigger value="joined">참여한 모임</TabsTrigger>
               </TabsList>
 
               <TabsContent value="created" className="mt-16">

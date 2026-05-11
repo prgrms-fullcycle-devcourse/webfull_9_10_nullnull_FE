@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { AppBackButton, AppContent, AppShell } from "@/components/layout";
+import { AppContent, AppIconLink, AppShell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -52,10 +52,9 @@ export function JoinNameStep({ role, nickname, onBack, onComplete }: Props) {
   return (
     <AppShell
       title={<span className="text-base">모임 참여하기</span>}
-      leftSlot={<AppBackButton onClick={onBack} />}
+      leftSlot={<AppIconLink icon="back" label="뒤로가기" onClick={onBack} />}
       bottomSlot={
         <Button
-          size="cta"
           onClick={handleNext}
           disabled={name.trim().length < 2 || name.trim().length > 10}
         >

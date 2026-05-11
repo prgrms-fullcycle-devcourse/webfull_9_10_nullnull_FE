@@ -168,9 +168,7 @@ function TermsSheetBody({
             {TERM_CONTENT[viewingTerm].body}
           </div>
           <div className="pb-[calc(1rem+env(safe-area-inset-bottom))]">
-            <Button size="cta" onClick={() => setViewingTerm(null)}>
-              확인
-            </Button>
+            <Button onClick={() => setViewingTerm(null)}>확인</Button>
           </div>
         </>
       ) : (
@@ -227,10 +225,10 @@ function TermsSheetBody({
           </div>
 
           <div className="flex flex-col gap-3 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-            <Button size="cta" onClick={onAgree} disabled={!allChecked}>
+            <Button onClick={onAgree} disabled={!allChecked}>
               동의하고 계속하기
             </Button>
-            <Button size="cta" variant="ghost" onClick={onClose}>
+            <Button variant="ghost" onClick={onClose}>
               닫기
             </Button>
           </div>

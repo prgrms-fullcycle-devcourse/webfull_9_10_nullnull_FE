@@ -2,13 +2,17 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AppShell } from "@/components/layout/AppShell";
+import {
+  AppContent,
+  AppIconLink,
+  AppLogoLink,
+  AppShell,
+} from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { CreateRoomStep1 } from "@/features/room/components/create/CreateRoomStep1";
 import { CreateRoomStep2 } from "@/features/room/components/create/CreateRoomStep2";
 import { CreateRoomStep3 } from "@/features/room/components/create/CreateRoomStep3";
 import { CreateRoomComplete } from "@/features/room/components/create/CreateRoomComplete";
-import { AppBackButton, AppContent, AppLogoLink } from "@/components/layout";
 import { useCreateRoom } from "./hooks/useCreateRoom";
 import { AppDialog } from "@/components/dialog/AppDialog";
 import { toast } from "sonner";
@@ -56,15 +60,18 @@ export function CreateRoom() {
           step === 4 ? (
             <AppLogoLink />
           ) : step === 1 ? (
-            <AppBackButton onClick={handleExitRequest} />
+            <AppIconLink
+              icon="back"
+              label="뒤로가기"
+              onClick={handleExitRequest}
+            />
           ) : (
-            <AppBackButton onClick={handleBack} />
+            <AppIconLink icon="back" label="뒤로가기" onClick={handleBack} />
           )
         }
         rightSlot={undefined}
         bottomSlot={
           <Button
-            size="cta"
             onClick={step === 3 ? onFinalSubmit : handleNext}
             disabled={isSubmitting}
           >
@@ -75,7 +82,7 @@ export function CreateRoom() {
         {step < 4 ? (
           <AppContent>
             <div className="mb-5">
-              <div className="flex gap-1 mb-3">
+              <div className="mb-3 flex gap-1">
                 {[1, 2, 3].map((s) => (
                   <div
                     key={s}
@@ -83,7 +90,7 @@ export function CreateRoom() {
                   />
                 ))}
               </div>
-              <div className="text-primary font-bold text-sm tracking-widest">
+              <div className="text-md font-bold tracking-widest text-primary">
                 STEP {step}
               </div>
             </div>

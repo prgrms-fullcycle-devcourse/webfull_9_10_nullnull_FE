@@ -6,7 +6,7 @@ import styles from "./RoomCardsAnimation.module.css";
 
 export function RoomCardsAnimation() {
   return (
-    <div className="relative mt-8 h-[214px] w-full max-w-[335px]">
+    <div className="relative mt-15 h-[214px] w-full max-w-[335px]">
       <div className={`${styles.previewCard} ${styles.previewCard1}`}>
         <Image src={imgMain1} alt="" className="size-full" />
       </div>

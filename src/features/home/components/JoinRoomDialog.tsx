@@ -69,18 +69,12 @@ export function JoinRoomDialog({ open, onOpenChange }: JoinRoomDialogProps) {
             placeholder="https://nullnull.app/room/..."
             value={joinUrl}
             onChange={(e) => setJoinUrl(e.target.value)}
-            className="h-12 rounded-xl border-gray-100 bg-gray-50 px-4 text-sm"
+            className="rounded-xl border-gray-100 bg-gray-50 px-4 text-sm"
           />
         </div>
 
         <DialogFooter className="mt-6 border-none bg-transparent p-0">
-          <Button
-            size="cta"
-            className="w-full h-12 text-base font-bold"
-            onClick={handleJoinSubmit}
-          >
-            참가하기
-          </Button>
+          <Button onClick={handleJoinSubmit}>참가하기</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

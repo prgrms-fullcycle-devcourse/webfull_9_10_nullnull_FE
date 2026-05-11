@@ -42,7 +42,7 @@ export function RoomDashboardView({ room }: Props) {
       <RoomSummary room={room} />
 
       {isConfirmed ? (
-        <ConfirmedInfoCard />
+        <ConfirmedInfoCard isHighlighted={room.status === "CONFIRMED"} />
       ) : (
         <RoomParticipationProgressCard
           current={room.participantCount ?? 0}
@@ -83,9 +83,15 @@ function RoomSummary({ room }: { room: RoomApiResponse }) {
   );
 }
 
-function ConfirmedInfoCard() {
+function ConfirmedInfoCard({ isHighlighted }: { isHighlighted: boolean }) {
   return (
-    <section className="flex flex-col gap-4 rounded-3xl border border-border-subtle bg-white p-5">
+    <section
+      className={`flex flex-col gap-4 rounded-3xl border border-border-subtle bg-white p-5 ${
+        isHighlighted
+          ? "[--info-icon-bg:var(--color-info-subtle)] [--info-icon-color:var(--color-info)]"
+          : "[--info-icon-bg:var(--color-bg-muted)] [--info-icon-color:var(--color-gray-400)]"
+      }`}
+    >
       <InfoRow icon="calendar" label="날짜" value={MOCK_CONFIRMED.date} />
       <InfoRow icon="time" label="시간" value={MOCK_CONFIRMED.time} />
       <InfoRow
@@ -116,9 +122,9 @@ function InfoRow({
 }) {
   return (
     <div className="flex items-start gap-3">
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-bg-muted">
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--info-icon-bg)]">
         <span
-          className={`icon icon-${icon} !size-4 text-gray-400`}
+          className={`icon icon-${icon} text-[var(--info-icon-color)]`}
           aria-hidden="true"
         />
       </span>
