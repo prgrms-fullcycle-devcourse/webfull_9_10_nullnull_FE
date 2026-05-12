@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabase/client";
 import { authApi } from "@/features/auth/api/auth.api";
 import { useAuthStore } from "@/store/useAuthStore";
 import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -37,6 +38,7 @@ export default function AuthCallbackPage() {
             await authApi.consent(session.access_token);
           }
 
+          toast.success(`${response.data.user.nickname}님, 환영합니다!`);
           router.push("/"); // 무조건 메인 페이지로 리다이렉트
         } else {
           router.push("/login");

@@ -112,6 +112,19 @@ export function AppDialog({
     );
   }
 
+  if (type === "full") {
+    return (
+      <FullDialogContent
+        title={title}
+        content={content}
+        className={className}
+        trigger={children}
+        open={dialog.open}
+        onOpenChange={dialog.onOpenChange}
+      />
+    );
+  }
+
   return (
     <AlertDialogContentByType
       type={type}
@@ -296,6 +309,52 @@ function BottomDialogContent({
             />
           </SheetFooter>
         )}
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+function FullDialogContent({
+  title,
+  content,
+  className,
+  trigger,
+  open,
+  onOpenChange,
+}: {
+  title?: string;
+  content?: ReactNode;
+  className?: string;
+  trigger?: ReactNode;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      {trigger && <SheetTrigger asChild>{trigger}</SheetTrigger>}
+      <SheetContent
+        side="bottom"
+        showCloseButton={false}
+        className={cn(
+          "flex h-full w-full flex-col border-none rounded-none p-0 top-0",
+          className,
+        )}
+      >
+        <SheetHeader className="sr-only">
+          <SheetTitle>{title}</SheetTitle>
+          <SheetDescription>{title} 상세 내용입니다.</SheetDescription>
+        </SheetHeader>
+        <header className="relative flex h-14 shrink-0 items-center justify-center border-b bg-white px-4">
+          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
+          <button
+            onClick={() => onOpenChange(false)}
+            className="absolute right-4 rounded-lg p-1 transition-colors hover:bg-gray-100"
+            aria-label="닫기"
+          >
+            <i className="icon icon-close size-6" />
+          </button>
+        </header>
+        <div className="flex-1 overflow-y-auto bg-white p-5">{content}</div>
       </SheetContent>
     </Sheet>
   );
