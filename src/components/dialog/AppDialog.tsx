@@ -67,6 +67,15 @@ const alertFooterClassName: Record<DialogSize, string> = {
   compact: "gap-3 pt-4",
 };
 
+const bottomTitleClassName =
+  "whitespace-pre-line text-left text-2xl font-bold leading-8 text-bg-import";
+
+const bottomHeaderClassName = "px-4 pb-3.5 pt-7 text-left";
+
+const bottomDescriptionClassName = "pb-3.5 pt-3.5";
+
+const bottomFooterClassName = "gap-3 px-4 pb-4 pt-7";
+
 export function AppDialog({
   type,
   engine = "sheet",
@@ -231,16 +240,22 @@ function BottomDialogContent({
     return (
       <Drawer open={open} onOpenChange={onOpenChange} direction="bottom">
         {trigger && <DrawerTrigger asChild>{trigger}</DrawerTrigger>}
-        <DrawerContent className={cn("rounded-t-2xl", className)}>
-          <DrawerHeader className="p-5 text-left">
-            {title && <DrawerTitle>{title}</DrawerTitle>}
+        <DrawerContent className={cn("rounded-t-2xl p-0", className)}>
+          <DrawerHeader className={bottomHeaderClassName}>
+            {title && (
+              <DrawerTitle className={bottomTitleClassName}>
+                {title}
+              </DrawerTitle>
+            )}
             {description && (
-              <DrawerDescription>{description}</DrawerDescription>
+              <DrawerDescription className={bottomDescriptionClassName}>
+                {description}
+              </DrawerDescription>
             )}
           </DrawerHeader>
-          {content}
+          <div className="mt-3.5 px-4">{content}</div>
           {actions.length > 0 && (
-            <DrawerFooter className="p-5 pt-0">
+            <DrawerFooter className={bottomFooterClassName}>
               <DialogActions
                 actions={actions}
                 size={dialogSize}
@@ -261,13 +276,19 @@ function BottomDialogContent({
         showCloseButton={false}
         className={cn("rounded-t-2xl p-0", className)}
       >
-        <SheetHeader className="p-5 text-left">
-          {title && <SheetTitle>{title}</SheetTitle>}
-          {description && <SheetDescription>{description}</SheetDescription>}
+        <SheetHeader className={bottomHeaderClassName}>
+          {title && (
+            <SheetTitle className={bottomTitleClassName}>{title}</SheetTitle>
+          )}
+          {description && (
+            <SheetDescription className={bottomDescriptionClassName}>
+              {description}
+            </SheetDescription>
+          )}
         </SheetHeader>
-        {content}
+        <div className="mt-3.5 px-4">{content}</div>
         {actions.length > 0 && (
-          <SheetFooter className="p-5 pt-0">
+          <SheetFooter className={bottomFooterClassName}>
             <DialogActions
               actions={actions}
               size={dialogSize}
