@@ -53,7 +53,7 @@ export function RoomFeedbackView({ result, roomStatus }: Props) {
   return (
     <div className="flex min-h-[inherit] flex-col">
       <section
-        className="relative flex w-full flex-col items-center overflow-hidden bg-contain bg-center bg-no-repeat bg-position-[center_top_-2rem] px-4 pb-5 pt-20 text-center"
+        className="relative flex w-full flex-col items-center overflow-hidden bg-contain bg-center bg-no-repeat bg-position-[center_top_-2rem] px-4 pb-5 pt-5 text-center"
         style={{ backgroundImage: `url(${positiveTitleBg.src})` }}
       >
         <div

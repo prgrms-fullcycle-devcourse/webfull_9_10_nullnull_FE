@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { MapView } from "@/components/MapView";
+import { MapView } from "@/components/kakao";
 
 const MOCK_TIMES = [
   {
@@ -59,13 +59,13 @@ export function RoomResultView() {
   return (
     <div className="flex flex-col px-4 pt-5">
       <section className="flex flex-col">
-        <div className="mb-5 flex flex-col gap-3">
-          <h1 className="text-2xl font-bold leading-8 text-text-primary">
+        <div className="mb-5">
+          <h2 className="text-2xl font-bold leading-tight text-gray-950">
             가장 많이 모일 수 있는
             <br />
             널널한 시간을 찾았어요!
-          </h1>
-          <p className="text-lg font-medium leading-6 text-text-tertiary">
+          </h2>
+          <p className="mt-3 text-lg font-medium text-gray-400 leading-relaxed">
             시간과 장소를 선택하고 모임을 확정해 보세요
           </p>
         </div>

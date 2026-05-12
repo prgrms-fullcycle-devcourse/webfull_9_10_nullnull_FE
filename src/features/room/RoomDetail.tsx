@@ -4,28 +4,24 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
-import {
-  AppBackButton,
-  AppLogoLink,
-  AppShareButton,
-  AppShell,
-} from "@/components/layout";
-import { AppDialog } from "@/components/dialog";
+import { AgreementDialog, AppDialog } from "@/components/dialog";
+import { AppIconLink, AppLogoLink, AppShell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { useRoomJoinStore } from "@/store/useRoomJoinStore";
 
 import { JoinNameStep } from "./components/detail/JoinNameStep";
-import { PrivacyConsentSheet } from "./components/detail/PrivacyConsentSheet";
 import { RoomDashboardView } from "./components/detail/RoomDashboardView";
 import { RoomDetailView } from "./components/detail/RoomDetailView";
 import { RoomEndedView } from "./components/detail/RoomEndedView";
+import { RoomFeedbackView } from "./components/detail/RoomFeedbackView";
 import { RoomResultView } from "./components/detail/RoomResultView";
+import { useFeedbackStore } from "@/features/room/model/useFeedbackStore";
 import type { RoomApiResponse, RoomDetailData } from "./types/room";
 
 const MOCK_DETAIL_DATA: RoomDetailData = {
   viewer: {
-    role: "MEMBER",
-    participantStatus: "SUBMITTED",
+    role: "GUEST",
+    participantStatus: "JOINED",
     nickname: undefined,
     consentRequired: true,
   },
@@ -76,7 +72,6 @@ export function RoomDetail({ slug }: Props) {
   const router = useRouter();
   const [data, setData] = useState<RoomDetailData>(MOCK_DETAIL_DATA);
   const [view, setView] = useState<View>("detail");
-  const [privacyOpen, setPrivacyOpen] = useState(false);
   const setJoin = useRoomJoinStore((state) => state.set);
 
   const room = useMemo(() => toRoomApiResponse(data, slug), [data, slug]);
@@ -96,16 +91,26 @@ export function RoomDetail({ slug }: Props) {
     viewer.role === "HOST" &&
     (room.status === "READY" || room.status === "CONFIRMED");
   const endedReason = getEndedReason(data);
+  const feedbackResult = useFeedbackStore((s) => s.result);
+  const clearFeedback = useFeedbackStore((s) => s.clear);
 
   useEffect(() => {
     if (
+      !feedbackResult &&
       viewer.role === "MEMBER" &&
       viewer.participantStatus === "JOINED" &&
       room.status === "COLLECTING"
     ) {
       router.replace(`/room/${slug}/schedule`);
     }
-  }, [viewer.role, viewer.participantStatus, room.status, slug, router]);
+  }, [
+    feedbackResult,
+    viewer.role,
+    viewer.participantStatus,
+    room.status,
+    slug,
+    router,
+  ]);
 
   const roomForComponents: RoomApiResponse = {
     ...room,
@@ -119,12 +124,16 @@ export function RoomDetail({ slug }: Props) {
   };
 
   const handleJoinClick = () => {
-    if (viewer.consentRequired) {
-      setPrivacyOpen(true);
-    } else {
-      setView("join-name");
-    }
+    setView("join-name");
   };
+
+  useEffect(() => {
+    if (!feedbackResult) return;
+    const timer = setTimeout(() => {
+      clearFeedback();
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [feedbackResult, clearFeedback]);
 
   const handleJoinComplete = (name: string, uuid: string) => {
     setJoin(name, uuid);
@@ -144,17 +153,27 @@ export function RoomDetail({ slug }: Props) {
     setView("result");
   };
 
+  if (feedbackResult) {
+    return (
+      <AppShell leftSlot={<AppLogoLink />}>
+        <RoomFeedbackView result={feedbackResult} roomStatus={room.status} />
+      </AppShell>
+    );
+  }
+
   if (view === "result" && canHostOpenResult) {
     return (
       <AppShell
         title="모임 확정하기"
-        leftSlot={<AppBackButton onClick={() => setView("detail")} />}
-        rightSlot={<AppShareButton />}
-        bottomSlot={
-          <Button size="cta" onClick={() => {}}>
-            선택완료
-          </Button>
+        leftSlot={
+          <AppIconLink
+            icon="back"
+            label="뒤로가기"
+            onClick={() => setView("detail")}
+          />
         }
+        rightSlot={<AppIconLink icon="share" label="공유하기" />}
+        bottomSlot={<Button onClick={() => {}}>선택완료</Button>}
       >
         <RoomResultView />
       </AppShell>
@@ -165,8 +184,14 @@ export function RoomDetail({ slug }: Props) {
     return (
       <AppShell
         title="모임 자세히 보기"
-        leftSlot={<AppBackButton onClick={() => router.back()} />}
-        rightSlot={<AppShareButton />}
+        leftSlot={
+          <AppIconLink
+            icon="back"
+            label="뒤로가기"
+            onClick={() => router.back()}
+          />
+        }
+        rightSlot={<AppIconLink icon="share" label="공유하기" />}
         bottomSlot={
           <RoomDashboardBottomSlot
             room={roomForComponents}
@@ -185,7 +210,7 @@ export function RoomDetail({ slug }: Props) {
       <AppShell
         leftSlot={<AppLogoLink />}
         bottomSlot={
-          <Button size="cta" asChild>
+          <Button asChild>
             <Link href="/room">새 모임 만들기</Link>
           </Button>
         }
@@ -210,19 +235,12 @@ export function RoomDetail({ slug }: Props) {
     <AppShell
       leftSlot={<AppLogoLink />}
       bottomSlot={
-        <Button size="cta" onClick={handleJoinClick}>
-          참여하기
-        </Button>
-      }
-      overlaySlot={
-        privacyOpen && (
-          <PrivacyConsentSheet
-            onClose={() => setPrivacyOpen(false)}
-            onAgree={() => {
-              setPrivacyOpen(false);
-              setView("join-name");
-            }}
-          />
+        viewer.consentRequired ? (
+          <AgreementDialog onAgree={handleJoinClick}>
+            <Button>참여하기</Button>
+          </AgreementDialog>
+        ) : (
+          <Button onClick={handleJoinClick}>참여하기</Button>
         )
       }
     >
@@ -252,10 +270,9 @@ function RoomDashboardBottomSlot({
             { label: "마감하기", onClick: onCloseCollecting },
           ]}
         >
-          <Button size="cta">모집 마감하기</Button>
+          <Button>모집 마감하기</Button>
         </AppDialog>
         <Button
-          size="cta"
           variant="ghost"
           className="h-10 text-sm font-semibold text-text-primary"
           onClick={() => {}}
@@ -267,39 +284,27 @@ function RoomDashboardBottomSlot({
   }
 
   if (room.viewerRole === "HOST" && room.status === "READY") {
-    return (
-      <Button size="cta" onClick={onOpenResult}>
-        모임 확정하기
-      </Button>
-    );
+    return <Button onClick={onOpenResult}>모임 확정하기</Button>;
   }
 
   if (room.status === "COLLECTING") {
     return (
-      <Button size="cta" variant="outline" onClick={() => {}}>
+      <Button variant="outline" onClick={() => {}}>
         제출결과 수정하기
       </Button>
     );
   }
 
   if (room.status === "READY") {
-    return (
-      <Button size="cta" onClick={() => {}}>
-        모임장 재촉하기
-      </Button>
-    );
+    return <Button onClick={() => {}}>모임장 재촉하기</Button>;
   }
 
   if (room.status === "CONFIRMED") {
-    return (
-      <Button size="cta" onClick={() => {}}>
-        지도 보기
-      </Button>
-    );
+    return <Button onClick={() => {}}>지도 보기</Button>;
   }
 
   return (
-    <Button size="cta" asChild>
+    <Button asChild>
       <Link href="/room">새 모임 만들기</Link>
     </Button>
   );

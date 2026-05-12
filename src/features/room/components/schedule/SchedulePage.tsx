@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AppShell } from "@/components/layout/AppShell";
+import { AppIconLink, AppShell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { TimeTable } from "./TimeTable";
 import { useRoomJoinStore } from "@/store/useRoomJoinStore";
+import { useFeedbackStore } from "@/features/room/model/useFeedbackStore";
 import type { RoomApiResponse } from "@/features/room/types/room";
 
 function generateDates(
@@ -18,8 +19,7 @@ function generateDates(
   const end = new Date(dateEnd);
   for (const d = new Date(dateStart); d <= end; d.setDate(d.getDate() + 1)) {
     const dow = d.getDay();
-    const iso = dow === 0 ? 7 : dow;
-    if (availableDays.includes(iso)) dates.push(new Date(d));
+    if (availableDays.includes(dow)) dates.push(new Date(d));
   }
   return dates;
 }
@@ -47,6 +47,7 @@ type Props = {
 export function SchedulePage({ slug, room }: Props) {
   const router = useRouter();
   const { name, uuid, clear } = useRoomJoinStore();
+  const setFeedback = useFeedbackStore((s) => s.set);
   const [selectedSlots, setSelectedSlots] = useState<Set<string>>(new Set());
 
   const dates = generateDates(room.dateStart, room.dateEnd, room.availableDays);
@@ -61,40 +62,41 @@ export function SchedulePage({ slug, room }: Props) {
     if (room.collectOrigin) {
       router.push(`/room/${slug}/location`);
     } else {
-      router.push(`/room/${slug}/feedback?result=waiting`);
+      setFeedback("waiting");
+      router.push(`/room/${slug}`);
     }
+  };
+
+  const handleAbsent = () => {
+    setFeedback("absent");
+    router.push(`/room/${slug}`);
   };
 
   return (
     <AppShell
       title={<span className="text-base">모임 참여하기</span>}
       leftSlot={
-        <button
+        <AppIconLink
+          icon="back"
+          label="뒤로가기"
           onClick={() => router.back()}
-          className="icon icon-back"
-          aria-label="뒤로가기"
         />
       }
       bottomSlot={
-        <div className="flex flex-col gap-1">
-          <Button size="cta" onClick={handleNext}>
-            다음
-          </Button>
-          <Link
-            href={`/room/${slug}/feedback?result=absent`}
-            className="flex items-center justify-center h-11 text-sm text-gray-400 hover:text-gray-600 transition-colors"
-          >
+        <>
+          <Button onClick={handleNext}>다음</Button>
+          <Button variant="ghost" onClick={handleAbsent}>
             이번 모임은 안 나갈래요
-          </Link>
-        </div>
+          </Button>
+        </>
       }
     >
-      <div className="px-5 py-8 flex flex-col gap-6">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-2xl font-bold text-gray-900">
+      <div className="flex min-w-0 flex-col gap-5 px-4 py-5">
+        <div>
+          <h2 className="text-2xl font-bold leading-tight text-gray-950">
             안되는 시간 고르기
           </h2>
-          <p className="text-sm text-gray-500 leading-relaxed">
+          <p className="mt-3 text-lg font-medium text-gray-400 leading-relaxed">
             선택하신 시간을 빼고 우리만의 널널한 시간을 찾아낼게요
           </p>
         </div>

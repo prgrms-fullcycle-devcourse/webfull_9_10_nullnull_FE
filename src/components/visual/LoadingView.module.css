@@ -1,0 +1,54 @@
+.drawPath {
+  stroke-dasharray: 320;
+  stroke-dashoffset: 320;
+  animation: linear-flow 3s ease-in-out infinite;
+}
+
+.delay {
+  animation-delay: 0.5s;
+}
+
+.dots::after {
+  content: "";
+  display: inline-block;
+  width: 1.5em;
+  text-align: left;
+  animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes linear-flow {
+  0% {
+    stroke-dashoffset: 320;
+  }
+
+  45%,
+  65% {
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    stroke-dashoffset: -320;
+  }
+}
+
+@keyframes dots {
+  0% {
+    content: "";
+  }
+
+  25% {
+    content: ".";
+  }
+
+  50% {
+    content: "..";
+  }
+
+  75% {
+    content: "...";
+  }
+
+  100% {
+    content: "";
+  }
+}

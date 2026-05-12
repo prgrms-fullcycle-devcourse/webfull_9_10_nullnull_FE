@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 import {
   AlertDialog,
@@ -44,7 +44,7 @@ const DEFAULT_CONFIRM_ACTIONS: DialogAction[] = [
 
 const alertContentClassName: Record<DialogSize, string> = {
   default: "w-[calc(100%-40px)] max-w-[320px] rounded-2xl p-5",
-  compact: "w-[calc(100%-40px)] max-w-[320px] rounded-3xl p-4",
+  compact: "w-[calc(100%-40px)] max-w-[320px] rounded-3xl px-4 pb-4 pt-7",
 };
 
 const alertTitleClassName: Record<DialogSize, string> = {
@@ -66,6 +66,15 @@ const alertFooterClassName: Record<DialogSize, string> = {
   default: "gap-2 pt-3",
   compact: "gap-3 pt-4",
 };
+
+const bottomTitleClassName =
+  "whitespace-pre-line text-left text-2xl font-bold leading-8 text-bg-import";
+
+const bottomHeaderClassName = "px-4 pb-3.5 pt-7 text-left";
+
+const bottomDescriptionClassName = "pb-3.5 pt-3.5";
+
+const bottomFooterClassName = "gap-3 px-4 pb-4 pt-7";
 
 export function AppDialog({
   type,
@@ -155,8 +164,21 @@ function AlertDialogContentByType({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const [lastDialogText, setLastDialogText] = useState({ title, description });
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      setLastDialogText({ title, description });
+    }
+
+    onOpenChange(nextOpen);
+  };
+
+  const displayTitle = title ?? lastDialogText.title;
+  const displayDescription =
+    description || (!open ? lastDialogText.description : undefined);
+
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog open={open} onOpenChange={handleOpenChange}>
       {trigger && <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>}
       <AlertDialogContent
         className={cn(alertContentClassName[dialogSize], className)}
@@ -170,7 +192,7 @@ function AlertDialogContentByType({
           <AlertDialogTitle
             className={cn("text-text-primary", alertTitleClassName[dialogSize])}
           >
-            {title ?? (type === "alert" ? "알림" : "확인")}
+            {displayTitle ?? (type === "alert" ? "알림" : "확인")}
           </AlertDialogTitle>
           <AlertDialogDescription
             className={cn(
@@ -178,7 +200,7 @@ function AlertDialogContentByType({
               alertDescriptionClassName[dialogSize],
             )}
           >
-            {description ?? "내용을 확인해주세요."}
+            {displayDescription ?? "내용을 확인해주세요."}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
@@ -186,10 +208,11 @@ function AlertDialogContentByType({
 
         <AlertDialogFooter
           className={cn(
-            "grid border-0 bg-transparent p-0",
+            "!grid border-0 bg-transparent p-0",
             alertFooterClassName[dialogSize],
-            actions.length === 2 && "grid-cols-2",
-            actions.length === 3 && "grid-cols-3",
+            actions.length === 1 && "!grid-cols-1",
+            actions.length === 2 && "!grid-cols-2",
+            actions.length === 3 && "!grid-cols-3",
           )}
         >
           <DialogActions
@@ -230,16 +253,22 @@ function BottomDialogContent({
     return (
       <Drawer open={open} onOpenChange={onOpenChange} direction="bottom">
         {trigger && <DrawerTrigger asChild>{trigger}</DrawerTrigger>}
-        <DrawerContent className={cn("rounded-t-2xl", className)}>
-          <DrawerHeader className="p-5 text-left">
-            {title && <DrawerTitle>{title}</DrawerTitle>}
+        <DrawerContent className={cn("rounded-t-2xl p-0", className)}>
+          <DrawerHeader className={bottomHeaderClassName}>
+            {title && (
+              <DrawerTitle className={bottomTitleClassName}>
+                {title}
+              </DrawerTitle>
+            )}
             {description && (
-              <DrawerDescription>{description}</DrawerDescription>
+              <DrawerDescription className={bottomDescriptionClassName}>
+                {description}
+              </DrawerDescription>
             )}
           </DrawerHeader>
-          {content}
+          <div className="mt-3.5 px-4">{content}</div>
           {actions.length > 0 && (
-            <DrawerFooter className="p-5 pt-0">
+            <DrawerFooter className={bottomFooterClassName}>
               <DialogActions
                 actions={actions}
                 size={dialogSize}
@@ -260,13 +289,19 @@ function BottomDialogContent({
         showCloseButton={false}
         className={cn("rounded-t-2xl p-0", className)}
       >
-        <SheetHeader className="p-5 text-left">
-          {title && <SheetTitle>{title}</SheetTitle>}
-          {description && <SheetDescription>{description}</SheetDescription>}
+        <SheetHeader className={bottomHeaderClassName}>
+          {title && (
+            <SheetTitle className={bottomTitleClassName}>{title}</SheetTitle>
+          )}
+          {description && (
+            <SheetDescription className={bottomDescriptionClassName}>
+              {description}
+            </SheetDescription>
+          )}
         </SheetHeader>
-        {content}
+        <div className="mt-3.5 px-4">{content}</div>
         {actions.length > 0 && (
-          <SheetFooter className="p-5 pt-0">
+          <SheetFooter className={bottomFooterClassName}>
             <DialogActions
               actions={actions}
               size={dialogSize}

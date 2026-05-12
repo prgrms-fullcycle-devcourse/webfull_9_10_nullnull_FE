@@ -27,7 +27,7 @@
     { label: "마감하기", onClick: handleCloseRecruit },
   ]}
 >
-  <Button size="cta">모집 마감하기</Button>
+  <Button>모집 마감하기</Button>
 </AppDialog>
 ```
 
@@ -64,7 +64,7 @@ type DialogType = "alert" | "confirm" | "bottom";
 
 `compact`는 Production Figma 기준으로 다음 규칙을 따릅니다.
 
-- alert padding: `p-4` = 16px
+- alert padding: `px-4 pb-4 pt-7` = left/right/bottom 16px, top 28px
 - 버튼 높이: `h-14` = 56px
 - 버튼 간격: `gap-3` = 12px
 - title: `text-xl font-semibold` = 20px semibold
@@ -89,7 +89,7 @@ actions={[
 | 속성 | 설명 |
 | --- | --- |
 | `label` | 버튼 텍스트 |
-| `variant` | `primary`, `secondary`, `danger`, `ghost` |
+| `variant` | `default`, `secondary`, `danger`, `ghost` |
 | `onClick` | 버튼 클릭 시 실행할 함수 |
 | `disabled` | 버튼 비활성화 |
 | `closeOnClick` | `false`면 클릭 후 dialog를 닫지 않음 |
@@ -180,3 +180,46 @@ const [open, setOpen] = useState(false);
 | `useDialogOpen.ts` | controlled/uncontrolled open 상태 처리 |
 | `src/components/ui/*` | shadcn/Radix 기반 원자 컴포넌트 |
 | `src/lib/getDialogContainer.ts` | `.wrap-container` 기준 portal container 조회 |
+
+## 약관 동의 다이얼로그
+
+약관 동의처럼 여러 화면에서 같은 플로우로 재사용되는 팝업은 페이지 안에서 직접 `AppDialog`와 체크박스 상태를 조합하지 않습니다.
+
+공통 약관 동의 플로우는 `AgreementDialog`를 사용합니다.
+
+```tsx
+<AgreementDialog onAgree={handleAgree}>
+  <Button>참여하기</Button>
+</AgreementDialog>
+```
+
+### 책임
+
+| 파일 | 책임 |
+| --- | --- |
+| `AgreementDialog.tsx` | 약관 동의 전용 플로우, 필수 약관 체크 상태, 전체 체크, 동의 버튼 비활성화 처리 |
+| `AppDialog.tsx` | bottom drawer/sheet의 공통 레이아웃, title/content/footer 영역과 actions 렌더링 |
+| 사용 페이지 | trigger 버튼 제공, 동의 완료 후 이동/API 호출 등 페이지 흐름 처리 |
+
+### 사용 규칙
+
+- `AgreementDialog`는 내부에서 `AppDialog type="bottom" engine="drawer"`를 사용합니다.
+- 페이지에서는 약관 체크 상태를 직접 관리하지 않습니다.
+- 페이지에서는 `onAgree`로 동의 완료 후 실행할 동작만 넘깁니다.
+- 약관 상세 보기 연결이 필요하면 `onOpenTerm`으로 처리합니다.
+- 약관 동의 UI를 만들기 위해 shadcn `Drawer`, `DrawerContent`를 페이지에서 직접 조합하지 않습니다.
+- `AgreementDialog`는 `AppDialog`를 대체하는 새 공통 다이얼로그 시스템이 아니라, `AppDialog`를 사용하는 약관 동의 전용 조합 컴포넌트입니다.
+
+## bottom 레이아웃 규칙
+
+`type="bottom"`은 `AppDialog`에서 공통 레이아웃을 관리합니다.
+
+| 영역 | 규칙 |
+| --- | --- |
+| Header | `px-4 pb-3.5 pt-7 text-left` |
+| Title | `whitespace-pre-line text-left text-2xl font-bold leading-8 text-bg-import` |
+| Description | 있을 때만 렌더링하며 `pb-3.5 pt-3.5` |
+| Content | `mt-3.5 px-4` |
+| Footer | `gap-3 px-4 pb-4 pt-7` |
+
+bottom content의 좌우 패딩과 header 아래 간격은 각 페이지/전용 컴포넌트에서 따로 넣지 않고 `AppDialog` 공통 레이아웃을 따릅니다.

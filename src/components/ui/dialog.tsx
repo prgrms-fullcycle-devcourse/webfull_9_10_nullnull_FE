@@ -4,6 +4,7 @@ import * as React from "react";
 import { Dialog as DialogPrimitive } from "radix-ui";
 
 import { cn } from "@/lib/utils";
+import { getDialogContainer } from "@/lib/getDialogContainer";
 import { Button } from "@/components/ui/button";
 import { XIcon } from "lucide-react";
 
@@ -20,9 +21,26 @@ function DialogTrigger({
 }
 
 function DialogPortal({
+  container,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Portal>) {
-  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
+  const portalContainer = React.useSyncExternalStore(
+    () => () => {},
+    () => container ?? getDialogContainer() ?? document.body,
+    () => null,
+  );
+
+  if (!portalContainer) {
+    return null;
+  }
+
+  return (
+    <DialogPrimitive.Portal
+      data-slot="dialog-portal"
+      container={portalContainer}
+      {...props}
+    />
+  );
 }
 
 function DialogClose({
@@ -33,13 +51,17 @@ function DialogClose({
 
 function DialogOverlay({
   className,
+  scope = "page",
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
+}: React.ComponentProps<typeof DialogPrimitive.Overlay> & {
+  scope?: "page" | "container";
+}) {
   return (
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       className={cn(
-        "fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        scope === "container" ? "absolute" : "fixed",
+        "inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
         className,
       )}
       {...props}
@@ -51,17 +73,20 @@ function DialogContent({
   className,
   children,
   showCloseButton = true,
+  scope = "container",
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean;
+  scope?: "page" | "container";
 }) {
   return (
     <DialogPortal>
-      <DialogOverlay />
+      <DialogOverlay scope={scope} />
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          scope === "container" ? "absolute" : "fixed",
+          "top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className,
         )}
         {...props}

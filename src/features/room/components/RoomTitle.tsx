@@ -1,11 +1,12 @@
 export type RoomStatus = "모집중" | "마감" | "확정" | "종료" | "진행중";
 
 const STATUS_STYLE: Record<RoomStatus, string> = {
-  모집중: "text-[#6B4EFF] bg-[#EDEBFF]",
-  마감: "text-[#D97706] bg-[#FEF3C7]",
-  확정: "text-[#65742E] bg-[#F0F4D1]",
-  종료: "text-gray-400 bg-gray-100",
-  진행중: "text-teal-600 bg-teal-50",
+  모집중: "text-[var(--color-info-darker)] bg-[var(--color-info-subtle)]",
+  마감: "text-[var(--color-warning-darker)] bg-[var(--color-warning-subtle)]",
+  확정: "text-[var(--color-success-darker)] bg-[var(--color-success-subtle)]",
+  종료: "text-gray-600 bg-gray-100",
+  진행중:
+    "text-[var(--color-secondary-darker)] bg-[var(--color-secondary-subtle)]",
 };
 
 export const ROOM_STATUS_LABEL: Record<
@@ -61,9 +62,9 @@ export function RoomTitle({ title, hostName, category, status }: Props) {
   return (
     <div className="px-5 pt-5 pb-4 flex flex-col gap-3">
       <div className="flex gap-2 flex-wrap">
-        <span className="flex items-center gap-1 text-xs font-medium text-teal-600 bg-teal-50 px-3 py-1 rounded-full">
+        <span className="flex items-center gap-1 text-xs font-medium text-[var(--color-secondary-darker)] bg-[var(--color-secondary-subtle)] px-3 py-1 rounded-full">
           <span
-            className={`icon icon-${categoryConfig.icon} text-teal-600`}
+            className={`icon icon-${categoryConfig.icon} text-[var(--color-secondary-darker)]`}
             style={{ width: "1rem", height: "1rem" }}
             aria-hidden="true"
           />
