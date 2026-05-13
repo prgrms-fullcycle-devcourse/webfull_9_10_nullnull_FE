@@ -1,5 +1,10 @@
 import { api } from "@/shared/api/axios";
-import type { RoomDetailData } from "../types/room";
+import type { BlockedSlot, RoomDetailData } from "../types/room";
+
+interface SubmitParticipationPayload {
+  blockedSlots: BlockedSlot[];
+  origin?: { placeName: string; address: string; lat: number; lng: number };
+}
 
 interface RoomDetailResponse {
   statusCode: number;
@@ -9,6 +14,10 @@ interface RoomDetailResponse {
 export interface CreateRoomResponse {
   slug: string;
   id: number;
+}
+
+export interface JoinRoomResponse {
+  participantId: number;
 }
 
 export const roomApi = {
@@ -23,5 +32,27 @@ export const roomApi = {
       payload,
     );
     return data.data;
+  },
+
+  declineRoom: async (participantId: number): Promise<void> => {
+    await api.patch(`/participants/${participantId}/decline`);
+  },
+
+  joinRoom: async (
+    roomId: number,
+    nickname: string,
+  ): Promise<JoinRoomResponse> => {
+    const { data } = await api.post<{ data: JoinRoomResponse }>(
+      `/rooms/${roomId}/participants`,
+      { nickname },
+    );
+    return data.data;
+  },
+
+  submitParticipation: async (
+    participantId: number,
+    payload: SubmitParticipationPayload,
+  ): Promise<void> => {
+    await api.patch(`/participants/${participantId}/participation`, payload);
   },
 };

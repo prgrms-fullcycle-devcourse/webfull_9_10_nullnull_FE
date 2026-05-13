@@ -24,16 +24,16 @@ export function formatDeadline(isoStr: string): string {
   return `${m}.${d}(${DAY[date.getDay()]}) ${h}:${min}`;
 }
 
-/** ISO 요일 숫자 배열 [6, 7, 1] → ["토", "일", "월"] (1=월 ~ 7=일) */
+/** 요일 숫자 배열 [0, 1, 6] → ["일", "월", "토"] (0=일 ~ 6=토) */
 export function formatDays(days: number[]): string[] {
   const DAY_LABEL: Record<number, string> = {
+    0: "일",
     1: "월",
     2: "화",
     3: "수",
     4: "목",
     5: "금",
     6: "토",
-    7: "일",
   };
   return days.map((d) => DAY_LABEL[d] ?? String(d));
 }
