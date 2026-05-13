@@ -10,9 +10,9 @@ export type ViewerRole = "HOST" | "MEMBER" | "GUEST";
 
 export type RoomViewer = {
   role: ViewerRole;
-  participantId?: number;
-  participantStatus?: ParticipantStatus;
-  nickname?: string;
+  participantId?: number | null;
+  participantStatus?: ParticipantStatus | null;
+  nickname?: string | null;
   consentRequired: boolean;
 };
 
@@ -73,6 +73,40 @@ export type ClosedInfo = {
   closedTrigger: string;
 } | null;
 
+export type RoomTimeCandidate = {
+  id: number;
+  date: string;
+  rank: number;
+  startAt: string;
+  endAt: string;
+  availableCount: number;
+  durationMinutes: number;
+  unavailableParticipants: {
+    participantId: number;
+    nickname: string;
+  }[];
+};
+
+export type RoomPlaceCandidate = {
+  id: number;
+  rank: number;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+};
+
+export type RoomCandidates = {
+  submittedParticipantCount: number;
+  timeCandidates: RoomTimeCandidate[];
+  placeCandidates: RoomPlaceCandidate[];
+};
+
+export type ConfirmRoomPayload = {
+  timeCandidateId: number;
+  placeCandidateId?: number | null;
+};
+
 export type RoomDetailData = {
   viewer: RoomViewer;
   room: RoomInfo;
@@ -102,11 +136,12 @@ export interface SubmitParticipationPayload {
 // ---- 컴포넌트용 평탄화 타입 (하위 컴포넌트 호환) ----
 
 export type RoomApiResponse = {
+  roomId: number;
   slug: string;
   name: string;
   category: string;
   status: RoomStatus;
-  participantStatus?: ParticipantStatus;
+  participantStatus?: ParticipantStatus | null;
   viewerRole?: ViewerRole;
   hostNickname: string;
   badge: string;
@@ -121,7 +156,7 @@ export type RoomApiResponse = {
   maxParticipants?: number;
   collectOrigin?: boolean;
   role?: "guest" | "member" | "host";
-  nickname?: string;
+  nickname?: string | null;
 };
 
 export type RoomLocation = {

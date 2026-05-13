@@ -37,7 +37,7 @@ export function FixedBottom({
     >
       <div
         ref={setFixedElement}
-        className="fixed bottom-0 left-1/2 z-50 w-full max-w-[var(--layout-content)] -translate-x-1/2 bg-background lg:left-[calc(50%+125px)]"
+        className="fixed bottom-0 left-1/2 z-50 w-full max-w-[var(--layout-content)] -translate-x-1/2 lg:left-[calc(50%+125px)]"
       >
         <div
           className={cn(

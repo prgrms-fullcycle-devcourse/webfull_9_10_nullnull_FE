@@ -39,7 +39,7 @@ export function RoomDetailView({ room }: Props) {
           모임에 초대 되었어요
         </h1>
         <p className="mt-2 text-sm leading-[18px] text-text-disabled">
-          안 되는 시간을 선택하고 모임을 확장해 보세요
+          안 되는 시간을 선택하고 모임을 확정해 보세요
         </p>
       </section>
 

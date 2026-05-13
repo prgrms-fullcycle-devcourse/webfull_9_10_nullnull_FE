@@ -1,14 +1,21 @@
 import { api } from "@/shared/api/axios";
 import type {
-  RoomDetailData,
+  ConfirmRoomPayload,
   CreateRoomResponse,
   JoinRoomResponse,
+  RoomCandidates,
+  RoomDetailData,
   SubmitParticipationPayload,
 } from "../types/room";
 
 interface RoomDetailResponse {
   statusCode: number;
   data: RoomDetailData;
+}
+
+interface RoomCandidatesResponse {
+  statusCode: number;
+  data: RoomCandidates;
 }
 
 export const roomApi = {
@@ -21,6 +28,17 @@ export const roomApi = {
     const { data } = await api.post<{ data: CreateRoomResponse }>(
       "/rooms",
       payload,
+    );
+    return data.data;
+  },
+
+  readyRoom: async (roomId: number): Promise<void> => {
+    await api.post(`/rooms/${roomId}/ready`);
+  },
+
+  getCandidates: async (roomId: number): Promise<RoomCandidates> => {
+    const { data } = await api.get<RoomCandidatesResponse>(
+      `/rooms/${roomId}/candidates`,
     );
     return data.data;
   },
@@ -38,6 +56,13 @@ export const roomApi = {
       { nickname },
     );
     return data.data;
+  },
+
+  confirmRoom: async (
+    roomId: number,
+    payload: ConfirmRoomPayload,
+  ): Promise<void> => {
+    await api.post(`/rooms/${roomId}/confirm`, payload);
   },
 
   submitParticipation: async (

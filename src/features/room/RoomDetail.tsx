@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
-import { useQueryClient } from "@tanstack/react-query";
 import { AgreementDialog, AppDialog } from "@/components/dialog";
 import { AppIconLink, AppLogoLink, AppShell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
@@ -18,8 +19,8 @@ import { RoomEndedView } from "./components/detail/RoomEndedView";
 import { RoomFeedbackView } from "./components/detail/RoomFeedbackView";
 import { RoomResultView } from "./components/detail/RoomResultView";
 import { useFeedbackStore } from "@/features/room/model/useFeedbackStore";
-import { useRoomDetail, roomKeys } from "./hooks/useRoomDetail";
 import { roomApi } from "./api/room.api";
+import { roomKeys, useRoomDetail } from "./hooks/useRoomDetail";
 import type { RoomApiResponse, RoomDetailData } from "./types/room";
 
 type View = "detail" | "join-name" | "result";
@@ -34,6 +35,14 @@ export function RoomDetail({ slug }: Props) {
   const { data, isLoading, isError } = useRoomDetail(slug);
   const [view, setView] = useState<View>("detail");
   const [joinError, setJoinError] = useState("");
+  const [isClosingCollecting, setIsClosingCollecting] = useState(false);
+  const [isConfirmingRoom, setIsConfirmingRoom] = useState(false);
+  const [selectedTimeCandidateId, setSelectedTimeCandidateId] = useState<
+    number | null
+  >(null);
+  const [selectedPlaceCandidateId, setSelectedPlaceCandidateId] = useState<
+    number | null
+  >(null);
   const setJoin = useRoomJoinStore((state) => state.set);
 
   const room = useMemo(
@@ -48,6 +57,19 @@ export function RoomDetail({ slug }: Props) {
     const timer = setTimeout(() => clearFeedback(), 3000);
     return () => clearTimeout(timer);
   }, [feedbackResult, clearFeedback]);
+
+  const canHostOpenResult =
+    data?.viewer.role === "HOST" && room?.status === "READY";
+  const { data: candidates } = useQuery({
+    queryKey: ["room", data?.room.roomId, "candidates"],
+    queryFn: () => roomApi.getCandidates(data!.room.roomId),
+    enabled: Boolean(data && view === "result" && canHostOpenResult),
+  });
+  const currentTimeCandidateId =
+    selectedTimeCandidateId ?? candidates?.timeCandidates[0]?.id ?? null;
+  const currentPlaceCandidateId = data?.room.collectOrigin
+    ? (selectedPlaceCandidateId ?? candidates?.placeCandidates[0]?.id ?? null)
+    : null;
 
   if (isError) {
     return (
@@ -94,9 +116,6 @@ export function RoomDetail({ slug }: Props) {
       room.status === "READY" ||
       room.status === "CONFIRMED" ||
       room.status === "CLOSED");
-  const canHostOpenResult =
-    viewer.role === "HOST" &&
-    (room.status === "READY" || room.status === "CONFIRMED");
   const endedReason = getEndedReason(data);
 
   const handleJoinClick = () => {
@@ -116,22 +135,61 @@ export function RoomDetail({ slug }: Props) {
       } else if (code === "INVALID_ROOM_STATUS") {
         setJoinError("현재 참여할 수 없는 방입니다.");
       } else {
-        setJoinError("참여 중 오류가 발생했어요. 다시 시도해주세요.");
+        setJoinError("참여 중 오류가 발생했어요. 다시 시도해 주세요.");
       }
     }
   };
 
-  const handleCloseCollecting = () => {
-    queryClient.setQueryData(roomKeys.detail(slug), (prev: RoomDetailData) => ({
-      ...prev,
-      room: {
-        ...prev.room,
-        status: "READY" as const,
-        badge: "마감",
-        text: "모임장의 확정을 기다리고 있어요",
-      },
-    }));
-    setView("result");
+  const handleCloseCollecting = async () => {
+    setIsClosingCollecting(true);
+
+    try {
+      await roomApi.readyRoom(data.room.roomId);
+      queryClient.setQueryData(
+        roomKeys.detail(slug),
+        (prev: RoomDetailData) => ({
+          ...prev,
+          room: {
+            ...prev.room,
+            status: "READY" as const,
+            badge: "마감",
+            text: "모임장의 확정을 기다리고 있어요",
+          },
+        }),
+      );
+      await queryClient.invalidateQueries({ queryKey: roomKeys.detail(slug) });
+      setView("result");
+    } catch (error) {
+      console.error(error);
+      toast.error("모집 마감에 실패했어요. 다시 시도해 주세요.");
+    } finally {
+      setIsClosingCollecting(false);
+    }
+  };
+
+  const handleConfirmRoom = async () => {
+    if (!currentTimeCandidateId) {
+      toast.error("확정할 시간을 선택해 주세요.");
+      return;
+    }
+
+    setIsConfirmingRoom(true);
+
+    try {
+      await roomApi.confirmRoom(data.room.roomId, {
+        timeCandidateId: currentTimeCandidateId,
+        placeCandidateId: data.room.collectOrigin
+          ? currentPlaceCandidateId
+          : null,
+      });
+      await queryClient.invalidateQueries({ queryKey: roomKeys.detail(slug) });
+      setView("detail");
+    } catch (error) {
+      console.error(error);
+      toast.error("모임 확정에 실패했어요. 다시 시도해 주세요.");
+    } finally {
+      setIsConfirmingRoom(false);
+    }
   };
 
   if (feedbackResult) {
@@ -158,9 +216,23 @@ export function RoomDetail({ slug }: Props) {
           />
         }
         rightSlot={<AppIconLink icon="share" label="공유하기" />}
-        bottomSlot={<Button onClick={() => {}}>선택완료</Button>}
+        bottomSlot={
+          <Button
+            onClick={handleConfirmRoom}
+            disabled={isConfirmingRoom || !currentTimeCandidateId}
+          >
+            선택완료
+          </Button>
+        }
       >
-        <RoomResultView />
+        <RoomResultView
+          candidates={candidates}
+          collectOrigin={data.room.collectOrigin}
+          selectedTimeCandidateId={currentTimeCandidateId}
+          selectedPlaceCandidateId={currentPlaceCandidateId}
+          onSelectTime={setSelectedTimeCandidateId}
+          onSelectPlace={setSelectedPlaceCandidateId}
+        />
       </AppShell>
     );
   }
@@ -183,6 +255,7 @@ export function RoomDetail({ slug }: Props) {
             onCloseCollecting={handleCloseCollecting}
             onOpenResult={() => setView("result")}
             onEditSubmission={() => router.push(`/room/${slug}/schedule`)}
+            isClosingCollecting={isClosingCollecting}
           />
         }
       >
@@ -211,7 +284,7 @@ export function RoomDetail({ slug }: Props) {
       <>
         <JoinNameStep
           role="guest"
-          nickname={viewer.nickname}
+          nickname={viewer.nickname ?? undefined}
           onBack={() => setView("detail")}
           onComplete={handleJoinComplete}
         />
@@ -256,25 +329,31 @@ function RoomDashboardBottomSlot({
   onCloseCollecting,
   onOpenResult,
   onEditSubmission,
+  isClosingCollecting,
 }: {
   room: RoomApiResponse;
-  onCloseCollecting: () => void;
+  onCloseCollecting: () => void | Promise<void>;
   onOpenResult: () => void;
   onEditSubmission: () => void;
+  isClosingCollecting?: boolean;
 }) {
   if (room.viewerRole === "HOST" && room.status === "COLLECTING") {
     return (
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3" aria-busy={isClosingCollecting}>
         <AppDialog
           type="confirm"
           title="모집을 마감할까요?"
           description="모집을 마감하면 더 이상 답변을 받을 수 없어요"
           actions={[
             { label: "취소", variant: "secondary" },
-            { label: "마감하기", onClick: onCloseCollecting },
+            {
+              label: "마감하기",
+              onClick: onCloseCollecting,
+              disabled: isClosingCollecting,
+            },
           ]}
         >
-          <Button>모집 마감하기</Button>
+          <Button disabled={isClosingCollecting}>모집 마감하기</Button>
         </AppDialog>
         <Button
           variant="ghost"
