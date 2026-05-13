@@ -140,7 +140,7 @@ export function RoomDetail({ slug }: Props) {
         <RoomFeedbackView
           result={feedbackResult}
           room={roomForComponents}
-          originName={data.mySubmission?.origin?.placeName}
+          placeName={data.mySubmission?.origin?.placeName}
         />
       </AppShell>
     );

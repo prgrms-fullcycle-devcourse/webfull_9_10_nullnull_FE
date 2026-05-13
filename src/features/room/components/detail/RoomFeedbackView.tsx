@@ -43,10 +43,10 @@ const COPY: Record<
 type Props = {
   result: RoomFeedbackResult;
   room: RoomApiResponse;
-  originName?: string;
+  placeName?: string;
 };
 
-export function RoomFeedbackView({ result, room, originName }: Props) {
+export function RoomFeedbackView({ result, room, placeName }: Props) {
   const copy = COPY[result];
   const dotClassName =
     copy.attendanceTone === "success" ? "bg-success" : "bg-danger";
@@ -104,9 +104,7 @@ export function RoomFeedbackView({ result, room, originName }: Props) {
             {copy.showLocation && (
               <div className="flex items-center justify-between">
                 <span className="text-text-tertiary">출발지</span>
-                <span className="font-bold text-text-primary">
-                  {originName}
-                </span>
+                <span className="font-bold text-text-primary">{placeName}</span>
               </div>
             )}
           </div>
