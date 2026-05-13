@@ -42,10 +42,11 @@ const COPY: Record<
 
 type Props = {
   result: RoomFeedbackResult;
-  roomStatus: RoomApiResponse["status"];
+  room: RoomApiResponse;
+  placeName?: string;
 };
 
-export function RoomFeedbackView({ result, roomStatus }: Props) {
+export function RoomFeedbackView({ result, room, placeName }: Props) {
   const copy = COPY[result];
   const dotClassName =
     copy.attendanceTone === "success" ? "bg-success" : "bg-danger";
@@ -78,14 +79,17 @@ export function RoomFeedbackView({ result, roomStatus }: Props) {
       </section>
 
       <section className="flex flex-col gap-5 px-4 pt-5">
-        <RoomParticipationProgressCard current={6} max={8} />
+        <RoomParticipationProgressCard
+          current={room.participantCount ?? 0}
+          max={room.maxParticipants ?? 0}
+        />
 
         <div className="rounded-2xl border border-border-subtle bg-white p-4">
           <div className="flex items-center justify-between border-b border-border-subtle pb-4">
             <h2 className="text-lg font-bold leading-6 text-text-primary">
-              우리 언제 밥 한번 먹지
+              {room.name}
             </h2>
-            <RoomStatusBadge status={ROOM_STATUS_LABEL[roomStatus]} />
+            <RoomStatusBadge status={ROOM_STATUS_LABEL[room.status]} />
           </div>
 
           <div className="flex flex-col gap-3 pt-4 text-sm leading-[18px]">
@@ -100,9 +104,7 @@ export function RoomFeedbackView({ result, roomStatus }: Props) {
             {copy.showLocation && (
               <div className="flex items-center justify-between">
                 <span className="text-text-tertiary">출발지</span>
-                <span className="font-bold text-text-primary">
-                  부산 앞 바다
-                </span>
+                <span className="font-bold text-text-primary">{placeName}</span>
               </div>
             )}
           </div>

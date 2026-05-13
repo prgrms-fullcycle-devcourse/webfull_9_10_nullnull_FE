@@ -2,70 +2,26 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { AgreementDialog, AppDialog } from "@/components/dialog";
 import { AppIconLink, AppLogoLink, AppShell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
+import { LoadingView } from "@/components/visual/LoadingView";
 import { useRoomJoinStore } from "@/store/useRoomJoinStore";
 
-import { roomApi } from "./api/room.api";
 import { JoinNameStep } from "./components/detail/JoinNameStep";
 import { RoomDashboardView } from "./components/detail/RoomDashboardView";
 import { RoomDetailView } from "./components/detail/RoomDetailView";
 import { RoomEndedView } from "./components/detail/RoomEndedView";
 import { RoomFeedbackView } from "./components/detail/RoomFeedbackView";
 import { RoomResultView } from "./components/detail/RoomResultView";
-import { useRoomDetail } from "./hooks/useRoomDetail";
 import { useFeedbackStore } from "@/features/room/model/useFeedbackStore";
+import { roomApi } from "./api/room.api";
+import { roomKeys, useRoomDetail } from "./hooks/useRoomDetail";
 import type { RoomApiResponse, RoomDetailData } from "./types/room";
-
-const MOCK_DETAIL_DATA: RoomDetailData = {
-  viewer: {
-    role: "GUEST",
-    participantStatus: "JOINED",
-    nickname: undefined,
-    consentRequired: true,
-  },
-  room: {
-    roomId: 1,
-    slug: "abc123",
-    name: "우리 언제 밥 한번 먹지",
-    category: "MEAL",
-    status: "COLLECTING",
-    hostNickname: "방만든모임장",
-    badge: "진행중",
-    text: "안 되는 시간을 선택하고 모임을 확정해 보세요",
-    dateStart: "2026-05-24",
-    dateEnd: "2026-05-26",
-    availableDays: [6, 7, 1],
-    timeStart: "09:00",
-    timeEnd: "22:00",
-    collectOrigin: true,
-    deadlineAt: "2026-10-25T23:59:00+09:00",
-  },
-  summary: {
-    totalCount: 8,
-    submittedCount: 4,
-    declinedCount: 1,
-    joinedCount: 1,
-    submittedRatio: 75,
-  },
-  participants: {
-    submitted: ["김철수", "이영희", "박민수", "정지원"],
-    declined: ["최동훈"],
-    joined: ["강유리"],
-  },
-  mySubmission: null,
-  confirmedMeeting: null,
-  closed: null,
-};
-
-// 테스트할 케이스로 viewer.role / room.status 조합 변경
-// viewer.role: "HOST" | "MEMBER" | "GUEST"
-// room.status: "COLLECTING" | "READY" | "CONFIRMED" | "CLOSED"
 
 type View = "detail" | "join-name" | "result";
 
@@ -75,10 +31,10 @@ type Props = {
 
 export function RoomDetail({ slug }: Props) {
   const router = useRouter();
-  const [optimisticData, setOptimisticData] = useState<RoomDetailData | null>(
-    null,
-  );
+  const queryClient = useQueryClient();
+  const { data, isLoading, isError } = useRoomDetail(slug);
   const [view, setView] = useState<View>("detail");
+  const [joinError, setJoinError] = useState("");
   const [isClosingCollecting, setIsClosingCollecting] = useState(false);
   const [isConfirmingRoom, setIsConfirmingRoom] = useState(false);
   const [selectedTimeCandidateId, setSelectedTimeCandidateId] = useState<
@@ -88,55 +44,56 @@ export function RoomDetail({ slug }: Props) {
     number | null
   >(null);
   const setJoin = useRoomJoinStore((state) => state.set);
-  const { data: roomDetailData, refetch: refetchRoomDetail } =
-    useRoomDetail(slug);
-  const data = optimisticData ?? roomDetailData ?? MOCK_DETAIL_DATA;
 
-  const room = useMemo(() => toRoomApiResponse(data, slug), [data, slug]);
-  const { viewer, summary } = data;
-
-  const isMemberDashboard =
-    viewer.role === "MEMBER" &&
-    (viewer.participantStatus === "SUBMITTED" ||
-      viewer.participantStatus === "DECLINED");
-  const isHostDashboard =
-    viewer.role === "HOST" &&
-    (room.status === "COLLECTING" ||
-      room.status === "READY" ||
-      room.status === "CONFIRMED" ||
-      room.status === "CLOSED");
-  const canHostOpenResult = viewer.role === "HOST" && room.status === "READY";
-  const { data: candidates } = useQuery({
-    queryKey: ["room", data.room.roomId, "candidates"],
-    queryFn: () => roomApi.getCandidates(data.room.roomId),
-    enabled: view === "result" && canHostOpenResult,
-  });
-  const currentTimeCandidateId =
-    selectedTimeCandidateId ?? candidates?.timeCandidates[0]?.id ?? null;
-  const currentPlaceCandidateId = data.room.collectOrigin
-    ? (selectedPlaceCandidateId ?? candidates?.placeCandidates[0]?.id ?? null)
-    : null;
-  const endedReason = getEndedReason(data);
+  const room = useMemo(
+    () => (data ? toRoomApiResponse(data, slug) : null),
+    [data, slug],
+  );
   const feedbackResult = useFeedbackStore((s) => s.result);
   const clearFeedback = useFeedbackStore((s) => s.clear);
 
   useEffect(() => {
-    if (
-      !feedbackResult &&
-      viewer.role === "MEMBER" &&
-      viewer.participantStatus === "JOINED" &&
-      room.status === "COLLECTING"
-    ) {
-      router.replace(`/room/${slug}/schedule`);
-    }
-  }, [
-    feedbackResult,
-    viewer.role,
-    viewer.participantStatus,
-    room.status,
-    slug,
-    router,
-  ]);
+    if (!feedbackResult) return;
+    const timer = setTimeout(() => clearFeedback(), 3000);
+    return () => clearTimeout(timer);
+  }, [feedbackResult, clearFeedback]);
+
+  const canHostOpenResult =
+    data?.viewer.role === "HOST" && room?.status === "READY";
+  const { data: candidates } = useQuery({
+    queryKey: ["room", data?.room.roomId, "candidates"],
+    queryFn: () => roomApi.getCandidates(data!.room.roomId),
+    enabled: Boolean(data && view === "result" && canHostOpenResult),
+  });
+  const currentTimeCandidateId =
+    selectedTimeCandidateId ?? candidates?.timeCandidates[0]?.id ?? null;
+  const currentPlaceCandidateId = data?.room.collectOrigin
+    ? (selectedPlaceCandidateId ?? candidates?.placeCandidates[0]?.id ?? null)
+    : null;
+
+  if (isError) {
+    return (
+      <AppShell leftSlot={<AppLogoLink />}>
+        <AppDialog
+          type="alert"
+          open={true}
+          title="방 정보를 불러오지 못했어요"
+          description="존재하지 않는 방이거나 일시적인 오류입니다."
+          actions={[{ label: "확인", onClick: () => router.replace("/") }]}
+        />
+      </AppShell>
+    );
+  }
+
+  if (isLoading || !data || !room) {
+    return (
+      <AppShell leftSlot={<AppLogoLink />}>
+        <LoadingView className="min-h-[calc(100dvh-var(--layout-header-height))]" />
+      </AppShell>
+    );
+  }
+
+  const { viewer, summary } = data;
 
   const roomForComponents: RoomApiResponse = {
     ...room,
@@ -149,56 +106,65 @@ export function RoomDetail({ slug }: Props) {
     maxParticipants: summary.totalCount,
   };
 
+  const isMemberDashboard =
+    viewer.role === "MEMBER" &&
+    (viewer.participantStatus === "SUBMITTED" ||
+      viewer.participantStatus === "DECLINED");
+  const isHostDashboard =
+    viewer.role === "HOST" &&
+    (room.status === "COLLECTING" ||
+      room.status === "READY" ||
+      room.status === "CONFIRMED" ||
+      room.status === "CLOSED");
+  const endedReason = getEndedReason(data);
+
   const handleJoinClick = () => {
     setView("join-name");
   };
 
-  useEffect(() => {
-    if (!feedbackResult) return;
-    const timer = setTimeout(() => {
-      clearFeedback();
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [feedbackResult, clearFeedback]);
-
-  const handleJoinComplete = (name: string, uuid: string) => {
-    setJoin(name, uuid);
-    router.push(`/room/${slug}/schedule`);
+  const handleJoinComplete = async (name: string) => {
+    try {
+      await roomApi.joinRoom(data.room.roomId, name);
+      setJoin(name, "");
+      await queryClient.invalidateQueries({ queryKey: roomKeys.detail(slug) });
+      router.push(`/room/${slug}/schedule`);
+    } catch (err: any) {
+      const code = err?.response?.data?.error;
+      if (code === "ALREADY_PARTICIPATED") {
+        setJoinError("이미 참여 중인 방입니다.");
+      } else if (code === "INVALID_ROOM_STATUS") {
+        setJoinError("현재 참여할 수 없는 방입니다.");
+      } else {
+        setJoinError("참여 중 오류가 발생했어요. 다시 시도해 주세요.");
+      }
+    }
   };
 
   const handleCloseCollecting = async () => {
     setIsClosingCollecting(true);
-    let shouldUseOptimisticReady = false;
 
     try {
       await roomApi.readyRoom(data.room.roomId);
-      const result = await refetchRoomDetail();
-
-      if (result.data) {
-        setOptimisticData(null);
-      } else {
-        shouldUseOptimisticReady = true;
-      }
+      queryClient.setQueryData(
+        roomKeys.detail(slug),
+        (prev: RoomDetailData) => ({
+          ...prev,
+          room: {
+            ...prev.room,
+            status: "READY" as const,
+            badge: "마감",
+            text: "모임장의 확정을 기다리고 있어요",
+          },
+        }),
+      );
+      await queryClient.invalidateQueries({ queryKey: roomKeys.detail(slug) });
+      setView("result");
     } catch (error) {
       console.error(error);
       toast.error("모집 마감에 실패했어요. 다시 시도해 주세요.");
+    } finally {
       setIsClosingCollecting(false);
-      return;
     }
-
-    if (shouldUseOptimisticReady) {
-      setOptimisticData({
-        ...data,
-        room: {
-          ...data.room,
-          status: "READY",
-          badge: "마감",
-          text: "모임장의 확정을 기다리고 있어요",
-        },
-      });
-    }
-    setView("result");
-    setIsClosingCollecting(false);
   };
 
   const handleConfirmRoom = async () => {
@@ -216,7 +182,7 @@ export function RoomDetail({ slug }: Props) {
           ? currentPlaceCandidateId
           : null,
       });
-      await refetchRoomDetail();
+      await queryClient.invalidateQueries({ queryKey: roomKeys.detail(slug) });
       setView("detail");
     } catch (error) {
       console.error(error);
@@ -229,7 +195,11 @@ export function RoomDetail({ slug }: Props) {
   if (feedbackResult) {
     return (
       <AppShell leftSlot={<AppLogoLink />}>
-        <RoomFeedbackView result={feedbackResult} roomStatus={room.status} />
+        <RoomFeedbackView
+          result={feedbackResult}
+          room={roomForComponents}
+          placeName={data.mySubmission?.origin?.placeName}
+        />
       </AppShell>
     );
   }
@@ -284,6 +254,7 @@ export function RoomDetail({ slug }: Props) {
             room={roomForComponents}
             onCloseCollecting={handleCloseCollecting}
             onOpenResult={() => setView("result")}
+            onEditSubmission={() => router.push(`/room/${slug}/schedule`)}
             isClosingCollecting={isClosingCollecting}
           />
         }
@@ -310,20 +281,36 @@ export function RoomDetail({ slug }: Props) {
 
   if (view === "join-name") {
     return (
-      <JoinNameStep
-        role="guest"
-        nickname={viewer.nickname ?? undefined}
-        onBack={() => setView("detail")}
-        onComplete={handleJoinComplete}
-      />
+      <>
+        <JoinNameStep
+          role="guest"
+          nickname={viewer.nickname ?? undefined}
+          onBack={() => setView("detail")}
+          onComplete={handleJoinComplete}
+        />
+        <AppDialog
+          type="alert"
+          open={!!joinError}
+          title="참여에 실패했어요"
+          description={joinError}
+          actions={[{ label: "확인", onClick: () => setJoinError("") }]}
+        />
+      </>
     );
   }
+
+  const isMemberJoined =
+    viewer.role === "MEMBER" && viewer.participantStatus === "JOINED";
 
   return (
     <AppShell
       leftSlot={<AppLogoLink />}
       bottomSlot={
-        viewer.consentRequired ? (
+        isMemberJoined ? (
+          <Button onClick={() => router.push(`/room/${slug}/schedule`)}>
+            참여하기
+          </Button>
+        ) : viewer.consentRequired ? (
           <AgreementDialog onAgree={handleJoinClick}>
             <Button>참여하기</Button>
           </AgreementDialog>
@@ -341,11 +328,13 @@ function RoomDashboardBottomSlot({
   room,
   onCloseCollecting,
   onOpenResult,
+  onEditSubmission,
   isClosingCollecting,
 }: {
   room: RoomApiResponse;
   onCloseCollecting: () => void | Promise<void>;
   onOpenResult: () => void;
+  onEditSubmission: () => void;
   isClosingCollecting?: boolean;
 }) {
   if (room.viewerRole === "HOST" && room.status === "COLLECTING") {
@@ -357,15 +346,19 @@ function RoomDashboardBottomSlot({
           description="모집을 마감하면 더 이상 답변을 받을 수 없어요"
           actions={[
             { label: "취소", variant: "secondary" },
-            { label: "마감하기", onClick: onCloseCollecting },
+            {
+              label: "마감하기",
+              onClick: onCloseCollecting,
+              disabled: isClosingCollecting,
+            },
           ]}
         >
-          <Button>모집 마감하기</Button>
+          <Button disabled={isClosingCollecting}>모집 마감하기</Button>
         </AppDialog>
         <Button
           variant="ghost"
           className="h-10 text-sm font-semibold text-text-primary"
-          onClick={() => {}}
+          onClick={onEditSubmission}
         >
           제출결과 수정하기
         </Button>
@@ -379,7 +372,7 @@ function RoomDashboardBottomSlot({
 
   if (room.status === "COLLECTING") {
     return (
-      <Button variant="outline" onClick={() => {}}>
+      <Button variant="outline" onClick={onEditSubmission}>
         제출결과 수정하기
       </Button>
     );
