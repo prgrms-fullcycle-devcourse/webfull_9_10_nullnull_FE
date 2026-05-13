@@ -83,6 +83,22 @@ export type RoomDetailData = {
   closed: ClosedInfo;
 };
 
+// ---- API 요청/응답 타입 ----
+
+export interface CreateRoomResponse {
+  slug: string;
+  id: number;
+}
+
+export interface JoinRoomResponse {
+  participantId: number;
+}
+
+export interface SubmitParticipationPayload {
+  blockedSlots: BlockedSlot[];
+  origin?: { placeName: string; address: string; lat: number; lng: number };
+}
+
 // ---- 컴포넌트용 평탄화 타입 (하위 컴포넌트 호환) ----
 
 export type RoomApiResponse = {

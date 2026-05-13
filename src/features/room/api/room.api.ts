@@ -1,23 +1,14 @@
 import { api } from "@/shared/api/axios";
-import type { BlockedSlot, RoomDetailData } from "../types/room";
-
-interface SubmitParticipationPayload {
-  blockedSlots: BlockedSlot[];
-  origin?: { placeName: string; address: string; lat: number; lng: number };
-}
+import type {
+  RoomDetailData,
+  CreateRoomResponse,
+  JoinRoomResponse,
+  SubmitParticipationPayload,
+} from "../types/room";
 
 interface RoomDetailResponse {
   statusCode: number;
   data: RoomDetailData;
-}
-
-export interface CreateRoomResponse {
-  slug: string;
-  id: number;
-}
-
-export interface JoinRoomResponse {
-  participantId: number;
 }
 
 export const roomApi = {
