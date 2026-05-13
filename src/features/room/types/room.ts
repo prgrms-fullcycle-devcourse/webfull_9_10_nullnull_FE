@@ -10,12 +10,14 @@ export type ViewerRole = "HOST" | "MEMBER" | "GUEST";
 
 export type RoomViewer = {
   role: ViewerRole;
+  participantId?: number;
   participantStatus?: ParticipantStatus;
   nickname?: string;
   consentRequired: boolean;
 };
 
 export type RoomInfo = {
+  roomId: number;
   slug: string;
   name: string;
   category: string;
@@ -48,14 +50,14 @@ export type RoomParticipants = {
 
 export type BlockedSlot = {
   date: string;
-  slotIndex: number;
+  slotIndexes: number[];
 };
 
 export type MySubmission = {
   nickname: string;
   status: ParticipantStatus;
-  blockedSlots: BlockedSlot[];
-  origin?: { address: string };
+  blockedSlots: { date: string; slotIndex: number }[];
+  origin?: { placeName: string; address: string; lat: number; lng: number };
 } | null;
 
 export type ConfirmedMeeting = {
@@ -80,6 +82,22 @@ export type RoomDetailData = {
   confirmedMeeting: ConfirmedMeeting;
   closed: ClosedInfo;
 };
+
+// ---- API 요청/응답 타입 ----
+
+export interface CreateRoomResponse {
+  slug: string;
+  id: number;
+}
+
+export interface JoinRoomResponse {
+  participantId: number;
+}
+
+export interface SubmitParticipationPayload {
+  blockedSlots: BlockedSlot[];
+  origin?: { placeName: string; address: string; lat: number; lng: number };
+}
 
 // ---- 컴포넌트용 평탄화 타입 (하위 컴포넌트 호환) ----
 

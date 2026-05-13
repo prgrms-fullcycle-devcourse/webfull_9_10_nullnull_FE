@@ -1,12 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { AppContent, AppIconLink, AppShell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { MapView } from "@/components/kakao";
 import { LocationSearchSheet } from "./LocationSearchSheet";
 import { useFeedbackStore } from "@/features/room/model/useFeedbackStore";
+import { useRoomDetail, roomKeys } from "@/features/room/hooks/useRoomDetail";
+import { useRoomJoinStore } from "@/store/useRoomJoinStore";
+import { roomApi } from "@/features/room/api/room.api";
 import type { RoomLocation } from "@/features/room/types/room";
 
 type Props = {
@@ -18,14 +22,79 @@ export function LocationPage({ slug }: Props) {
   const [location, setLocation] = useState<RoomLocation | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const setFeedback = useFeedbackStore((s) => s.set);
+  const queryClient = useQueryClient();
+  const { data } = useRoomDetail(slug);
+  const { blockedSlots, fromSchedule, clear } = useRoomJoinStore();
+  const locationInitialized = useRef(false);
+  const fromScheduleOnMount = useRef(fromSchedule);
 
-  const handleComplete = () => {
-    // TODO: 출발지 정보를 API로 전송 후 이동
+  useEffect(() => {
+    if (
+      !data?.mySubmission?.origin ||
+      data.viewer.participantStatus !== "SUBMITTED" ||
+      locationInitialized.current
+    )
+      return;
+    const { placeName, address, lat, lng } = data.mySubmission.origin;
+    setLocation({ name: placeName, address, lat, lng });
+    locationInitialized.current = true;
+  }, [data]);
+
+  useEffect(() => {
+    const status = data?.viewer.participantStatus;
+    if (
+      data?.viewer.role === "GUEST" ||
+      (status !== "JOINED" && status !== "SUBMITTED") ||
+      data?.room.status !== "COLLECTING"
+    ) {
+      router.replace(`/room/${slug}`);
+    }
+  }, [
+    data?.viewer.role,
+    data?.viewer.participantStatus,
+    data?.room.status,
+    router,
+    slug,
+  ]);
+
+  useEffect(() => {
+    if (!fromScheduleOnMount.current) {
+      router.replace(`/room/${slug}/schedule`);
+    }
+  }, [router, slug]);
+
+  if (
+    data?.viewer.role === "GUEST" ||
+    (data?.viewer.participantStatus !== "JOINED" &&
+      data?.viewer.participantStatus !== "SUBMITTED") ||
+    data?.room.status !== "COLLECTING"
+  ) {
+    return null;
+  }
+
+  const handleComplete = async () => {
+    if (!data?.viewer.participantId || !location) return;
+    await roomApi.submitParticipation(data.viewer.participantId, {
+      blockedSlots,
+      origin: {
+        placeName: location.name,
+        address: location.address,
+        lat: location.lat,
+        lng: location.lng,
+      },
+    });
+    await queryClient.invalidateQueries({ queryKey: roomKeys.detail(slug) });
+    clear();
     setFeedback("waiting");
     router.push(`/room/${slug}`);
   };
 
-  const handleAbsent = () => {
+  const handleAbsent = async () => {
+    if (data?.viewer.participantId) {
+      await roomApi.declineRoom(data.viewer.participantId);
+    }
+    await queryClient.invalidateQueries({ queryKey: roomKeys.detail(slug) });
+    clear();
     setFeedback("absent");
     router.push(`/room/${slug}`);
   };
@@ -71,7 +140,6 @@ export function LocationPage({ slug }: Props) {
 
         {location && (
           <>
-            {/* 장소 정보 카드 */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-4 py-4">
               <span className="text-lg font-bold text-gray-900 block mb-1">
                 {location.name}
@@ -86,7 +154,6 @@ export function LocationPage({ slug }: Props) {
               </div>
             </div>
 
-            {/* 지도 카드 */}
             <div className="rounded-2xl overflow-hidden shadow-sm">
               <MapView
                 markers={[
