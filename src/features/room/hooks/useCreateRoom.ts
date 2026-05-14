@@ -85,15 +85,12 @@ export const useCreateRoom = () => {
 
     // 3단계 검증 (마감일 < 시작일)
     if (step === 3) {
-      const startDateTime = `${formData.startDate}T${formData.startTime}`;
-      const deadlineDateTime = `${formData.deadlineDate}T${formData.deadlineTime}`;
-
       if (
         formData.startDate &&
         formData.deadlineDate &&
-        deadlineDateTime >= startDateTime
+        formData.deadlineDate >= formData.startDate
       ) {
-        newErrors.deadline = "투표 마감은 모임 시작 전이어야 해요";
+        newErrors.deadline = "투표 마감은 모임 시작 최소 하루 전이어야 해요";
       }
     }
 
@@ -123,10 +120,7 @@ export const useCreateRoom = () => {
       if (!formData.startDate || !formData.endDate) return false;
       if (!formData.deadlineDate || !formData.deadlineTime) return false;
 
-      const startDateTime = `${formData.startDate}T${formData.startTime}`;
-      const deadlineDateTime = `${formData.deadlineDate}T${formData.deadlineTime}`;
-
-      if (deadlineDateTime >= startDateTime) return false;
+      if (formData.deadlineDate >= formData.startDate) return false;
     }
 
     return true;

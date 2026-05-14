@@ -120,7 +120,11 @@ export function CreateRoom() {
                 handleNext();
               }
             }}
-            disabled={isSubmitting || (step === 4 && !createdSlug && !roomId)}
+            disabled={
+              isSubmitting ||
+              (step === 4 && !createdSlug && !roomId) ||
+              Object.keys(errors).length > 0
+            }
           >
             {isSubmitting
               ? "생성 중..."
