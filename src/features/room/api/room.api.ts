@@ -5,6 +5,8 @@ import type {
   JoinRoomResponse,
   RoomCandidates,
   RoomDetailData,
+  RoomListItem,
+  RoomListResponse,
   SubmitParticipationPayload,
 } from "../types/room";
 
@@ -21,6 +23,10 @@ interface RoomCandidatesResponse {
 export const roomApi = {
   getDetail: async (slug: string): Promise<RoomDetailData> => {
     const { data } = await api.get<RoomDetailResponse>(`/rooms/${slug}`);
+    return data.data;
+  },
+  getMyRooms: async (): Promise<RoomListResponse> => {
+    const { data } = await api.get<{ data: RoomListResponse }>("/rooms");
     return data.data;
   },
 

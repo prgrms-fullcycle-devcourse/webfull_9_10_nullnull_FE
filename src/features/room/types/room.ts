@@ -60,6 +60,32 @@ export type MySubmission = {
   origin?: { placeName: string; address: string; lat: number; lng: number };
 } | null;
 
+export type RoomListItem = {
+  roomId: number;
+  slug: string;
+  name: string;
+  category: string;
+  status: RoomStatus;
+  myRole: "HOST" | "MEMBER";
+  hostNickname: string;
+  participantCount: number;
+  submittedCount: number;
+  submittedRatio: number;
+  confirmedMeeting: {
+    startAt: string;
+    placeName: string | null;
+  } | null;
+  dateStart: string;
+  dateEnd: string;
+  deadlineAt: string;
+  createdAt: string;
+};
+
+export type RoomListResponse = {
+  totalCount: number;
+  rooms: RoomListItem[];
+};
+
 export type ConfirmedMeeting = {
   startAt: string;
   endAt: string;
