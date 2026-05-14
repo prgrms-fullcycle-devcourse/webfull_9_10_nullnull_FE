@@ -56,12 +56,8 @@ export function CreateRoomComplete({ data }: { data: RoomData }) {
               end: formatDate(data.endDate),
             }}
             timeRange={{
-              start: formatTime(
-                data.startTime.replace("오후 ", "").replace("오전 ", ""),
-              ),
-              end: formatTime(
-                data.endTime.replace("오후 ", "").replace("오전 ", ""),
-              ),
+              start: formatTime(data.startTime),
+              end: formatTime(data.endTime),
             }}
             days={
               data.preferredDayType === "custom"
@@ -69,7 +65,7 @@ export function CreateRoomComplete({ data }: { data: RoomData }) {
                 : [data.preferredDayType === "weekday" ? "주중" : "주말"]
             }
             deadline={formatDeadline(
-              `${data.deadlineDate}T${data.deadlineTime === "오전 9:00" ? "09:00" : "21:00"}:00`,
+              `${data.deadlineDate}T${data.deadlineTime}:00`,
             )}
           />
         </div>

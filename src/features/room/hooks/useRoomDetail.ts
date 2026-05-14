@@ -10,6 +10,6 @@ export function useRoomDetail(slug: string) {
     queryKey: roomKeys.detail(slug),
     queryFn: () => roomApi.getDetail(slug),
     staleTime: 30_000,
-    retry: false,
+    retry: 1,
   });
 }

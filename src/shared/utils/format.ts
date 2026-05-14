@@ -6,12 +6,9 @@ export function formatDate(dateStr: string): string {
   return `${y}.${m}.${d} (${DAY[new Date(dateStr).getDay()]})`;
 }
 
-/** "09:00" → "오전 09:00" / "22:00" → "오후 10:00" */
+/** "18:00" → "18:00" */
 export function formatTime(timeStr: string): string {
-  const [h, m] = timeStr.split(":").map(Number);
-  const period = h < 12 ? "오전" : "오후";
-  const hour = h === 0 ? 12 : h > 12 ? h - 12 : h;
-  return `${period} ${String(hour).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  return timeStr;
 }
 
 /** "2026-10-25T23:59:00+09:00" → "10.25(토) 23:59" */

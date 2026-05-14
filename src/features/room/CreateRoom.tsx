@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   AppContent,
   AppIconLink,
@@ -21,6 +22,7 @@ export function CreateRoom() {
   const router = useRouter();
   const {
     step,
+    roomId,
     formData,
     errors,
     handleNext,
@@ -31,6 +33,8 @@ export function CreateRoom() {
   } = useCreateRoom();
 
   const [showExitDialog, setShowExitDialog] = useState(false);
+
+  const [createdSlug, setCreatedSlug] = useState<string | null>(null);
 
   // 이탈 확인 핸들러
   const handleExitRequest = () => {
@@ -45,10 +49,37 @@ export function CreateRoom() {
     try {
       const result = await submitRoom();
       if (result) {
+        setCreatedSlug(result.slug);
         handleNext(); // Step 4로 이동
       }
     } catch {
       toast.error("방 생성에 실패했어요. 다시 시도해 주세요.");
+    }
+  };
+
+  const handleShare = async () => {
+    const slugToShare = createdSlug || roomId;
+    if (!slugToShare) return;
+
+    const shareUrl = `${window.location.origin}/room/${slugToShare}`;
+    const shareData = {
+      title: "널널 - 모임 시간 정하기",
+      text: `[${formData.title}] 모임에 초대되었어요!\n가능한 시간을 선택해 주세요.`,
+      url: shareUrl,
+    };
+
+    try {
+      if (navigator.share && navigator.canShare?.(shareData)) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("링크가 클립보드에 복사되었어요!");
+      }
+    } catch (error) {
+      if ((error as Error).name !== "AbortError") {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("링크가 클립보드에 복사되었어요!");
+      }
     }
   };
 
@@ -69,13 +100,32 @@ export function CreateRoom() {
             <AppIconLink icon="back" label="뒤로가기" onClick={handleBack} />
           )
         }
-        rightSlot={undefined}
+        rightSlot={
+          step === 4 ? (
+            <AppIconLink icon="share" label="공유하기" onClick={handleShare} />
+          ) : undefined
+        }
         bottomSlot={
           <Button
-            onClick={step === 3 ? onFinalSubmit : handleNext}
-            disabled={isSubmitting}
+            onClick={() => {
+              if (step === 4) {
+                const finalSlug = createdSlug || roomId;
+                if (finalSlug) router.push(`/room/${finalSlug}/schedule`);
+              } else if (step === 3) {
+                onFinalSubmit();
+              } else {
+                handleNext();
+              }
+            }}
+            disabled={isSubmitting || (step === 4 && !createdSlug && !roomId)}
           >
-            {isSubmitting ? "생성 중..." : step === 3 ? "완료" : "다음"}
+            {isSubmitting
+              ? "생성 중..."
+              : step === 4
+                ? "안 되는 시간 선택하기"
+                : step === 3
+                  ? "완료"
+                  : "다음"}
           </Button>
         }
       >

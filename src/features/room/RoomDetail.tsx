@@ -121,6 +121,29 @@ export function RoomDetail({ slug }: Props) {
     setView("join-name");
   };
 
+  const handleShare = async () => {
+    const shareUrl = `${window.location.origin}/room/${slug}`;
+    const shareData = {
+      title: "널널 - 모임 시간 정하기",
+      text: `[${room.name}] 모임에 초대되었어요!\n가능한 시간을 선택해 주세요.`,
+      url: shareUrl,
+    };
+
+    try {
+      if (navigator.share && navigator.canShare?.(shareData)) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("링크가 클립보드에 복사되었어요!");
+      }
+    } catch (error) {
+      if ((error as Error).name !== "AbortError") {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("링크가 클립보드에 복사되었어요!");
+      }
+    }
+  };
+
   const handleJoinComplete = async (name: string) => {
     try {
       await roomApi.joinRoom(data.room.roomId, name);
@@ -214,7 +237,9 @@ export function RoomDetail({ slug }: Props) {
             onClick={() => setView("detail")}
           />
         }
-        rightSlot={<AppIconLink icon="share" label="공유하기" />}
+        rightSlot={
+          <AppIconLink icon="share" label="공유하기" onClick={handleShare} />
+        }
         bottomSlot={
           <Button
             onClick={handleConfirmRoom}
@@ -247,7 +272,9 @@ export function RoomDetail({ slug }: Props) {
             onClick={() => router.back()}
           />
         }
-        rightSlot={<AppIconLink icon="share" label="공유하기" />}
+        rightSlot={
+          <AppIconLink icon="share" label="공유하기" onClick={handleShare} />
+        }
         bottomSlot={
           <RoomDashboardBottomSlot
             room={roomForComponents}

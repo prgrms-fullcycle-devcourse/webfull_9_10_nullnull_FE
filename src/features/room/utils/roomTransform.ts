@@ -1,6 +1,10 @@
 import { type RoomData } from "../types/room";
 
 const convertTo24Hour = (timeStr: string): string => {
+  // If already in HH:mm format (e.g. "18:00")
+  if (/^\d{2}:\d{2}$/.test(timeStr)) return timeStr;
+
+  // Fallback for old AM/PM format if still used somewhere
   const [ampm, time] = timeStr.split(" ");
   const [hour, minute] = time.split(":").map(Number);
 
@@ -32,9 +36,7 @@ export const transformToCreateRoomDto = (data: RoomData) => {
   const timeEnd = convertTo24Hour(data.endTime);
   const deadlineTime = convertTo24Hour(data.deadlineTime);
 
-  const deadlineAt = new Date(
-    `${data.deadlineDate}T${deadlineTime}:00`,
-  ).toISOString();
+  const deadlineAt = `${data.deadlineDate}T${deadlineTime}:00`;
 
   return {
     name: data.title,

@@ -19,13 +19,20 @@ export const useCreateRoom = () => {
 
   const [formData, setFormData] = useState<RoomData>(() => {
     const now = new Date();
-    const startDate = now.toISOString().split("T")[0];
-    const endDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split("T")[0];
-    const deadlineDate = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split("T")[0];
+    const formatDate = (d: Date) => {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
+    const startDate = formatDate(now);
+    const endDate = formatDate(
+      new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
+    );
+    const deadlineDate = formatDate(
+      new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000),
+    );
 
     const user = useAuthStore.getState().user;
 
@@ -37,12 +44,12 @@ export const useCreateRoom = () => {
 
       startDate,
       endDate,
-      startTime: "오후 6:00",
-      endTime: "오후 10:00",
+      startTime: "18:00",
+      endTime: "22:00",
       preferredDayType: "weekday",
       customDays: [],
       deadlineDate,
-      deadlineTime: "오전 9:00",
+      deadlineTime: "09:00",
       collectOrigin: false,
     };
   });
@@ -105,10 +112,6 @@ export const useCreateRoom = () => {
     setShowEmptyErrors(false);
 
     if (step < 4) {
-      if (step === 3 && !roomId) {
-        const slug = Math.random().toString(36).substring(2, 10);
-        setRoomId(slug);
-      }
       setStep(step + 1);
     }
   };
@@ -127,6 +130,7 @@ export const useCreateRoom = () => {
     try {
       const payload = transformToCreateRoomDto(formData);
       const result = await roomApi.create(payload);
+      setRoomId(result.slug); // 백엔드에서 받은 실제 slug로 업데이트
       return result;
     } finally {
       setIsSubmitting(false);

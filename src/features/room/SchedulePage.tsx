@@ -72,6 +72,8 @@ export function SchedulePage({ slug, onBack }: Props) {
   }, [data]);
 
   useEffect(() => {
+    if (!data) return; // 데이터가 로딩될 때까지 대기
+
     const status = data?.viewer.participantStatus;
     if (
       data?.viewer.role === "GUEST" ||
@@ -80,13 +82,7 @@ export function SchedulePage({ slug, onBack }: Props) {
     ) {
       router.replace(`/room/${slug}`);
     }
-  }, [
-    data?.viewer.role,
-    data?.viewer.participantStatus,
-    data?.room.status,
-    router,
-    slug,
-  ]);
+  }, [data, router, slug]);
 
   if (isLoading || !data) {
     return (
