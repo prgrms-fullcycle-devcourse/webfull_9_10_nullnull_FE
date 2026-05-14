@@ -4,45 +4,67 @@ import {
 } from "@/features/room/components/RoomTitle";
 import { RoomParticipationProgressCard } from "@/features/room/components/RoomParticipationProgressCard";
 import { Button } from "@/components/ui/button";
-import type { RoomApiResponse } from "@/features/room/types/room";
+import { formatTime } from "@/shared/utils/format";
+import type {
+  RoomApiResponse,
+  RoomParticipants,
+  ConfirmedMeeting,
+} from "@/features/room/types/room";
 
-const MOCK_ATTENDANCE = {
-  attending: [
-    "난방 고양이",
-    "아프리카청춘이다",
-    "트와이스",
-    "노스트라단무지",
-    "잭스패로우",
-  ],
-  declined: ["스칼렛위치"],
-  pending: ["조셉", "생갈치1호의행방불명"],
-};
+const DAY_FULL = [
+  "일요일",
+  "월요일",
+  "화요일",
+  "수요일",
+  "목요일",
+  "금요일",
+  "토요일",
+];
 
-const MOCK_CONFIRMED = {
-  date: "26. 05. 24 금요일",
-  time: "오후 4:00 - 오후 6:00",
-  attendeeCount: 5,
-  placeName: "부산 앞 바다",
-  placeAddress: "부산광역시 강서구 녹산산단382로14번가길 10-29번지(송정동)",
-};
+function formatConfirmedDate(isoStr: string): string {
+  const date = new Date(isoStr);
+  const yy = String(date.getFullYear()).slice(2);
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  return `${yy}. ${mm}. ${dd} ${DAY_FULL[date.getDay()]}`;
+}
+
+function formatConfirmedTime(startIso: string, endIso: string): string {
+  const toTime = (iso: string) => {
+    const date = new Date(iso);
+    const h = String(date.getHours()).padStart(2, "0");
+    const m = String(date.getMinutes()).padStart(2, "0");
+    return formatTime(`${h}:${m}`);
+  };
+  return `${toTime(startIso)} - ${toTime(endIso)}`;
+}
 
 type Props = {
   room: RoomApiResponse;
+  participants: RoomParticipants;
+  confirmedMeeting: ConfirmedMeeting;
 };
 
-export function RoomDashboardView({ room }: Props) {
+export function RoomDashboardView({
+  room,
+  participants,
+  confirmedMeeting,
+}: Props) {
   const isConfirmed = room.status === "CONFIRMED" || room.status === "CLOSED";
   const isHostCollecting =
     room.viewerRole === "HOST" && room.status === "COLLECTING";
   const hasUnsubmittedParticipants =
-    MOCK_ATTENDANCE.declined.length > 0 || MOCK_ATTENDANCE.pending.length > 0;
+    participants.declined.length > 0 || participants.joined.length > 0;
 
   return (
     <div className="flex flex-col gap-5 px-4 py-5">
       <RoomSummary room={room} />
 
       {isConfirmed ? (
-        <ConfirmedInfoCard isHighlighted={room.status === "CONFIRMED"} />
+        <ConfirmedInfoCard
+          isHighlighted={room.status === "CONFIRMED"}
+          confirmedMeeting={confirmedMeeting}
+        />
       ) : (
         <RoomParticipationProgressCard
           current={room.participantCount ?? 0}
@@ -51,6 +73,7 @@ export function RoomDashboardView({ room }: Props) {
       )}
 
       <AttendanceCard
+        participants={participants}
         compact={isHostCollecting && !hasUnsubmittedParticipants}
         showReminder={isHostCollecting && hasUnsubmittedParticipants}
       />
@@ -83,7 +106,13 @@ function RoomSummary({ room }: { room: RoomApiResponse }) {
   );
 }
 
-function ConfirmedInfoCard({ isHighlighted }: { isHighlighted: boolean }) {
+function ConfirmedInfoCard({
+  isHighlighted,
+  confirmedMeeting,
+}: {
+  isHighlighted: boolean;
+  confirmedMeeting: ConfirmedMeeting;
+}) {
   return (
     <section
       className={`flex flex-col gap-4 rounded-3xl border border-border-subtle bg-white p-5 ${
@@ -92,18 +121,35 @@ function ConfirmedInfoCard({ isHighlighted }: { isHighlighted: boolean }) {
           : "[--info-icon-bg:var(--color-bg-muted)] [--info-icon-color:var(--color-gray-400)]"
       }`}
     >
-      <InfoRow icon="calendar" label="날짜" value={MOCK_CONFIRMED.date} />
-      <InfoRow icon="time" label="시간" value={MOCK_CONFIRMED.time} />
+      <InfoRow
+        icon="calendar"
+        label="날짜"
+        value={
+          confirmedMeeting ? formatConfirmedDate(confirmedMeeting.startAt) : "-"
+        }
+      />
+      <InfoRow
+        icon="time"
+        label="시간"
+        value={
+          confirmedMeeting
+            ? formatConfirmedTime(
+                confirmedMeeting.startAt,
+                confirmedMeeting.endAt,
+              )
+            : "-"
+        }
+      />
       <InfoRow
         icon="person"
         label="참석 인원"
-        value={`${MOCK_CONFIRMED.attendeeCount}명`}
+        value={confirmedMeeting ? `${confirmedMeeting.confirmedCount}명` : "-"}
       />
       <InfoRow
         icon="pin"
         label="장소"
-        value={MOCK_CONFIRMED.placeName}
-        description={MOCK_CONFIRMED.placeAddress}
+        value={confirmedMeeting?.place?.name ?? "-"}
+        description={confirmedMeeting?.place?.address}
       />
     </section>
   );
@@ -146,9 +192,11 @@ function InfoRow({
 }
 
 function AttendanceCard({
+  participants,
   compact = false,
   showReminder = false,
 }: {
+  participants: RoomParticipants;
   compact?: boolean;
   showReminder?: boolean;
 }) {
@@ -160,19 +208,19 @@ function AttendanceCard({
       <AttendanceGroup
         tone="success"
         label="참석"
-        names={MOCK_ATTENDANCE.attending}
+        names={participants.submitted}
       />
       {!compact && (
         <>
           <AttendanceGroup
             tone="danger"
             label="불참"
-            names={MOCK_ATTENDANCE.declined}
+            names={participants.declined}
           />
           <AttendanceGroup
             tone="muted"
             label="미정"
-            names={MOCK_ATTENDANCE.pending}
+            names={participants.joined}
           />
         </>
       )}

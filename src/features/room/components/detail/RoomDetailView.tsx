@@ -4,7 +4,7 @@ import positiveTitleBg from "@/assets/images/components/bg_positive_title.svg";
 import pulseStyles from "@/components/visual/LogoPulse.module.css";
 import { RoomTitle } from "@/features/room/components/RoomTitle";
 import { RoomInfoList } from "@/features/room/components/RoomInfoList";
-import { ParticipationStatus } from "@/features/room/components/ParticipationStatus";
+import { RoomParticipationProgressCard } from "@/features/room/components/RoomParticipationProgressCard";
 import type { RoomApiResponse } from "@/features/room/types/room";
 import {
   formatDate,
@@ -72,7 +72,7 @@ export function RoomDetailView({ room }: Props) {
 
         {/* 참여 현황 카드 */}
         <div className="rounded-2xl border border-border-subtle bg-white px-5 py-4">
-          <ParticipationStatus
+          <RoomParticipationProgressCard
             current={room.participantCount ?? 0}
             max={room.maxParticipants ?? 0}
           />
