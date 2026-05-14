@@ -101,8 +101,7 @@ export function RoomDetail({ slug }: Props) {
     viewerRole: viewer.role,
     role: viewer.role.toLowerCase() as RoomApiResponse["role"],
     nickname: viewer.nickname,
-    participantCount:
-      summary.submittedCount + summary.declinedCount + summary.joinedCount,
+    participantCount: summary.submittedCount + summary.declinedCount,
     maxParticipants: summary.totalCount,
   };
 
@@ -259,7 +258,11 @@ export function RoomDetail({ slug }: Props) {
           />
         }
       >
-        <RoomDashboardView room={roomForComponents} />
+        <RoomDashboardView
+          room={roomForComponents}
+          participants={data.participants}
+          confirmedMeeting={data.confirmedMeeting}
+        />
       </AppShell>
     );
   }
@@ -422,15 +425,5 @@ function toRoomApiResponse(
   data: RoomDetailData,
   slug: string,
 ): RoomApiResponse {
-  const { viewer, room, summary } = data;
-
-  return {
-    ...room,
-    slug,
-    participantStatus: viewer.participantStatus,
-    viewerRole: viewer.role,
-    participantCount:
-      summary.submittedCount + summary.declinedCount + summary.joinedCount,
-    maxParticipants: summary.totalCount,
-  };
+  return { ...data.room, slug };
 }
