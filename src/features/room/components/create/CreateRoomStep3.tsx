@@ -185,9 +185,9 @@ function DaySelector({ data, onUpdate }: Props) {
                   key={day}
                   value={day}
                   className={cn(
-                    "!h-10 !rounded-xl border border-border-subtle bg-white text-sm font-medium text-text-primary transition-all focus:outline-none",
+                    "h-10! rounded-xl! border border-border-subtle bg-white text-sm font-medium text-text-primary transition-all focus:outline-none",
                     isSelected
-                      ? "!border-primary !bg-primary/10 !text-primary"
+                      ? "border-primary! bg-primary/10! text-primary!"
                       : "hover:text-text-primary",
                   )}
                 >

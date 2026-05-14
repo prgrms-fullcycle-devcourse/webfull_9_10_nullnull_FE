@@ -13,6 +13,10 @@ import { Button } from "@/components/ui/button";
 import { AppDialog } from "@/components/dialog";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useMyRooms } from "../../room/hooks/useMyRooms";
+import { RoomCard } from "./RoomCard";
+import { Loader2, ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface HomeDashboardViewProps {
   userNickname: string;
@@ -21,6 +25,10 @@ interface HomeDashboardViewProps {
 export function HomeDashboardView({ userNickname }: HomeDashboardViewProps) {
   const [activeTab, setActiveTab] = useState("created");
   const [showBellDialog, setShowBellDialog] = useState(false);
+  const { rooms, isLoading } = useMyRooms();
+
+  const createdRooms = rooms.filter((r) => r.myRole === "HOST");
+  const joinedRooms = rooms.filter((r) => r.myRole === "MEMBER");
 
   return (
     <>
@@ -48,7 +56,7 @@ export function HomeDashboardView({ userNickname }: HomeDashboardViewProps) {
             <Button asChild>
               <Link href="/room">모임 만들기</Link>
             </Button>
-          ) : null // 참여한 모임 탭에서는 하단 버튼을 숨깁니다.
+          ) : null
         }
       >
         <AppContent>
@@ -69,24 +77,45 @@ export function HomeDashboardView({ userNickname }: HomeDashboardViewProps) {
                 <TabsTrigger value="joined">참여한 모임</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="created" className="mt-16">
-                <EmptyState
-                  message="아직 만들어진 모임이 없어요."
-                  subMessage="새로운 모임을 만들어보세요!"
-                />
+              <TabsContent value="created" className="mt-8">
+                {isLoading ? (
+                  <LoadingState />
+                ) : createdRooms.length > 0 ? (
+                  <RoomListGroup rooms={createdRooms} />
+                ) : (
+                  <EmptyState
+                    message="아직 만들어진 모임이 없어요."
+                    subMessage="새로운 모임을 만들어보세요!"
+                  />
+                )}
               </TabsContent>
 
-              <TabsContent value="joined" className="mt-16">
-                <EmptyState
-                  message="아직 참여한 모임이 없어요."
-                  subMessage="친구의 초대 링크로 참여해 보세요!"
-                />
+              <TabsContent value="joined" className="mt-8">
+                {isLoading ? (
+                  <LoadingState />
+                ) : joinedRooms.length > 0 ? (
+                  <RoomListGroup rooms={joinedRooms} />
+                ) : (
+                  <EmptyState
+                    message="아직 참여한 모임이 없어요."
+                    subMessage="친구의 초대 링크로 참여해 보세요!"
+                  />
+                )}
               </TabsContent>
             </Tabs>
           </section>
         </AppContent>
       </AppShell>
     </>
+  );
+}
+
+function LoadingState() {
+  return (
+    <div className="flex flex-col items-center justify-center py-20">
+      <Loader2 className="size-8 animate-spin text-primary" />
+      <p className="mt-4 text-sm text-text-tertiary">모임을 불러오는 중...</p>
+    </div>
   );
 }
 
@@ -107,6 +136,81 @@ function EmptyState({
         <br />
         {subMessage}
       </p>
+    </div>
+  );
+}
+function RoomListGroup({ rooms }: { rooms: any[] }) {
+  const [isCollectingOpen, setIsCollectingOpen] = useState(true);
+  const [isConfirmedOpen, setIsConfirmedOpen] = useState(true);
+
+  const collecting = rooms.filter(
+    (r) => r.status === "COLLECTING" || r.status === "READY",
+  );
+  const confirmed = rooms.filter(
+    (r) => r.status === "CONFIRMED" || r.status === "CLOSED",
+  );
+
+  return (
+    <div className="flex flex-col gap-10">
+      {collecting.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <button
+            onClick={() => setIsCollectingOpen(!isCollectingOpen)}
+            className="flex items-center justify-between w-full text-left focus:outline-none"
+          >
+            <h2 className="text-sm font-bold text-text-secondary flex items-center gap-2">
+              <span className="size-1.5 rounded-full bg-info" />
+              모집 중
+              <span className="ml-1 text-xs font-medium text-text-disabled">
+                {collecting.length}
+              </span>
+            </h2>
+            <ChevronDown
+              className={cn(
+                "size-4 text-text-disabled transition-transform duration-200",
+                !isCollectingOpen && "-rotate-90",
+              )}
+            />
+          </button>
+          {isCollectingOpen && (
+            <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
+              {collecting.map((room) => (
+                <RoomCard key={room.roomId} room={room} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {confirmed.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <button
+            onClick={() => setIsConfirmedOpen(!isConfirmedOpen)}
+            className="flex items-center justify-between w-full text-left focus:outline-none"
+          >
+            <h2 className="text-sm font-bold text-text-secondary flex items-center gap-2">
+              <span className="size-1.5 rounded-full bg-success" />
+              확정됨
+              <span className="ml-1 text-xs font-medium text-text-disabled">
+                {confirmed.length}
+              </span>
+            </h2>
+            <ChevronDown
+              className={cn(
+                "size-4 text-text-disabled transition-transform duration-200",
+                !isConfirmedOpen && "-rotate-90",
+              )}
+            />
+          </button>
+          {isConfirmedOpen && (
+            <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
+              {confirmed.map((room) => (
+                <RoomCard key={room.roomId} room={room} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
