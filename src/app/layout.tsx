@@ -1,14 +1,27 @@
 import type { Metadata } from "next";
-import { QueryProvider } from "@/components/providers/QueryProvider";
 import Script from "next/script";
+import { QueryProvider } from "@/components/providers/QueryProvider";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
+
+const serviceDescription = "안되는 시간 빼고 널널한 시간 찾기";
 
 export const metadata: Metadata = {
   title: "NULLNULL",
-  description: "안되는 시간 빼고 널널한 시간 찾기",
+  description: serviceDescription,
+  openGraph: {
+    title: "NULLNULL",
+    description: serviceDescription,
+    images: [
+      {
+        url: "/og-image.svg",
+        width: 1024,
+        height: 559,
+        alt: "NULLNULL",
+      },
+    ],
+  },
 };
-
-import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({
   children,
