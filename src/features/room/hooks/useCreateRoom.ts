@@ -9,6 +9,7 @@ export type RoomErrors = {
   title?: string;
   category?: string;
   date?: string;
+  deadline?: string;
 };
 
 export const useCreateRoom = () => {
@@ -26,9 +27,11 @@ export const useCreateRoom = () => {
       return `${year}-${month}-${day}`;
     };
 
-    const startDate = formatDate(now);
-    const endDate = formatDate(
+    const startDate = formatDate(
       new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
+    );
+    const endDate = formatDate(
+      new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000),
     );
     const deadlineDate = formatDate(
       new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000),
@@ -80,11 +83,29 @@ export const useCreateRoom = () => {
       }
     }
 
+    // 3단계 검증 (마감일 < 시작일)
+    if (step === 3) {
+      const startDateTime = `${formData.startDate}T${formData.startTime}`;
+      const deadlineDateTime = `${formData.deadlineDate}T${formData.deadlineTime}`;
+
+      if (
+        formData.startDate &&
+        formData.deadlineDate &&
+        deadlineDateTime >= startDateTime
+      ) {
+        newErrors.deadline = "투표 마감은 모임 시작 전이어야 해요";
+      }
+    }
+
     return newErrors;
   }, [
     formData.nickname,
     formData.title,
     formData.category,
+    formData.startDate,
+    formData.deadlineDate,
+    formData.startTime,
+    formData.deadlineTime,
     step,
     showEmptyErrors,
   ]);
@@ -101,6 +122,11 @@ export const useCreateRoom = () => {
     } else if (step === 3) {
       if (!formData.startDate || !formData.endDate) return false;
       if (!formData.deadlineDate || !formData.deadlineTime) return false;
+
+      const startDateTime = `${formData.startDate}T${formData.startTime}`;
+      const deadlineDateTime = `${formData.deadlineDate}T${formData.deadlineTime}`;
+
+      if (deadlineDateTime >= startDateTime) return false;
     }
 
     return true;
@@ -126,6 +152,8 @@ export const useCreateRoom = () => {
   };
 
   const submitRoom = async () => {
+    if (!validateStep()) return null;
+
     setIsSubmitting(true);
     try {
       const payload = transformToCreateRoomDto(formData);

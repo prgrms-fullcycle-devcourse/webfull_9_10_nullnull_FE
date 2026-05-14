@@ -15,6 +15,7 @@ import { TIME_OPTIONS } from "../../constants/room";
 
 interface Props {
   data: RoomData;
+  errors?: import("../../hooks/useCreateRoom").RoomErrors;
   onUpdate: (data: Partial<RoomData>) => void;
 }
 
@@ -30,7 +31,7 @@ function preventDateTextSelection(event: React.MouseEvent<HTMLInputElement>) {
   event.preventDefault();
 }
 
-export function CreateRoomStep3({ data, onUpdate }: Props) {
+export function CreateRoomStep3({ data, errors, onUpdate }: Props) {
   return (
     <div className="flex-1 flex flex-col gap-6">
       <div>
@@ -46,7 +47,7 @@ export function CreateRoomStep3({ data, onUpdate }: Props) {
         <DateRangePicker data={data} onUpdate={onUpdate} />
         <TimeRangePicker data={data} onUpdate={onUpdate} />
         <DaySelector data={data} onUpdate={onUpdate} />
-        <DeadlinePicker data={data} onUpdate={onUpdate} />
+        <DeadlinePicker data={data} errors={errors} onUpdate={onUpdate} />
         <PlaceRecommendation data={data} onUpdate={onUpdate} />
       </div>
     </div>
@@ -65,7 +66,7 @@ function DateRangePicker({ data, onUpdate }: Props) {
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
         <Input
           type="date"
-          className="cursor-pointer select-none"
+          className="cursor-pointer select-none h-10 rounded-xl border-border-subtle bg-white px-4 text-sm transition-all focus-visible:border-primary-default focus-visible:ring-primary-default/10"
           min={today}
           value={data.startDate}
           onMouseDown={preventDateTextSelection}
@@ -76,7 +77,7 @@ function DateRangePicker({ data, onUpdate }: Props) {
         <span className="text-sm font-medium text-text-disabled">~</span>
         <Input
           type="date"
-          className="cursor-pointer select-none"
+          className="cursor-pointer select-none h-10 rounded-xl border-border-subtle bg-white px-4 text-sm transition-all focus-visible:border-primary-default focus-visible:ring-primary-default/10"
           min={endDateMin}
           value={data.endDate}
           onMouseDown={preventDateTextSelection}
@@ -100,7 +101,7 @@ function TimeRangePicker({ data, onUpdate }: Props) {
           value={data.startTime}
           onValueChange={(val) => onUpdate({ startTime: val })}
         >
-          <SelectTrigger>
+          <SelectTrigger className="h-10 rounded-xl border-border-subtle bg-white px-4 text-sm transition-all focus:border-primary-default focus:ring-primary-default/10">
             <SelectValue placeholder="시작 시간" />
           </SelectTrigger>
           <SelectContent className="rounded-xl shadow-xl border-border-subtle">
@@ -116,7 +117,7 @@ function TimeRangePicker({ data, onUpdate }: Props) {
           value={data.endTime}
           onValueChange={(val) => onUpdate({ endTime: val })}
         >
-          <SelectTrigger>
+          <SelectTrigger className="h-10 rounded-xl border-border-subtle bg-white px-4 text-sm transition-all focus:border-primary-default focus:ring-primary-default/10">
             <SelectValue placeholder="종료 시간" />
           </SelectTrigger>
           <SelectContent className="rounded-xl shadow-xl border-border-subtle">
@@ -201,7 +202,7 @@ function DaySelector({ data, onUpdate }: Props) {
   );
 }
 
-function DeadlinePicker({ data, onUpdate }: Props) {
+function DeadlinePicker({ data, errors, onUpdate }: Props) {
   const today = new Date().toISOString().split("T")[0];
 
   return (
@@ -212,7 +213,12 @@ function DeadlinePicker({ data, onUpdate }: Props) {
       <div className="grid grid-cols-2 items-center gap-2">
         <Input
           type="date"
-          className="flex-1 cursor-pointer select-none"
+          className={cn(
+            "flex-1 cursor-pointer select-none h-10 rounded-xl border-border-subtle bg-white px-4 text-sm transition-all",
+            errors?.deadline
+              ? "border-red-500 ring-1 ring-red-500/10 focus-visible:ring-red-500/20"
+              : "focus-visible:border-primary-default focus-visible:ring-primary-default/10",
+          )}
           min={today}
           value={data.deadlineDate}
           onMouseDown={preventDateTextSelection}
@@ -225,7 +231,14 @@ function DeadlinePicker({ data, onUpdate }: Props) {
             value={data.deadlineTime}
             onValueChange={(val) => onUpdate({ deadlineTime: val })}
           >
-            <SelectTrigger>
+            <SelectTrigger
+              className={cn(
+                "h-10 rounded-xl border-border-subtle bg-white px-4 text-sm transition-all",
+                errors?.deadline
+                  ? "border-red-500 ring-1 ring-red-500/10 focus:ring-red-500/20"
+                  : "focus:border-primary-default focus:ring-primary-default/10",
+              )}
+            >
               <SelectValue placeholder="시간 선택" />
             </SelectTrigger>
             <SelectContent className="rounded-xl shadow-xl border-border-subtle">
@@ -238,6 +251,11 @@ function DeadlinePicker({ data, onUpdate }: Props) {
           </Select>
         </div>
       </div>
+      {errors?.deadline && (
+        <p className="text-xs font-medium text-red-500 animate-in fade-in slide-in-from-top-1 ml-1">
+          {errors.deadline}
+        </p>
+      )}
     </div>
   );
 }

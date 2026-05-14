@@ -51,6 +51,9 @@ export function CreateRoom() {
       if (result) {
         setCreatedSlug(result.slug);
         handleNext(); // Step 4로 이동
+      } else {
+        // validation failed
+        toast.error("모임 정보를 다시 확인해 주세요.");
       }
     } catch {
       toast.error("방 생성에 실패했어요. 다시 시도해 주세요.");
@@ -161,7 +164,11 @@ export function CreateRoom() {
             )}
 
             {step === 3 && (
-              <CreateRoomStep3 data={formData} onUpdate={updateFormData} />
+              <CreateRoomStep3
+                data={formData}
+                errors={errors}
+                onUpdate={updateFormData}
+              />
             )}
           </AppContent>
         ) : (
