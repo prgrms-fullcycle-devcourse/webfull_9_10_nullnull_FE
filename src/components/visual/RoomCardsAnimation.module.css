@@ -1,4 +1,4 @@
-.mainPreviewCard {
+.previewCard {
   position: absolute;
   overflow: hidden;
   animation-duration: 3.3s;
@@ -8,31 +8,31 @@
   will-change: transform;
 }
 
-.mainPreviewCard1 {
+.previewCard1 {
   left: 0;
   top: 0;
   width: 335px;
   height: 93px;
-  animation-name: main-preview-card-1;
+  animation-name: preview-card-1;
 }
 
-.mainPreviewCard2 {
+.previewCard2 {
   left: 36px;
   top: 99px;
   width: 263px;
   height: 65px;
-  animation-name: main-preview-card-2;
+  animation-name: preview-card-2;
 }
 
-.mainPreviewCard3 {
+.previewCard3 {
   left: 79px;
   top: 170px;
   width: 177px;
   height: 44px;
-  animation-name: main-preview-card-3;
+  animation-name: preview-card-3;
 }
 
-@keyframes main-preview-card-1 {
+@keyframes preview-card-1 {
   0%,
   24.24% {
     transform: translate(0, 0) scale(1, 1);
@@ -50,7 +50,7 @@
   }
 }
 
-@keyframes main-preview-card-2 {
+@keyframes preview-card-2 {
   0%,
   24.24% {
     transform: translate(0, 0) scale(1, 1);
@@ -68,7 +68,7 @@
   }
 }
 
-@keyframes main-preview-card-3 {
+@keyframes preview-card-3 {
   0%,
   24.24% {
     transform: translate(0, 0) scale(1, 1);

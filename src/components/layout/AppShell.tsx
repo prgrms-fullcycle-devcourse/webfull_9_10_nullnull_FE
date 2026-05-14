@@ -24,10 +24,12 @@ export function AppShell({
 }: Props) {
   return (
     <div className="Wrap min-h-dvh bg-background">
-      <div className="wrap-container bg-gray-50">
+      <div className="relative wrap-container bg-gray-50">
         <AppHeader title={title} leftSlot={leftSlot} rightSlot={rightSlot} />
 
-        <main className="flex-1">{children}</main>
+        <main className="flex flex-1 flex-col">
+          <div className="main-container flex flex-1 flex-col">{children}</div>
+        </main>
 
         {bottomSlot && (
           <FixedBottom

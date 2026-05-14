@@ -1,0 +1,93 @@
+export type RoomStatus = "모집중" | "마감" | "확정" | "종료" | "진행중";
+
+const STATUS_STYLE: Record<RoomStatus, string> = {
+  모집중: "text-[var(--color-info-darker)] bg-[var(--color-info-subtle)]",
+  마감: "text-[var(--color-warning-darker)] bg-[var(--color-warning-subtle)]",
+  확정: "text-[var(--color-success-darker)] bg-[var(--color-success-subtle)]",
+  종료: "text-gray-600 bg-gray-100",
+  진행중:
+    "text-[var(--color-secondary-darker)] bg-[var(--color-secondary-subtle)]",
+};
+
+export const ROOM_STATUS_LABEL: Record<
+  "COLLECTING" | "READY" | "CONFIRMED" | "CLOSED",
+  RoomStatus
+> = {
+  COLLECTING: "모집중",
+  READY: "마감",
+  CONFIRMED: "확정",
+  CLOSED: "종료",
+};
+
+export function RoomStatusBadge({ status }: { status: RoomStatus }) {
+  const style = STATUS_STYLE[status] ?? "text-gray-400 bg-gray-100";
+  return (
+    <span className={`text-xs font-medium px-3 py-1 rounded-full ${style}`}>
+      {status}
+    </span>
+  );
+}
+
+type CategoryConfig = {
+  label: string;
+  icon: string;
+};
+
+const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
+  MEAL: { label: "식사", icon: "food" },
+  CAFE: { label: "카페", icon: "coffee" },
+  DRINK: { label: "술", icon: "bar" },
+  STUDY: { label: "스터디", icon: "study" },
+  MEETING: { label: "회의", icon: "meeting" },
+  EXERCISE: { label: "운동", icon: "exercise" },
+  GAME: { label: "게임", icon: "game" },
+  PARTY: { label: "파티", icon: "anniv" },
+  ETC: { label: "기타", icon: "star" },
+};
+
+type Props = {
+  title: string;
+  hostName: string;
+  category: string;
+  status: RoomStatus;
+};
+
+export function RoomTitle({ title, hostName, category, status }: Props) {
+  const categoryConfig = CATEGORY_CONFIG[category] ?? {
+    label: category,
+    icon: "star",
+  };
+  const statusStyle = STATUS_STYLE[status] ?? "text-gray-400 bg-gray-100";
+
+  return (
+    <div className="px-5 pt-5 pb-4 flex flex-col gap-3">
+      <div className="flex gap-2 flex-wrap">
+        <span className="flex items-center gap-1 text-xs font-medium text-[var(--color-secondary-darker)] bg-[var(--color-secondary-subtle)] px-3 py-1 rounded-full">
+          <span
+            className={`icon icon-${categoryConfig.icon} text-[var(--color-secondary-darker)]`}
+            style={{ width: "1rem", height: "1rem" }}
+            aria-hidden="true"
+          />
+          {categoryConfig.label}
+        </span>
+
+        <span
+          className={`text-xs font-medium px-3 py-1 rounded-full ${statusStyle}`}
+        >
+          {status}
+        </span>
+      </div>
+
+      <h2 className="text-lg font-bold text-gray-900">{title}</h2>
+
+      <div className="flex items-center gap-2">
+        <span
+          className="icon icon-host text-[#6B4EFF] shrink-0"
+          aria-hidden="true"
+        />
+        <span className="text-xs text-gray-400">모임장</span>
+        <span className="text-sm font-medium text-gray-700">{hostName}</span>
+      </div>
+    </div>
+  );
+}

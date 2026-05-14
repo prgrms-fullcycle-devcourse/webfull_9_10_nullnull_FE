@@ -1,0 +1,25 @@
+.pulse {
+  animation: logo-pulse 2s infinite;
+}
+
+.blue {
+  --logo-pulse-color: 95, 168, 211;
+}
+
+.orange {
+  --logo-pulse-color: 247, 178, 77;
+}
+
+@keyframes logo-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--logo-pulse-color), 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 20px rgba(var(--logo-pulse-color), 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--logo-pulse-color), 0);
+  }
+}
