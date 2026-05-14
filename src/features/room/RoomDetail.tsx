@@ -13,6 +13,7 @@ import { LoadingView } from "@/components/visual/LoadingView";
 import { useRoomJoinStore } from "@/store/useRoomJoinStore";
 
 import { JoinNameStep } from "./components/detail/JoinNameStep";
+import { RoomCreatedView } from "./components/detail/RoomCreatedView";
 import { RoomDashboardView } from "./components/detail/RoomDashboardView";
 import { RoomDetailView } from "./components/detail/RoomDetailView";
 import { RoomEndedView } from "./components/detail/RoomEndedView";
@@ -109,8 +110,13 @@ export function RoomDetail({ slug }: Props) {
     viewer.role === "MEMBER" &&
     (viewer.participantStatus === "SUBMITTED" ||
       viewer.participantStatus === "DECLINED");
+  const isHostCreated =
+    viewer.role === "HOST" &&
+    room.status === "COLLECTING" &&
+    viewer.participantStatus === "JOINED";
   const isHostDashboard =
     viewer.role === "HOST" &&
+    !isHostCreated &&
     (room.status === "COLLECTING" ||
       room.status === "READY" ||
       room.status === "CONFIRMED" ||
@@ -257,6 +263,21 @@ export function RoomDetail({ slug }: Props) {
           onSelectTime={setSelectedTimeCandidateId}
           onSelectPlace={setSelectedPlaceCandidateId}
         />
+      </AppShell>
+    );
+  }
+
+  if (isHostCreated) {
+    return (
+      <AppShell
+        leftSlot={<AppLogoLink />}
+        bottomSlot={
+          <Button onClick={() => router.push(`/room/${slug}/schedule`)}>
+            내 일정 입력하기
+          </Button>
+        }
+      >
+        <RoomCreatedView room={roomForComponents} />
       </AppShell>
     );
   }
