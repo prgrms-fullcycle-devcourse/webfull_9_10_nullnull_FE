@@ -183,6 +183,7 @@ export type RoomApiResponse = {
   collectOrigin?: boolean;
   role?: "guest" | "member" | "host";
   nickname?: string | null;
+  closed?: ClosedInfo;
 };
 
 export type RoomLocation = {

@@ -17,6 +17,8 @@ import { useMyRooms } from "../../room/hooks/useMyRooms";
 import { RoomCard } from "./RoomCard";
 import { Loader2, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 interface HomeDashboardViewProps {
   userNickname: string;
@@ -25,6 +27,8 @@ interface HomeDashboardViewProps {
 export function HomeDashboardView({ userNickname }: HomeDashboardViewProps) {
   const [activeTab, setActiveTab] = useState("created");
   const [showBellDialog, setShowBellDialog] = useState(false);
+  const [showJoinDialog, setShowJoinDialog] = useState(false);
+  const [inviteLink, setInviteLink] = useState("");
   const { rooms, isLoading } = useMyRooms();
 
   const createdRooms = rooms.filter((r) => r.myRole === "HOST");
@@ -38,6 +42,39 @@ export function HomeDashboardView({ userNickname }: HomeDashboardViewProps) {
         onOpenChange={setShowBellDialog}
         title="알림 기능 준비 중"
         description="조금만 기다려주세요! 곧 실시간 알림 서비스를 시작할 예정이에요."
+      />
+      <AppDialog
+        type="confirm"
+        open={showJoinDialog}
+        onOpenChange={setShowJoinDialog}
+        title="초대 링크로 참여하기"
+        description="친구에게 받은 초대 링크를 아래에 붙여넣어 주세요."
+        content={
+          <div className="pt-4">
+            <Input
+              placeholder="https://nznz.app/room/..."
+              value={inviteLink}
+              onChange={(e) => setInviteLink(e.target.value)}
+              className="h-12 rounded-xl border-border-subtle bg-bg-subtle px-4 text-sm focus-visible:ring-primary/20"
+              autoFocus
+            />
+          </div>
+        }
+        actions={[
+          { label: "취소", variant: "secondary" },
+          {
+            label: "입장하기",
+            onClick: () => {
+              if (!inviteLink) return;
+              const slug = inviteLink.split("/").filter(Boolean).pop();
+              if (slug) {
+                window.location.href = `/room/${slug}`;
+              } else {
+                toast.error("올바른 초대 링크를 입력해주세요.");
+              }
+            },
+          },
+        ]}
       />
       <AppShell
         leftSlot={<AppLogoLink />}
@@ -56,7 +93,14 @@ export function HomeDashboardView({ userNickname }: HomeDashboardViewProps) {
             <Button asChild>
               <Link href="/room">모임 만들기</Link>
             </Button>
-          ) : null
+          ) : (
+            <Button
+              className="w-full h-12 rounded-xl font-bold"
+              onClick={() => setShowJoinDialog(true)}
+            >
+              초대 링크로 참여하기
+            </Button>
+          )
         }
       >
         <AppContent>
@@ -154,9 +198,10 @@ function RoomListGroup({ rooms }: { rooms: any[] }) {
     <div className="flex flex-col gap-10">
       {collecting.length > 0 && (
         <div className="flex flex-col gap-4">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setIsCollectingOpen(!isCollectingOpen)}
-            className="flex items-center justify-between w-full text-left focus:outline-none"
+            className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent text-left focus:outline-none"
           >
             <h2 className="text-sm font-bold text-text-secondary flex items-center gap-2">
               <span className="size-1.5 rounded-full bg-info" />
@@ -171,7 +216,7 @@ function RoomListGroup({ rooms }: { rooms: any[] }) {
                 !isCollectingOpen && "-rotate-90",
               )}
             />
-          </button>
+          </Button>
           {isCollectingOpen && (
             <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
               {collecting.map((room) => (
@@ -184,9 +229,10 @@ function RoomListGroup({ rooms }: { rooms: any[] }) {
 
       {confirmed.length > 0 && (
         <div className="flex flex-col gap-4">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setIsConfirmedOpen(!isConfirmedOpen)}
-            className="flex items-center justify-between w-full text-left focus:outline-none"
+            className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent text-left focus:outline-none"
           >
             <h2 className="text-sm font-bold text-text-secondary flex items-center gap-2">
               <span className="size-1.5 rounded-full bg-success" />
@@ -201,7 +247,7 @@ function RoomListGroup({ rooms }: { rooms: any[] }) {
                 !isConfirmedOpen && "-rotate-90",
               )}
             />
-          </button>
+          </Button>
           {isConfirmedOpen && (
             <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
               {confirmed.map((room) => (

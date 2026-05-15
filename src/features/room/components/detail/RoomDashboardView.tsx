@@ -50,7 +50,8 @@ export function RoomDashboardView({
   participants,
   confirmedMeeting,
 }: Props) {
-  const isConfirmed = room.status === "CONFIRMED" || room.status === "CLOSED";
+  const isConfirmed = room.status === "CONFIRMED";
+  const isClosed = room.status === "CLOSED";
   const isHostCollecting =
     room.viewerRole === "HOST" && room.status === "COLLECTING";
   const hasUnsubmittedParticipants =
@@ -60,17 +61,19 @@ export function RoomDashboardView({
     <div className="flex flex-col gap-5 px-4 py-5">
       <RoomSummary room={room} />
 
-      {isConfirmed ? (
+      {isClosed && room.closed && <ClosureHistoryCard closed={room.closed} />}
+
+      {isConfirmed || (isClosed && confirmedMeeting) ? (
         <ConfirmedInfoCard
-          isHighlighted={room.status === "CONFIRMED"}
+          isHighlighted={isConfirmed}
           confirmedMeeting={confirmedMeeting}
         />
-      ) : (
+      ) : !isClosed ? (
         <RoomParticipationProgressCard
           current={room.participantCount ?? 0}
           max={room.maxParticipants ?? 0}
         />
-      )}
+      ) : null}
 
       <AttendanceCard
         participants={participants}
@@ -78,6 +81,45 @@ export function RoomDashboardView({
         showReminder={isHostCollecting && hasUnsubmittedParticipants}
       />
     </div>
+  );
+}
+
+function ClosureHistoryCard({
+  closed,
+}: {
+  closed: NonNullable<RoomApiResponse["closed"]>;
+}) {
+  const triggerLabel =
+    closed.closedTrigger === "MANUAL" ? "방장 직접 종료" : "자동 종료";
+  const fromStatusLabel = {
+    COLLECTING: "모집 중 종료",
+    READY: "확정 대기 중 종료",
+    CONFIRMED: "확정 후 종료",
+  }[closed.closedFromStatus];
+
+  return (
+    <section className="flex flex-col gap-3 rounded-3xl border border-border-subtle bg-bg-subtle p-5">
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-bold text-text-primary">종료 이력</h2>
+        <span className="text-xs font-medium text-text-disabled">
+          {new Date(closed.closedAt).toLocaleString("ko-KR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </span>
+      </div>
+      <div className="flex gap-2">
+        <span className="rounded-md bg-white px-2 py-1 text-xs font-semibold text-text-secondary shadow-sm">
+          {triggerLabel}
+        </span>
+        <span className="rounded-md bg-white px-2 py-1 text-xs font-semibold text-text-secondary shadow-sm">
+          {fromStatusLabel}
+        </span>
+      </div>
+    </section>
   );
 }
 

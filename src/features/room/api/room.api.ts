@@ -5,7 +5,6 @@ import type {
   JoinRoomResponse,
   RoomCandidates,
   RoomDetailData,
-  RoomListItem,
   RoomListResponse,
   SubmitParticipationPayload,
 } from "../types/room";
@@ -69,6 +68,10 @@ export const roomApi = {
     payload: ConfirmRoomPayload,
   ): Promise<void> => {
     await api.post(`/rooms/${roomId}/confirm`, payload);
+  },
+
+  closeRoom: async (roomId: number): Promise<void> => {
+    await api.post(`/rooms/${roomId}/close`);
   },
 
   submitParticipation: async (

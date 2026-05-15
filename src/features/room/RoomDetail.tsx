@@ -37,6 +37,7 @@ export function RoomDetail({ slug }: Props) {
   const [view, setView] = useState<View>("detail");
   const [joinError, setJoinError] = useState("");
   const [isClosingCollecting, setIsClosingCollecting] = useState(false);
+  const [isClosingRoom, setIsClosingRoom] = useState(false);
   const [isConfirmingRoom, setIsConfirmingRoom] = useState(false);
   const [selectedTimeCandidateId, setSelectedTimeCandidateId] = useState<
     number | null
@@ -220,6 +221,20 @@ export function RoomDetail({ slug }: Props) {
     }
   };
 
+  const handleManualCloseRoom = async () => {
+    setIsClosingRoom(true);
+    try {
+      await roomApi.closeRoom(data.room.roomId);
+      await queryClient.invalidateQueries({ queryKey: roomKeys.detail(slug) });
+      toast.success("방이 종료되었습니다.");
+    } catch (error) {
+      console.error(error);
+      toast.error("방 종료에 실패했어요. 다시 시도해 주세요.");
+    } finally {
+      setIsClosingRoom(false);
+    }
+  };
+
   if (feedbackResult) {
     return (
       <AppShell leftSlot={<AppLogoLink />}>
@@ -302,7 +317,9 @@ export function RoomDetail({ slug }: Props) {
             onCloseCollecting={handleCloseCollecting}
             onOpenResult={() => setView("result")}
             onEditSubmission={() => router.push(`/room/${slug}/schedule`)}
+            onCloseRoom={handleManualCloseRoom}
             isClosingCollecting={isClosingCollecting}
+            isClosingRoom={isClosingRoom}
           />
         }
       >
@@ -380,67 +397,156 @@ function RoomDashboardBottomSlot({
   onCloseCollecting,
   onOpenResult,
   onEditSubmission,
+  onCloseRoom,
   isClosingCollecting,
+  isClosingRoom,
 }: {
   room: RoomApiResponse;
   onCloseCollecting: () => void | Promise<void>;
   onOpenResult: () => void;
   onEditSubmission: () => void;
+  onCloseRoom: () => void | Promise<void>;
   isClosingCollecting?: boolean;
+  isClosingRoom?: boolean;
 }) {
-  if (room.viewerRole === "HOST" && room.status === "COLLECTING") {
+  // 방장(HOST)인 경우의 UI
+  if (room.viewerRole === "HOST") {
     return (
-      <div className="flex flex-col gap-3" aria-busy={isClosingCollecting}>
-        <AppDialog
-          type="confirm"
-          title="모집을 마감할까요?"
-          description="모집을 마감하면 더 이상 답변을 받을 수 없어요"
-          actions={[
-            { label: "취소", variant: "secondary" },
-            {
-              label: "마감하기",
-              onClick: onCloseCollecting,
-              disabled: isClosingCollecting,
-            },
-          ]}
-        >
-          <Button disabled={isClosingCollecting}>모집 마감하기</Button>
-        </AppDialog>
-        <Button
-          variant="ghost"
-          className="h-10 text-sm font-semibold text-text-primary"
-          onClick={onEditSubmission}
-        >
-          제출결과 수정하기
-        </Button>
+      <div className="flex flex-col gap-3">
+        {/* 메인 액션 버튼 */}
+        {room.status === "COLLECTING" && (
+          <AppDialog
+            type="confirm"
+            title="모집을 마감할까요?"
+            description="모집을 마감하면 더 이상 답변을 받을 수 없어요"
+            actions={[
+              { label: "취소", variant: "secondary" },
+              {
+                label: "마감하기",
+                onClick: onCloseCollecting,
+                disabled: isClosingCollecting,
+              },
+            ]}
+          >
+            <Button
+              className="h-12 w-full rounded-xl text-base font-bold"
+              disabled={isClosingCollecting}
+            >
+              모집 마감하기
+            </Button>
+          </AppDialog>
+        )}
+
+        {room.status === "READY" && (
+          <Button
+            className="h-12 w-full rounded-xl text-base font-bold"
+            onClick={onOpenResult}
+          >
+            모임 확정하기
+          </Button>
+        )}
+
+        {room.status === "CONFIRMED" && (
+          <Button
+            className="h-12 w-full rounded-xl text-base font-bold"
+            onClick={() => {}}
+          >
+            지도 보기
+          </Button>
+        )}
+
+        {room.status === "CLOSED" && (
+          <Button
+            asChild
+            className="h-12 w-full rounded-xl text-base font-bold"
+          >
+            <Link href="/room">새 모임 만들기</Link>
+          </Button>
+        )}
+
+        {/* 보조 액션 버튼들 (모두 세로 스택) */}
+        {room.status === "COLLECTING" && (
+          <Button
+            variant="secondary"
+            className="h-12 w-full rounded-xl text-base font-bold"
+            onClick={onEditSubmission}
+          >
+            제출 결과 수정하기
+          </Button>
+        )}
+
+        {room.status !== "CLOSED" && (
+          <CloseRoomDialog onClose={onCloseRoom} disabled={isClosingRoom} />
+        )}
       </div>
     );
   }
 
-  if (room.viewerRole === "HOST" && room.status === "READY") {
-    return <Button onClick={onOpenResult}>모임 확정하기</Button>;
-  }
-
+  // 참여자(MEMBER)인 경우의 UI
   if (room.status === "COLLECTING") {
     return (
-      <Button variant="outline" onClick={onEditSubmission}>
+      <Button
+        variant="outline"
+        className="h-12 rounded-xl font-bold"
+        onClick={onEditSubmission}
+      >
         제출결과 수정하기
       </Button>
     );
   }
 
   if (room.status === "READY") {
-    return <Button onClick={() => {}}>모임장 재촉하기</Button>;
+    return (
+      <Button className="h-12 rounded-xl font-bold" onClick={() => {}}>
+        모임장 재촉하기
+      </Button>
+    );
   }
 
   if (room.status === "CONFIRMED") {
-    return <Button onClick={() => {}}>지도 보기</Button>;
+    return (
+      <Button className="h-12 rounded-xl font-bold" onClick={() => {}}>
+        지도 보기
+      </Button>
+    );
   }
 
   return (
-    <Button asChild>
+    <Button asChild className="h-12 rounded-xl font-bold">
       <Link href="/room">새 모임 만들기</Link>
     </Button>
+  );
+}
+
+function CloseRoomDialog({
+  onClose,
+  disabled,
+}: {
+  onClose: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <AppDialog
+      type="confirm"
+      title="방을 종료할까요?"
+      description="방을 종료하면 더 이상 수정이나 확정을 할 수 없어요"
+      actions={[
+        { label: "취소", variant: "secondary" },
+        {
+          label: "종료하기",
+          onClick: onClose,
+          disabled: disabled,
+        },
+      ]}
+    >
+      <Button
+        variant="ghost"
+        disabled={disabled}
+        className="h-12 w-full rounded-xl text-base font-bold text-danger hover:bg-danger/5 hover:text-danger"
+      >
+        방 종료하기
+      </Button>
+    </AppDialog>
   );
 }
 
@@ -473,5 +579,5 @@ function toRoomApiResponse(
   data: RoomDetailData,
   slug: string,
 ): RoomApiResponse {
-  return { ...data.room, slug };
+  return { ...data.room, slug, closed: data.closed };
 }
