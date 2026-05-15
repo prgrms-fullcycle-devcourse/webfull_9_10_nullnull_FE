@@ -15,8 +15,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/og-image.svg",
-        width: 1024,
-        height: 559,
+        width: 1200,
+        height: 630,
         alt: "NULLNULL",
       },
     ],
