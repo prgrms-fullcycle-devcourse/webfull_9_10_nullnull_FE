@@ -186,13 +186,13 @@ function EmptyState({
 function RoomListGroup({ rooms }: { rooms: any[] }) {
   const [isCollectingOpen, setIsCollectingOpen] = useState(true);
   const [isConfirmedOpen, setIsConfirmedOpen] = useState(true);
+  const [isFinishedOpen, setIsFinishedOpen] = useState(false); // 종료됨은 기본적으로 닫아둠
 
   const collecting = rooms.filter(
     (r) => r.status === "COLLECTING" || r.status === "READY",
   );
-  const confirmed = rooms.filter(
-    (r) => r.status === "CONFIRMED" || r.status === "CLOSED",
-  );
+  const confirmed = rooms.filter((r) => r.status === "CONFIRMED");
+  const finished = rooms.filter((r) => r.status === "CLOSED");
 
   return (
     <div className="flex flex-col gap-10">
@@ -251,6 +251,37 @@ function RoomListGroup({ rooms }: { rooms: any[] }) {
           {isConfirmedOpen && (
             <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
               {confirmed.map((room) => (
+                <RoomCard key={room.roomId} room={room} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {finished.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <Button
+            variant="ghost"
+            onClick={() => setIsFinishedOpen(!isFinishedOpen)}
+            className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent text-left focus:outline-none"
+          >
+            <h2 className="text-sm font-bold text-text-secondary flex items-center gap-2">
+              <span className="size-1.5 rounded-full bg-gray-400" />
+              종료됨
+              <span className="ml-1 text-xs font-medium text-text-disabled">
+                {finished.length}
+              </span>
+            </h2>
+            <ChevronDown
+              className={cn(
+                "size-4 text-text-disabled transition-transform duration-200",
+                !isFinishedOpen && "-rotate-90",
+              )}
+            />
+          </Button>
+          {isFinishedOpen && (
+            <div className="flex flex-col gap-4 opacity-70 animate-in fade-in slide-in-from-top-2 duration-200">
+              {finished.map((room) => (
                 <RoomCard key={room.roomId} room={room} />
               ))}
             </div>

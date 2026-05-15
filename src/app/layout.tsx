@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { QueryProvider } from "@/components/providers/QueryProvider";
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import { PCLayout } from "@/components/layout/PCLayout";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -50,8 +52,12 @@ export default function RootLayout({
           </>
         )}
         <QueryProvider>
-          {children}
-          <Toaster position="top-center" />
+          <AuthProvider>
+            <PCLayout>
+              {children}
+              <Toaster position="top-center" />
+            </PCLayout>
+          </AuthProvider>
         </QueryProvider>
       </body>
     </html>

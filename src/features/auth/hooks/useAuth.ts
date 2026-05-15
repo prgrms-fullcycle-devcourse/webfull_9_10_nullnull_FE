@@ -2,6 +2,7 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { useAuthStore } from "@/store/useAuthStore";
+import { authApi } from "../api/auth.api";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
 
@@ -48,47 +49,25 @@ export const useAuth = () => {
 
   const updateNicknameMutation = useMutation({
     mutationFn: async (nickname: string) => {
-      // 로컬 스토리지에 구버전 데이터(user_id)가 있을 수 있으므로 둘 다 체크
-      const currentUserId = user?.userId || (user as any)?.user_id;
-
-      if (!currentUserId) {
-        throw new Error("사용자 ID를 찾을 수 없습니다. 다시 로그인해주세요.");
-      }
-
-      // 1. public.users 테이블 직접 업데이트 (DB 컬럼은 user_id)
-      const { data, error } = await supabase
-        .from("users")
-        .update({ nickname })
-        .eq("user_id", currentUserId)
-        .select()
-        .single();
-
-      if (error) {
-        console.error("Supabase Update Error:", error);
-        throw new Error(error.message);
-      }
-
-      // 2. Auth metadata 동기화
-      const { error: authError } = await supabase.auth.updateUser({
-        data: { nickname },
-      });
-
-      if (authError) {
-        console.warn("Auth Metadata Sync Warning:", authError);
-      }
-
-      return data;
+      const response = await authApi.updateNickname(nickname);
+      return response.data;
     },
-    onSuccess: (updatedUser) => {
-      if (updatedUser) {
-        // Zustand 스토어 업데이트
-        setUser(updatedUser);
+    onSuccess: (data) => {
+      if (data?.user) {
+        // 백엔드 응답의 id를 프론트엔드의 userId로 매핑하여 스토어 업데이트
+        setUser({
+          ...user!,
+          userId: data.user.id,
+          nickname: data.user.nickname,
+        });
         toast.success("닉네임이 성공적으로 변경되었습니다.");
       }
     },
     onError: (error: any) => {
-      console.error("닉네임 변경 최종 실패:", error);
-      toast.error(`변경 실패: ${error.message}`);
+      console.error("닉네임 변경 실패:", error);
+      toast.error(
+        `변경 실패: ${error.response?.data?.message || error.message}`,
+      );
     },
   });
 

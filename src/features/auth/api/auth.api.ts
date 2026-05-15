@@ -29,7 +29,7 @@ export const authApi = {
   },
 
   updateNickname: async (nickname: string) => {
-    const { data } = await api.patch("/auth/nickname", { nickname });
+    const { data } = await api.patch("/me", { nickname });
     return data;
   },
 };

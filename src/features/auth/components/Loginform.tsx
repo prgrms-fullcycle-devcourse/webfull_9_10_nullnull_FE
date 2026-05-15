@@ -108,7 +108,7 @@ export function LoginForm() {
             <section className="relative z-10 flex w-full flex-col items-center pt-[52px] text-center">
               <h1 className="text-[30px] font-bold leading-9 text-text-primary">
                 <span className="block">모두의 시간을</span>
-                <span className="block bg-gradient-to-r from-[#5B6EE1] to-[#5FA8D3] bg-clip-text text-transparent">
+                <span className="block bg-linear-to-r from-[#5B6EE1] to-[#5FA8D3] bg-clip-text text-transparent">
                   하나로 맞추다
                 </span>
               </h1>

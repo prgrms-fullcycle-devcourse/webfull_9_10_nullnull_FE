@@ -322,17 +322,29 @@
 }
 
 /* PC 레이아웃 최적화 (lg 이상) */
-@media (min-width: theme(--breakpoint-lg)) {
+@media (min-width: 1024px) {
   .Wrap {
-    display: flex;
-    justify-content: flex-start;
+    display: flex !important;
+    justify-content: space-between !important;
     align-items: center;
     padding-left: 0;
   }
 
+  .pc-branding {
+    display: flex !important;
+    flex: 1;
+  }
+
   .Wrap .wrap-container {
-    margin-right: 0;
+    margin-right: 5%;
     margin-left: auto;
+    flex-shrink: 0;
+    width: 450px !important;
+    height: 844px !important;
+    max-height: 90dvh !important;
+    border: 8px solid #111;
+    border-radius: 40px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
   }
 }
 
