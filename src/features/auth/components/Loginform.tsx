@@ -142,6 +142,33 @@ export function LoginForm() {
                 </div>
               ))}
             </section>
+
+            <section className="relative z-10 mt-10 flex flex-col items-center text-center">
+              <p className="text-xs leading-4 text-text-disabled">
+                가입 시 NULLNULL의 서비스 이용약관과
+                <br />
+                개인정보 처리방침에 동의하게 됩니다.
+              </p>
+
+              <div className="mt-5 flex items-center gap-2 text-xs font-medium leading-4 text-text-disabled">
+                <Link
+                  href="/terms"
+                  className="border-b border-border-strong pb-px"
+                >
+                  이용약관
+                </Link>
+                <span
+                  className="size-[3px] rounded-full bg-border-strong"
+                  aria-hidden="true"
+                />
+                <Link
+                  href="/privacy"
+                  className="border-b border-border-strong pb-px"
+                >
+                  개인정보 수집・이용 동의
+                </Link>
+              </div>
+            </section>
           </div>
         </AppContent>
       </AppShell>

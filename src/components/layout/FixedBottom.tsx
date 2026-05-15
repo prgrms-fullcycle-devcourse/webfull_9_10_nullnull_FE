@@ -37,17 +37,12 @@ export function FixedBottom({
     >
       <div
         ref={setFixedElement}
-        className={cn(
-          "z-50 w-full max-w-[var(--layout-mobile)]",
-          "fixed bottom-0 left-1/2 -translate-x-1/2",
-          "lg:sticky lg:bottom-0 lg:left-0 lg:translate-x-0",
-        )}
+        className="fixed bottom-0 left-1/2 z-50 w-full max-w-[var(--layout-content)] -translate-x-1/2 lg:left-[calc(50%+125px)]"
       >
         <div
           className={cn(
             // iOS 홈 인디케이터 영역을 피하고, 여러 하단 액션을 세로로 쌓을 수 있게 합니다.
-            "flex flex-col gap-1 bg-white px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))]",
-            "lg:pb-8 lg:rounded-b-[32px]",
+            "flex flex-col gap-1 bg-gray-50 px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))]",
             contentClassName,
           )}
         >
