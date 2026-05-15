@@ -94,9 +94,9 @@ export function AppShell({
               <span className="inline-block mr-3 drop-shadow-[0_0_40px_rgba(255,255,255,0.4)]">
                 안되는
               </span>
-              <span className="text-white/60">시간 빼고</span>
+              <span className="text-white">시간 빼고</span>
               <br />
-              <span className="text-white/60">널널한 시간 찾기</span>
+              <span className="text-white">널널한 시간 찾기</span>
             </h1>
             <p className="text-lg xl:text-xl font-medium text-white/90 leading-relaxed max-w-lg">
               여러 사람의 일정을 한눈에 보고,
@@ -129,13 +129,13 @@ export function AppShell({
                 className="flex items-center gap-4 group cursor-default"
               >
                 <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 transition-all duration-300 group-hover:bg-white/10 group-hover:scale-110">
-                  <item.icon className="w-5 h-5 text-indigo-200" />
+                  <item.icon className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex flex-col gap-0.5">
                   <span className="text-white font-bold text-[15px] tracking-tight">
                     {item.title}
                   </span>
-                  <span className="text-white/30 text-[11px] font-medium leading-none">
+                  <span className="text-white/90 text-[11px] font-medium leading-none">
                     {item.desc}
                   </span>
                 </div>
