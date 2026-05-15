@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { QueryProvider } from "@/components/providers/QueryProvider";
-import { AuthProvider } from "@/components/providers/AuthProvider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -51,10 +50,8 @@ export default function RootLayout({
           </>
         )}
         <QueryProvider>
-          <AuthProvider>
-            {children}
-            <Toaster position="top-center" />
-          </AuthProvider>
+          {children}
+          <Toaster position="top-center" />
         </QueryProvider>
       </body>
     </html>
