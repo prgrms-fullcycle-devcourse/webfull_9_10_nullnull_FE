@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import { AppShell, AppContent, AppLogoLink } from "@/components/layout";
 import { KakaoLoginBtn } from "./KakaoLoginBtn";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,9 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import TitlePositiveBg from "@/assets/images/components/bg_positive_title.svg";
+
+import { ServiceTerms } from "@/components/terms/ServiceTerms";
+import { PrivacyPolicy } from "@/components/terms/PrivacyPolicy";
 
 const loginFeatures = [
   {
@@ -33,6 +35,13 @@ export function LoginForm() {
   const { setUser } = useAuthStore();
   const router = useRouter();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [showTerms, setShowTerms] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
+
+  const handleOpenTerm = (id: "service" | "privacy") => {
+    if (id === "service") setShowTerms(true);
+    if (id === "privacy") setShowPrivacy(true);
+  };
 
   const handleTestLogin = async (email: string, pass: string) => {
     try {
@@ -83,12 +92,14 @@ export function LoginForm() {
             <div className="grid grid-cols-2 gap-2">
               <Button
                 variant="outline"
+                className="w-full"
                 onClick={() => handleTestLogin("host@test.com", "host1234")}
               >
                 호스트 로그인
               </Button>
               <Button
                 variant="outline"
+                className="w-full"
                 onClick={() => handleTestLogin("member@test.com", "member1234")}
               >
                 멤버 로그인
@@ -151,24 +162,29 @@ export function LoginForm() {
               </p>
 
               <div className="mt-5 flex items-center gap-2 text-xs font-medium leading-4 text-text-disabled">
-                <Link
-                  href="/terms"
+                <button
+                  type="button"
+                  onClick={() => handleOpenTerm("service")}
                   className="border-b border-border-strong pb-px"
                 >
                   이용약관
-                </Link>
+                </button>
                 <span
                   className="size-[3px] rounded-full bg-border-strong"
                   aria-hidden="true"
                 />
-                <Link
-                  href="/privacy"
+                <button
+                  type="button"
+                  onClick={() => handleOpenTerm("privacy")}
                   className="border-b border-border-strong pb-px"
                 >
                   개인정보 수집・이용 동의
-                </Link>
+                </button>
               </div>
             </section>
+
+            <ServiceTerms open={showTerms} onOpenChange={setShowTerms} />
+            <PrivacyPolicy open={showPrivacy} onOpenChange={setShowPrivacy} />
           </div>
         </AppContent>
       </AppShell>

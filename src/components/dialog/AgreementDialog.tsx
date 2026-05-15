@@ -14,13 +14,17 @@ const REQUIRED_TERMS = [
 type AgreementTermId = (typeof REQUIRED_TERMS)[number]["id"];
 
 type AgreementDialogProps = {
-  children: ReactNode;
+  children?: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   onAgree: () => void;
   onOpenTerm?: (termId: AgreementTermId) => void;
 };
 
 export function AgreementDialog({
   children,
+  open,
+  onOpenChange,
   onAgree,
   onOpenTerm,
 }: AgreementDialogProps) {
@@ -67,7 +71,11 @@ export function AgreementDialog({
     <AppDialog
       type="bottom"
       engine="drawer"
-      onOpenChange={handleOpenChange}
+      open={open}
+      onOpenChange={(isOpen) => {
+        handleOpenChange(isOpen);
+        onOpenChange?.(isOpen);
+      }}
       title={"모임을 시작하기 위해\n약관에 동의해주세요"}
       content={
         <AgreementContent
